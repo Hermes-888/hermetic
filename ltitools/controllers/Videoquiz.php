@@ -21,8 +21,8 @@ class Videoquiz extends Controller
     {
         parent::__construct();
 
-        BackendMenu::setContext('Hermetic.Ltitools', 'ltitools', 'videoquiz');
-        //BackendMenu::setContext('Delphinium.Roots', 'delphinium', ucfirst{{lowerPlugin}});
+        //BackendMenu::setContext('Hermetic.Ltitools', 'ltitools', 'videoquiz');
+        BackendMenu::setContext('Delphinium.Roots', 'delphinium', 'videoquiz');
     }
     
     public function index()

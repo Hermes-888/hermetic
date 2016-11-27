@@ -10,7 +10,7 @@ use System\Classes\PluginBase;
 class Plugin extends PluginBase
 {
     /**
-     * Use Roots to API
+     * Uses Roots API to obtain LMS data
      */
     public $require = [
         'Delphinium.Roots'
@@ -31,50 +31,6 @@ class Plugin extends PluginBase
     }
 
     /**
-     * Register method, called when the plugin is first registered.
-     *
-     * @return void
-     */
-    public function register()
-    {
-
-    }
-
-    /**
-     * Boot method, called right before the request route.
-     *
-     * @return array
-     */
-    public function boot()
-    {
-        Event::listen('backend.menu.extendItems', function($manager) {
-            $manager->addSideMenuItems('Hermetic.Ltitools', 'ltitools', [
-                'Popquiz' => [
-                  'label' => 'PopQuiz',
-                  'icon'  => 'icon-thumbs-o-up',
-                  'owner' => 'Hermetic.Ltitools',
-                  'group' => 'QuizTools',
-                  'url' => Backend::url('hermetic/ltitools/popquiz')
-                ],
-                'Videoquiz' => [
-                  'label' => 'VideoQuiz',
-                  'icon'  => 'icon-thumbs-o-up',
-                  'owner' => 'Hermetic.Ltitools',
-                  'group' => 'QuizTools',
-                  'url' => Backend::url('hermetic/ltitools/videoquiz')
-                ],
-                'Testcompo' => [
-                  'label' => 'TestComponent',
-                  'icon'  => 'icon-thumbs-o-down',
-                  'owner' => 'Hermetic.Ltitools',
-                  'group' => 'QuizTools',
-                  'url' => Backend::url('hermetic/ltitools/testcompo')
-                ]
-            ]);
-        });
-    }
-
-    /**
      * Registers any front-end components implemented in this plugin.
      *
      * @return array
@@ -85,6 +41,33 @@ class Plugin extends PluginBase
             'Hermetic\Ltitools\Components\Popquiz' => 'PopQuiz',
             'Hermetic\Ltitools\Components\Videoquiz' => 'VideoQuiz'
         ];
+    }
+
+    /**
+     * Boot method, called right before the request route.
+     *
+     * @return array
+     */
+    public function boot()
+    {
+        Event::listen('backend.menu.extendItems', function($manager) {
+            $manager->addSideMenuItems('Delphinium.Roots', 'delphinium', [
+                'Popquiz' => [
+                  'label' => 'PopQuiz',
+                  'icon'  => 'icon-gamepad',
+                  'owner' => 'Hermetic.Ltitools',
+                  'group' => 'QuizTools',
+                  'url' => Backend::url('hermetic/ltitools/popquiz')
+                ],
+                'Videoquiz' => [
+                  'label' => 'VideoQuiz',
+                  'icon'  => 'icon-film',
+                  'owner' => 'Hermetic.Ltitools',
+                  'group' => 'QuizTools',
+                  'url' => Backend::url('hermetic/ltitools/videoquiz')
+                ]
+            ]);
+        });
     }
 
     /**
@@ -121,5 +104,16 @@ class Plugin extends PluginBase
             ],
         ];
     }
+
+    /**
+     * Register method, called when the plugin is first registered.
+     *
+     * @return void
+
+    public function register()
+    {
+
+    }
+    */
 
 }

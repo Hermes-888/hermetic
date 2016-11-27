@@ -21,8 +21,8 @@ class Popquiz extends Controller
     {
         parent::__construct();
 
-        BackendMenu::setContext('Hermetic.Ltitools', 'ltitools', 'popquiz');
-        //BackendMenu::setContext('Delphinium.Roots', 'delphinium', ucfirst{{lowerPlugin}});
+        //BackendMenu::setContext('Hermetic.Ltitools', 'ltitools', 'popquiz');
+        BackendMenu::setContext('Delphinium.Roots', 'delphinium', 'popquiz');
     }
     
     public function index()
