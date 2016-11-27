@@ -1,0 +1,31 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+# Record name
+name: Popquiz
+
+# Model Form Field configuration
+form: $/hermetic/ltitools/models/popquiz/fields.yaml
+
+# Model Class name
+modelClass: Hermetic\Ltitools\Models\Popquiz
+
+# Default redirect location
+defaultRedirect: hermetic/ltitools/popquiz
+
+# Create page
+create:
+    title: Create Popquiz
+    redirect: hermetic/ltitools/popquiz/update/:id
+    redirectClose: hermetic/ltitools/popquiz
+
+# Update page
+update:
+    title: Edit Popquiz
+    redirect: hermetic/ltitools/popquiz
+    redirectClose: hermetic/ltitools/popquiz
+
+# Preview page
+preview:
+    title: Preview Popquiz

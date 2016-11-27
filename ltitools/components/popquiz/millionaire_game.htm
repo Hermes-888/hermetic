@@ -1,0 +1,47 @@
+<!-- Millionaire Game partial -->
+
+<script src="plugins/hermetic/ltitools/assets/libs/easeljs-0.7.1.min.js"></script>
+<script src="plugins/hermetic/ltitools/assets/libs/tweenjs-0.5.1.min.js"></script>
+<script src="plugins/hermetic/ltitools/assets/libs/movieclip-0.7.1.min.js"></script>
+<script src="plugins/hermetic/ltitools/assets/libs/preloadjs-0.4.1.min.js"></script>
+<script src="plugins/hermetic/ltitools/assets/libs/millionaireh5.js"></script>
+
+<!-- body onload="init();" style="background-color:#D4D4D4"-->
+<canvas id="canvas" width="960" height="540" style="background-color:#FFFFFF"></canvas>
+
+<script>
+
+	var canvas, stage, exportRoot, loader;
+	gameQuest = {{gameQuest|raw}};
+	//console.log('millionaire gameQuest:',gameQuest.length, gameQuest);
+	// warn if less than 15 questions
+	//console.log('millionaire role:',role);
+	if(role == 'Learner') { showIntro(); }
+	function showIntro() {
+		canvas = document.getElementById("canvas");
+		images = images||{};
+
+		var loader = new createjs.LoadQueue(false);
+		loader.addEventListener("fileload", handleFileLoad);
+		loader.addEventListener("complete", handleComplete);
+		loader.loadManifest(lib.properties.manifest);// 3rd
+	}
+
+	function handleFileLoad(evt) {
+		if (evt.item.type == "image") { images[evt.item.id] = evt.result; }
+	}
+
+	function handleComplete() {
+		exportRoot = new lib.millionaireh5();
+		console.log('Millionaire handleComplete:');// 4th
+		
+		stage = new createjs.Stage(canvas);
+		stage.addChild(exportRoot);
+		stage.update();
+		stage.enableMouseOver();
+
+		createjs.Ticker.setFPS(lib.properties.fps);
+		createjs.Ticker.addEventListener("tick", stage);
+	}
+
+</script>

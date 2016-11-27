@@ -1,0 +1,31 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+# Record name
+name: Videoquiz
+
+# Model Form Field configuration
+form: $/hermetic/ltitools/models/videoquiz/fields.yaml
+
+# Model Class name
+modelClass: Hermetic\Ltitools\Models\Videoquiz
+
+# Default redirect location
+defaultRedirect: hermetic/ltitools/videoquiz
+
+# Create page
+create:
+    title: Create Videoquiz
+    redirect: hermetic/ltitools/videoquiz/update/:id
+    redirectClose: hermetic/ltitools/videoquiz
+
+# Update page
+update:
+    title: Edit Videoquiz
+    redirect: hermetic/ltitools/videoquiz
+    redirectClose: hermetic/ltitools/videoquiz
+
+# Preview page
+preview:
+    title: Preview Videoquiz

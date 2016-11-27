@@ -1,0 +1,23 @@
+# ===================================
+#  List Column Definitions
+# ===================================
+
+columns:
+    id:
+        label: ID
+        searchable: true
+        
+    name:
+        label: Name
+        searchable: true
+        
+    player:
+        label: Configuration
+        searchable: true
+        
+    quiz_id:
+        label: Quiz id
+        searchable: true
+        
+    questions:
+        label: Questions

@@ -1,0 +1,31 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+# Record name
+name: Testcompo
+
+# Model Form Field configuration
+form: $/hermetic/ltitools/models/testcompo/fields.yaml
+
+# Model Class name
+modelClass: Hermetic\Ltitools\Models\Testcompo
+
+# Default redirect location
+defaultRedirect: hermetic/ltitools/testcompo
+
+# Create page
+create:
+    title: Create Testcompo
+    redirect: hermetic/ltitools/testcompo/update/:id
+    redirectClose: hermetic/ltitools/testcompo
+
+# Update page
+update:
+    title: Edit Testcompo
+    redirect: hermetic/ltitools/testcompo
+    redirectClose: hermetic/ltitools/testcompo
+
+# Preview page
+preview:
+    title: Preview Testcompo

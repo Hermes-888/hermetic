@@ -1,0 +1,25 @@
+<!--These script below will add the custom css that an instructor adds in the front-end of the component by editing the custom css field-->
+<script>
+
+	var role = '{{role}}';
+    //console.log('Role: ',role);//string
+	
+	var config = {{config|raw}};
+	//console.log('config',config);
+	
+	// instructor vars
+	var quizList = [];// all quizzes
+	var nextcount=0;// question details
+	
+	// game vars
+	var scoreis=0, misses=0;
+	var current=0;// questnum
+	var gameQuest={{gameQuest|raw}};//questions used in game
+
+</script>
+
+{% if ('Learner' in role) %}
+    {% partial __SELF__~'::student' %}
+{% elseif ('Instructor' in role or 'TeachingAssistant' in role) %}
+    {% partial __SELF__~'::instructor' %}
+{% endif %}

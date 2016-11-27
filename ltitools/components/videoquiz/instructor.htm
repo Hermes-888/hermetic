@@ -1,0 +1,61 @@
+<!-- Instructor View with Settings cog -->
+<div style="position:relative; z-index:950;">
+    <a id="popinfo" title="Info" tabindex="0" role="button" data-trigger-condition="" data-trigger-action="" data-trigger="focus" data-container="body" data-toggle="popover" data-placement="left" data-content="Setup below" style="position:absolute; top:0; right:0px;">
+        <i class="icon-question"></i>
+    </a>
+	<div id="cog" data-toggle="modal" data-keyboard="true" data-backdrop="true" onclick="showVideoquizModal()" style="position:absolute; top:0; right:10px;">
+        <a data-toggle="tooltip" title="Settings" data-placement="bottom"><i class="icon-cog"></i></a>
+    </div>
+</div>
+<div style="z-index:10;">
+    <!-- component partial -->
+    {% partial __SELF__~"::display" %}
+</div>
+
+<!-- Configuration modal with Front End Form and Instructions in tabs -->
+<div class="control-popup modal fade" id="videoquiz-content-configuration" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="overflow-y: auto;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 class="modal-title">Component Settings</h3>
+            </div>
+            <div class="modal-body">
+                <!-- Tabs -->
+                <ul class="nav nav-tabs">
+                  <li class="active"><a data-toggle="tab" href="#videoquizConfigure">Configure</a></li>
+                  <li><a data-toggle="tab" href="#videoquizInstruct">Instructions</a></li>
+                </ul>
+                <div class="tab-content" style="padding: 10px 0 10px 0;">
+                <!-- Configure instance -->
+                  <div id="videoquizConfigure" class="tab-pane fade in active" style="padding: 5px 0px;">
+                    <form role="form" id="updateForm"
+                      data-request="{{ __SELF__ }}::onUpdate"
+                      data-request-success="$el.hide();completed(data);">
+                        {{ videoquizform.update(this.page.videoquizrecordId)|raw }}
+                        {{ videoquizform.formRender()|raw }}
+                      <div class="form-group">
+                         <button class="btn btn-primary" type="submit" value="register">Update Component</button>
+                         <button type="button" onclick="hideVideoquizModal()" class="btn btn-default" data-disposable="">Close</button>
+                      </div>
+                    </form>
+                  </div>
+                <!-- Instructions -->
+                  <div id="videoquizInstruct" class="tab-pane fade in" style="padding:20px;">
+                      {{ videoquizinstructions|raw }}
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /*override backend styles*/
+    .modal-header {background:none !important;border-bottom:1px solid #e5e5e5 !important;color:#333333 !important}
+    .modal-header .close{color:black !important;background:transparent !important;}
+    .modal-body {padding-bottom: 10px;}
+	.hiddenFromTeacher{display:none;}
+	#Form-field-Videoquiz-id-group{display:none;}
+	#Form-field-Videoquiz-name-group{display:none;}
+</style>

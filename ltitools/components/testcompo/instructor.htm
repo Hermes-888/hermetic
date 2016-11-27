@@ -1,0 +1,81 @@
+<!--
+Copyright (C) 2012-2016 Project Delphinium - All Rights Reserved
+
+This file is subject to the terms and conditions defined in
+file 'https://github.com/ProjectDelphinium/delphinium/blob/master/EULA',
+which is part of this source code package.
+
+NOTICE:  All information contained herein is, and remains the property of Project Delphinium. The intellectual and technical concepts contained
+herein are proprietary to Project Delphinium and may be covered by U.S. and Foreign Patents, patents in process, and are protected by trade secret or copyright law.
+Dissemination of this information or reproduction of this material is strictly forbidden unless prior written permission is obtained
+from Project Delphinium.
+
+THE RECEIPT OR POSSESSION OF THIS SOURCE CODE AND/OR RELATED INFORMATION DOES NOT CONVEY OR IMPLY ANY RIGHTS
+TO REPRODUCE, DISCLOSE OR DISTRIBUTE ITS CONTENTS, OR TO MANUFACTURE, USE, OR SELL ANYTHING THAT IT  MAY DESCRIBE, IN WHOLE OR IN PART.
+
+Unauthorized copying of this file, via any medium is strictly prohibited
+Non-commercial use only, you may not charge money for the software
+You can modify personal copy of source-code but cannot distribute modifications
+You may not distribute any version of this software, modified or otherwise
+-->
+<!-- Instructor View with Settings cog -->
+<div style="position:relative; z-index:950;">
+    <a id="popinfo" title="Info" tabindex="0" role="button" data-trigger-condition="" data-trigger-action="" data-trigger="focus" data-container="body" data-toggle="popover" data-placement="left" data-content="Setup below" style="position:absolute; top:0; right:0px;">
+        <i class="icon-question"></i>
+    </a>
+	<div id="cog" data-toggle="modal" data-keyboard="true" data-backdrop="true" onclick="showTestcompoModal()" style="position:absolute; top:0; right:10px;">
+        <a data-toggle="tooltip" title="Settings" data-placement="bottom"><i class="icon-cog"></i></a>
+    </div>
+</div>
+<div style="z-index:10;">
+    <!-- component partial -->
+    {% partial __SELF__~"::display" %}
+</div>
+
+<!-- Configuration modal with Front End Form and Instructions in tabs -->
+<div class="control-popup modal fade" id="testcompo-content-configuration" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="overflow-y: auto;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 class="modal-title">Component Settings</h3>
+            </div>
+            <div class="modal-body">
+                <!-- Tabs -->
+                <ul class="nav nav-tabs">
+                  <li class="active"><a data-toggle="tab" href="#testcompoConfigure">Configure</a></li>
+                  <li><a data-toggle="tab" href="#testcompoInstruct">Instructions</a></li>
+                </ul>
+                <div class="tab-content" style="padding: 10px 0 10px 0;">
+                <!-- Configure instance -->
+                  <div id="testcompoConfigure" class="tab-pane fade in active" style="padding: 5px 0px;">
+                    <form role="form" id="updateForm"
+                      data-request="{{ __SELF__ }}::onUpdate"
+                      data-request-success="$el.hide();completed(data);">
+                        {{ testcompoform.update(this.page.testcomporecordId)|raw }}
+                        {{ testcompoform.formRender()|raw }}
+                      <div class="form-group">
+                         <button class="btn btn-primary" type="submit" value="register">Update Component</button>
+                         <button type="button" onclick="hideTestcompoModal()" class="btn btn-default" data-disposable="">Close</button>
+                      </div>
+                    </form>
+                  </div>
+                <!-- Instructions -->
+                  <div id="testcompoInstruct" class="tab-pane fade in" style="padding:20px;">
+                      {{ testcompoinstructions|raw }}
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /*override backend styles*/
+    .modal-header {background:none !important;border-bottom:1px solid #e5e5e5 !important;color:#333333 !important}
+    .modal-header .close{color:black !important;background:transparent !important;}
+    .modal-body {padding-bottom: 10px;}
+	.hiddenFromTeacher{display:none;}
+	#Form-field-Testcompo-id-group{display:none;}
+	#Form-field-Testcompo-name-group{display:none;}
+</style>

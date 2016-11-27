@@ -1,0 +1,243 @@
+<!-- You Got This Game partial -->
+<div class="bkground"></div>
+    <div class="page">
+        <div class="title">
+			<div id="introMessage"></div>
+            <div id="you"></div>
+            <div id="this"></div>
+            <div id="got"></div>
+            <div id="yep"></div>
+            <div id="gobtn">Play Now</div>
+        </div>
+        
+        <div class="gameplay">
+            <div class="headbox">
+                <div class="score">Score:</div>
+                <div class="missd">Missed:</div>
+                <div class="timr">Timer:</div>
+            </div>
+
+            <div class="questbox">Question:</div>
+			<div class="valid"></div>
+            <div class="answerbox">
+                <div id="a0" class="makeDraggable answer">Answer 0</div>
+                <div id="a1" class="makeDraggable answer">Answer 1</div>
+                <div id="a2" class="makeDraggable answer">Answer 2</div>
+                <div id="a3" class="makeDraggable answer">Answer 3</div>
+                <div id="nextaro"></div>
+            </div>
+			<div id="comment"></div>
+            <div id="star"></div>
+            <div id="wrong"></div>
+        </div>
+    </div>
+<!-- ???/div-->
+<script type="text/javascript" src="plugins/hermetic/ltitools/assets/js/jquery.spritely.js"></script>
+<!--script type="text/javascript" src="plugins/hermetic/ltitools/assets/js/ygt_game.js"></script-->
+<script>
+/* To Do:
+assets/js/ygt_game.js
+	
+	timer?
+    center animated title?
+	instructions
+if	gameIntro? from Assignment text? or config.description
+	gameOver();
+//ONLY? if type == "multiple_choice_question" ONLY?
+
+// init in default.htm
+var scoreis=0, misses=0;
+var current=0;// questnum
+var gameQuest=[];// array of questions
+
+Questions are stored in db as array of question_id
+in php if Learner, 
+retrieve questions in config.questions from delphinium_roots_quiz_questions
+*/
+
+gameQuest = {{gameQuest|raw}};
+console.log('ygt gameQuest:',gameQuest.length, gameQuest);
+//console.log('ygt role:',role);
+//if(role == 'Learner') { showIntro(); }
+showIntro();
+function showIntro()
+{
+	// reset intro elements
+	$('#you').css({'left':90,'opacity':0});
+	$('#got').css({'top':1,'opacity':0});
+	$('#this').css({'left':555,'opacity':0});
+	$('#yep').css({'top':555,'opacity':0});
+	
+	$('#nextaro').hide();
+	$('gameplay').hide();
+	$('title').show();
+	current=scoreis=misses=0;
+    
+	console.log('show intro');
+	console.log('gameQuest:',gameQuest);
+	if(gameQuest.length==0) {
+		$('#introMessage').html('Sorry, No Questions to play with');
+		$('#gobtn').hide();
+	} else {
+		$('#introMessage').hide();
+		$('#gobtn').show(); }
+	
+	$('#you')
+	   .animate({
+		  left: 335, opacity: 1
+		}, 300);
+
+	$('#got')
+		.delay(500)
+		.animate({
+			top:228, opacity: 1
+		}, 500);
+
+	$('#this')
+		.delay(800)
+		.animate({
+			left:392, opacity: 1
+		}, 300);	
+
+	$('#yep')
+		.delay(1000)
+		.animate({
+			top: 392, opacity: 1
+		}, 300);
+    /* click Play Now #gobtn */
+	$('#gobtn')
+		.delay(1600)
+		.animate({opacity: 1}, 400);
+}
+
+/*
+    click Play Now animates title off
+    play area onto screen
+*/
+$('#gobtn').on('click', function(){
+    $('.title').animate({left: -1000, opacity: 0}, 500, function(){ $('.title').hide(); });
+    $('.bkground').animate({opacity:0.2},800);
+    $('.gameplay').show();
+	if(gameQuest.length>0) {
+		showQuestion(current);
+	} else {
+		$('#introMessage').html('Sorry, No Questions to play with');
+	}
+});
+
+/* http://spritely.net/ sprites */
+$('#star').sprite({fps:6, no_of_frames:6}).active();
+$('#star').hide();
+function showStar() {
+    $('#star').show();
+    $('#star').css({'left':350,'top':120, opacity:1})
+        .animate({ left: 200, top: 20, opacity: 0 }, 1000, function(){ //$('#star').destroy(); 
+	});
+}
+
+$('#wrong').sprite({fps: 6, no_of_frames: 6}).active();
+$('#wrong').hide();
+function shoWrong() {
+    $('#wrong').show();
+    $('#wrong').css({'left':450,'top':150, opacity:1})
+        .animate({ top: 20, opacity: 0 }, 1000, function(){ //$('#wrong').spStop(true); 
+	});
+}
+
+$('#nextaro').sprite({fps: 6, no_of_frames: 4}).active();
+$('#nextaro').hide();
+function showNextaro() {
+    $('#nextaro').show();// sprite
+}
+$('#nextaro').on('click', function(){
+    $('#nextaro').hide();
+	$('#comment').html('').hide();
+	current++;
+	if(current==gameitems.length){ 
+		current=0;
+		//gameOver();//conclusion and play again?
+	} else {
+		showQuestion(current);//show next question
+	}
+});
+
+//animate onto screen from top? or fade in
+function showQuestion(index) {
+	$('.valid').empty();
+	$('.makeDraggable').hide();// all answers
+	//console.log('showQuestion');
+	var txt = gameQuest[index].text;
+		txt = $.parseHTML(txt);
+		txt = txt[0].textContent;
+	$('.questbox').attr('data-points', gameQuest[index].points_possible);
+	$('.questbox').html(txt);
+	var answers= $.parseJSON(gameQuest[index].answers);
+	//console.log(answers);
+	// animate answers onto screen from bottom? or fade in
+	for(var i=0; i<answers.length; i++){
+		$('#a'+i).html(answers[i].text)
+			.attr('weight', answers[i].weight)
+			.addClass('shado')
+			.show();// only answers with content
+	}
+}
+
+function updateScore() {
+	scoreis += parseInt($('.questbox').attr('data-points'));
+	$('.score').html('Score: '+scoreis);
+}
+function updateMissed() {
+	misses ++;
+	$('.missd').html('oops: '+misses);
+}
+/*
+    http://api.jqueryui.com/draggable/
+	http://getbootstrap.com/css/
+*/
+$('.makeDraggable').draggable({
+    containment: '.page',
+    snap: '.page',
+    zIndex: 500,
+    iframeFix: true,
+    distance: 10,
+	revert: true,
+	start: function(){
+		$(this).removeClass('shado');
+		$('#comment').html('').hide();
+	}
+});
+
+$('.questbox').droppable({
+    drop: handleDropEvent
+});
+function handleDropEvent( event, ui ) {
+    
+	var comdiv='';
+    var id = ui.draggable.attr('weight');
+    //console.log( 'dropped ID "' + id + '" was dropped onto me!' );
+	//multiple answers points/weight = score: totalWeight=100 = done
+	// if id>0 valid append ui.draggable.hide if weightcnt == 100
+    if(id == '100') {
+        showStar();//play correct sprite
+        updateScore();//console.log("correct");
+        $('.makeDraggable').hide();// all answers
+        $('.valid').append($(ui.draggable).html());// show answer
+		$('.valid').show();
+        showNextaro();// play next arrow button
+		if(gameQuest[current].correct_comments!= "") {
+			comdiv+=gameQuest[current].correct_comments;
+		}
+    } else {
+		updateMissed(); 
+		shoWrong();//play wrong
+		if(gameQuest[current].incorrect_comments != "") {
+			comdiv+=gameQuest[current].incorrect_comments;
+		}
+    }
+	if(gameQuest[current].neutral_comments != "") {
+		comdiv+=gameQuest[current].neutral_comments;
+	}
+	$('#comment').html(comdiv).show('slow');//slides in from upper left
+}
+
+</script>

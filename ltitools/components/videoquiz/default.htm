@@ -1,0 +1,23 @@
+<!--These script below will add the custom css that an instructor adds in the front-end of the component by editing the custom css field-->
+<script>
+
+var customCss = '{{custom_css}}';
+head = document.head || document.getElementsByTagName('head')[0],
+        style = document.createElement('style');
+
+style.type = 'text/css';
+if (style.styleSheet){
+    style.styleSheet.cssText = customCss;
+} else {
+    style.appendChild(document.createTextNode(customCss));
+}
+
+head.appendChild(style);
+
+</script>
+
+{% if ('Learner' in role) %}
+    {% partial __SELF__~'::student' %}
+{% elseif ('Instructor' in role or 'TeachingAssistant' in role) %}
+    {% partial __SELF__~'::instructor' %}
+{% endif %}

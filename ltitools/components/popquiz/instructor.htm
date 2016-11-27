@@ -1,0 +1,180 @@
+<!-- Instructor View with Settings cog -->
+<div style="position:relative; z-index:10;">
+    <a id="popinfo" title="Info" tabindex="0" role="button" data-trigger-condition="" data-trigger-action="" data-trigger="focus" data-container="body" data-toggle="popover" data-placement="left" data-content="Setup below" style="position:absolute; top:0; right:0px;">
+        <i class="icon-question"></i>
+    </a>
+	<div id="cog" data-toggle="modal" data-keyboard="true" data-backdrop="true" onclick="showPopquizModal()" style="position:absolute; top:0; right:10px;">
+        <a data-toggle="tooltip" title="Settings" data-placement="bottom"><i class="icon-cog"></i></a>
+    </div>
+</div>
+<div style="z-index:1;" class="row">
+    <div class="col-sm-12 text-center panel-group" id="accordion">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="panel-trigger" data-toggle="collapse" data-parent="#accordion" href="#accordion-1">Select A Quiz</a>
+                </h4>
+            </div>
+            <div id="accordion-1" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <!-- http://getbootstrap.com/css/   .col-xs-6 .col-md-4 -->
+                    <div id="col_0" class="col-md-4"></div>
+                    <div id="col_1" class="col-md-4"></div>
+                    <div id="col_2" class="col-md-4"></div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="panel-trigger" data-toggle="collapse" data-parent="#accordion" href="#accordion-2">Selected Quiz Questions</a>
+                </h4>
+            </div>
+            <div id="accordion-2" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <h4 id="qtitle">The chosen quiz TITLE </h4>
+                    <button class="btn btn-success" type="button" id="confirmit"><i class="icon-plus-square"></i> Add Selected Questions</button>
+                    <button class="btn btn-primary" type="button" id="viewit">View Question Details <i class="icon-eye"></i></button>
+                    
+                    <div id="quiz_data">
+                        <ul id="quizselectable" class="list-group">
+                          <!-- quiz questions -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="panel-trigger" data-toggle="collapse" data-parent="#accordion" href="#accordion-3">Questions Selected for Game</a>
+                </h4>
+            </div>
+            <div id="accordion-3" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <h4>Select what you want to do with these Questions:</h4>
+                    <div>
+                    <div id="questcount"></div>
+                    <button class="btn btn-default" type="button" id="clearit"><i class="icon-minus-square"></i> Remove All Questions</button>
+                    <button class="btn btn-warning" type="button" id="removeit"><i class="icon-minus"></i> Remove Selected Questions</button>
+                    <button class="btn btn-primary" type="button" id="seeit">See Question Details <i class="icon-eye"></i></button>
+                    <button class="btn btn-success" type="button" id="useit">Use These Questions <i class="icon-check-square-o"></i></button>
+                    <!--div id="game_details"></div-->
+                    </div>
+                    
+                    <div id="game_data">
+                        <ul id="gameselectable">
+                          <!-- selectable game questions li list-group-item -->
+                        </ul>
+                    </div> 
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="panel-trigger" data-toggle="collapse" data-parent="#accordion"  href="#accordion-4">Game Preview</a>
+                </h4>
+            </div>
+            <div id="accordion-4" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <!-- millionaire_game, ygt_game , ... -->
+                    {% if ('mgs' in game) %}
+                        {% partial __SELF__~'::millionaire_game' %}
+                    {% elseif ('ygt' in game) %}
+                        {% partial __SELF__~'::ygt_game' %}
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div><!--End accordion-->
+    
+</div>
+
+<!-- Modal: show details for a selected question -->
+<div class="control-popup modal fade" id="detailed" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width:800px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 id="detailed-title" class="modal-title">Quiz Questions</h4>
+            </div>
+            <div id="detailed-body" class="modal-body">
+                <div class="clearfix">
+                    <div id="qtype" class="left questype">Type:</div>
+                    <div id="qpoints" class="right questype">Points:</div>
+                </div>
+				<hr/>
+				<div>
+					<div id="qtext"></div>
+                </div>
+				<div>
+					<div id="qanswers"></div>
+					<div id="qfeedback"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+				<button id="backbtn" type="button" class="btn btn-primary"><i class="icon-arrow-left"></i> Previous</button>
+                <button id="nextbtn" type="button" class="btn btn-primary">Next <i class="icon-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Configuration modal with Front End Form and Instructions in tabs -->
+<div class="control-popup modal fade" id="popquiz-content-configuration" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="overflow-y: auto;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 class="modal-title">Component Settings</h3>
+            </div>
+            <div class="modal-body">
+                <!-- Tabs -->
+                <ul class="nav nav-tabs">
+                  <li class="active"><a data-toggle="tab" href="#popquizConfigure">Configure</a></li>
+                  <li><a data-toggle="tab" href="#popquizInstruct">Instructions</a></li>
+                </ul>
+                <div class="tab-content" style="padding: 10px 0 10px 0;">
+                <!-- Configure instance -->
+                  <div id="popquizConfigure" class="tab-pane fade in active" style="padding: 5px 0px;">
+                    <form role="form" id="updateForm">
+                        {{ popquizform.update(this.page.popquizrecordId)|raw }}
+                        {{ popquizform.formRender()|raw }}
+                      <div class="form-group">
+                         <button type="submit" onclick="updateForm()" class="btn btn-primary">Update Component</button>
+                         <button type="button" onclick="hidePopquizModal()" class="btn btn-default" data-disposable="">Close</button>
+                      </div>
+                    </form>
+                  </div>
+                <!-- Instructions -->
+                  <div id="popquizInstruct" class="tab-pane fade in" style="padding:20px;">
+                      {{ popquizinstructions|raw }}
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /*override backend styles*/
+    .modal-header {background:none !important;border-bottom:1px solid #e5e5e5 !important;color:#333333 !important}
+    .modal-header .close{color:black !important;background:transparent !important;}
+    .modal-body {padding-bottom: 10px;}
+	.hiddenFromTeacher{display:none;}
+	#Form-field-Popquiz-id-group{display:none;}
+	#Form-field-Popquiz-name-group{display:none;}
+</style>
+
+<script>
+	var gameitems=[];// questions selected for game
+	
+	quizList = {{quizList|raw}};// instructors only
+	if(gameQuest != null && gameQuest.length > 1) {
+        gameitems = {{gameQuest|raw}};// have to twig here
+        //showSelected();// from config.questions
+    }
+</script>

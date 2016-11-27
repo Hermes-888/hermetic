@@ -1,0 +1,75 @@
+Author.Plugin (component,model,controller)
+hermetic
+ltitools
+
+videoquiz
+popquiz
+quizlesson
+
+php artisan create:plugin hermetic.ltitools
+
+php artisan create:controller hermetic.ltitools videoquiz
+php artisan create:model hermetic.ltitools videoquiz
+php artisan create:component hermetic.ltitools videoquiz
+
+php artisan create:controller hermetic.ltitools videoquiz
+php artisan create:model hermetic.ltitools videoquiz
+php artisan create:component hermetic.ltitools popquiz
+
+
+
+Delphinium : videoquiz : Similar to Quizlesson
+  Resource Selection?
+  
+Instructor:
+    - upload a video to use or select from list???
+    - seek/play to a marker (time) click Add content
+    - select quiz template? pre-defined color/style groups
+    - select quiz from quizzes (question_banks)
+    - select question
+    - repeat until all questions in quiz are added?
+    
+Student:
+    - load selected video and track
+    - after last question answered, auto submit quiz, graded as quiz
+    
+
+remove from component.php
+    $this->page['recordId'] = $config->id;// UNUSED?
+    
+roots line 575
+//case "Illuminate\Database\Eloquent\Collection":
+case "October\Rain\Database\Collection":
+
+had to switch in order to get quizzes from lms
+timed out but is there
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+    
+    

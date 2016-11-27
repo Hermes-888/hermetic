@@ -1,0 +1,34 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
+fields:
+    id:
+        label: ID
+        disabled: true
+        
+    name:
+        label: Name
+        span: right
+        comment: Auto generated
+        
+    quiz_name:
+        label: Quiz Name
+        span: right
+        comment: Edit if desired
+        
+    quiz_description:
+        label: Description
+        span: left
+        type: textarea
+        comment: Enter an introduction 
+        
+    questions:
+        label: Questions
+        span: right
+        comment: Selected questions
+        
+    game_style:
+        label: Game Style
+        span: right
+        type: dropdown
