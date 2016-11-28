@@ -1,7 +1,5 @@
 Author.Plugin (component,model,controller)
-hermetic
-ltitools
-
+hermetic/ltitools/
 videoquiz
 popquiz
 quizlesson
@@ -12,14 +10,18 @@ php artisan create:controller hermetic.ltitools videoquiz
 php artisan create:model hermetic.ltitools videoquiz
 php artisan create:component hermetic.ltitools videoquiz
 
-php artisan create:controller hermetic.ltitools videoquiz
-php artisan create:model hermetic.ltitools videoquiz
+php artisan create:controller hermetic.ltitools popquiz
+php artisan create:model hermetic.ltitools popquiz
 php artisan create:component hermetic.ltitools popquiz
 
+Popquiz : 
+    could have several in a course. instance name should include/be quiz_name?
+    grade as assignment
 
 
-Delphinium : videoquiz : Similar to Quizlesson
-  Resource Selection?
+Videoquiz : Similar to Quizlesson
+    create Assignment, insert with Editor?
+    or Resource Selection? 
   
 Instructor:
     - upload a video to use or select from list???
@@ -28,6 +30,7 @@ Instructor:
     - select quiz from quizzes (question_banks)
     - select question
     - repeat until all questions in quiz are added?
+    - save track file for cues with question ids
     
 Student:
     - load selected video and track
@@ -37,12 +40,16 @@ Student:
 remove from component.php
     $this->page['recordId'] = $config->id;// UNUSED?
     
+    
+    
+error:
 roots line 575
 //case "Illuminate\Database\Eloquent\Collection":
 case "October\Rain\Database\Collection":
 
 had to switch in order to get quizzes from lms
-timed out but is there
+timed out but data is there now
+test on server
   
 
 

@@ -15,6 +15,7 @@ class Plugin extends PluginBase
     public $require = [
         'Delphinium.Roots'
     ];
+
     /**
      * Returns information about this plugin.
      *
@@ -23,7 +24,7 @@ class Plugin extends PluginBase
     public function pluginDetails()
     {
         return [
-            'name'        => 'ltitools',
+            'name'        => 'Quiz Tools',
             'description' => 'Tools to present quizzes',
             'author'      => 'hermetic',
             'icon'        => 'icon-cogs'
@@ -56,14 +57,14 @@ class Plugin extends PluginBase
                   'label' => 'PopQuiz',
                   'icon'  => 'icon-gamepad',
                   'owner' => 'Hermetic.Ltitools',
-                  'group' => 'QuizTools',
+                  'group' => 'Quiz Tools',
                   'url' => Backend::url('hermetic/ltitools/popquiz')
                 ],
                 'Videoquiz' => [
                   'label' => 'VideoQuiz',
                   'icon'  => 'icon-film',
                   'owner' => 'Hermetic.Ltitools',
-                  'group' => 'QuizTools',
+                  'group' => 'Quiz Tools',
                   'url' => Backend::url('hermetic/ltitools/videoquiz')
                 ]
             ]);
@@ -108,12 +109,11 @@ class Plugin extends PluginBase
     /**
      * Register method, called when the plugin is first registered.
      *
-     * @return void
-
+     * @return void UNUSED
+     */
     public function register()
     {
 
     }
-    */
 
 }
