@@ -1,14 +1,15 @@
 <?php namespace Hermetic\Ltitools\Updates;
 
 use Schema;
-use October\Rain\Database\Schema\Blueprint;
+//use October\Rain\Database\Schema\Blueprint;
 use October\Rain\Database\Updates\Migration;
 
 class CreateVideoquizzesTable extends Migration
 {
     public function up()
     {
-        Schema::create('hermetic_ltitools_videoquizzes', function(Blueprint $table) {
+        //Schema::create('hermetic_ltitools_videoquizzes', function(Blueprint $table) {
+        Schema::create('hermetic_ltitools_videoquizzes', function($table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('name');//$this->alias .'_'. $_SESSION['courseID'];

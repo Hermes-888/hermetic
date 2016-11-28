@@ -44,7 +44,19 @@ class Popquiz extends ComponentBase
     {
 
         //try{
-            
+        
+        /*    // should have been set in LtiConfiguration.php
+            if (!isset($_SESSION)) { session_start(); }
+            $_SESSION['courseID'] = \Input::get('custom_canvas_course_id');
+            $_SESSION['userID'] = \Input::get('custom_canvas_user_id');
+            $_SESSION['domain'] = \Input::get('custom_canvas_api_domain');
+            $_SESSION['lms'] = 'canvas';//\Input::get('custom_canvas_lms');
+            $_SESSION['roles'] = \Input::get('roles');// I added this for Editor version of LtiConfiguration.php
+        //$token = \Crypt::decrypt($_SESSION['userToken']);
+        
+        foreach($_POST as $key => $value ) { echo "$key = $value<br/>"; } 
+        die();
+        */
             $config = $this->getInstance();
             //use the record in the component and frontend form
             $this->page['config'] = json_encode($config);
