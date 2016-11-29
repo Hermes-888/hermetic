@@ -38,6 +38,9 @@ class Videoquiz extends ComponentBase
     {
 
         //try{
+            echo 'videoquiz_instructor';
+            foreach($_POST as $key => $value ) { echo "$key = $value<br/>"; } 
+            die();
             //NOTES:
             //Components have database instances. The logic for how they are created is as follows:
             //is an instance set in this component's properties? yes show it
