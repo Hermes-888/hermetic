@@ -5,6 +5,7 @@ use Hermetic\ltitools\Models\Popquiz as popModel;
 use Hermetic\ltitools\Controllers\Popquiz as popController;
 
 use Delphinium\Roots\Roots;
+use Delphinium\Roots\db\DbHelper;
 use Delphinium\Roots\Enums\ActionType;
 use Delphinium\Roots\Requestobjects\QuizRequest;
 use Delphinium\Roots\Models\Quizquestion as questionsModel;
@@ -45,15 +46,20 @@ class Popquiz extends ComponentBase
 
         //try{
         
-        /*    // should have been set in LtiConfiguration.php
+        /*  // Type = Editor = 
             if (!isset($_SESSION)) { session_start(); }
             $_SESSION['courseID'] = \Input::get('custom_canvas_course_id');
             $_SESSION['userID'] = \Input::get('custom_canvas_user_id');
             $_SESSION['domain'] = \Input::get('custom_canvas_api_domain');
-            $_SESSION['lms'] = 'canvas';//\Input::get('custom_canvas_lms');
+            $_SESSION['lms'] = \Input::get('custom_canvas_lms');
             $_SESSION['roles'] = \Input::get('roles');// I added this for Editor version of LtiConfiguration.php
-        //$token = \Crypt::decrypt($_SESSION['userToken']);
         
+            $dbHelper = new DbHelper();
+            $userCheck = $dbHelper->getCourseApprover($_SESSION['courseID']);// or for userID ?
+            $_SESSION['userToken'] = $userCheck->encrypted_token;
+            
+            if no token for user found, authorize a new one?
+            
         foreach($_POST as $key => $value ) { echo "$key = $value<br/>"; } 
         die();
         */

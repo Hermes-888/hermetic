@@ -30,7 +30,7 @@
 var selecteditems=[];// quiz question_id selections
 var chosenitems=[];// question_id of gameitems to use, view, remove, clear all
 var quests=[];// quiz questions to selected from
-
+console.log(config);
 	/*	Note: these functions are only for instructor view
 		list of all quizzes to choose questions for game
         //ONLY? if type == "multiple_choice_question" ONLY?

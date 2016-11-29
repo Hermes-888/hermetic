@@ -95,7 +95,10 @@ type=editor is skipping the doBltiHandshake()
 lti_message_type = ContentItemSelectionRequest
 
 config.xml includes editor options & custom:
-I removed ContentItemSelectionRequest from configuration.xml if $type == 'Editor', this needs to be a separate type in the dropdown
+I removed ContentItemSelectionRequest from configuration.xml if $type == 'Editor', this needs to be a separate type in the dropdown?
+<lticm:property name="message_type">ContentItemSelectionRequest</lticm:property>
+
+Testing:
 lti_message_type = basic-lti-launch-request
 
 <lticm:options name="editor_button">
@@ -121,4 +124,24 @@ I have also added the custom_canvas_lms variable. This is set when the developer
     <lticm:property name="lis_course_offering_sourcedid">$CourseSection.sourcedId</lticm:property>
     <lticm:property name="lis_person_sourcedid">$Person.sourcedId</lticm:property>
 </blti:custom>
+
+Of course this now breaks Quizlesson, unless another Type = contentItem is defined in LtiConfiguration.php
+
+May need contentItemSelectionRequest in order for Instructor to inject the popquiz iframe. similar to quizlesson.
+
+if contentItem is reinstated:
+
+get session vars in component.php like this:
+    $_SESSION['courseID'] = \Input::get('custom_canvas_course_id');
+    $_SESSION['userID'] = \Input::get('custom_canvas_user_id');
+    $_SESSION['domain'] = \Input::get('custom_canvas_api_domain');
+
+    $_SESSION['lms'] = 'canvas';// \Input::get('custom_canvas_lms');
+
+    $dbHelper = new DbHelper();
+    $userCheck = $dbHelper->getCourseApprover($_SESSION['courseID']);
+    $_SESSION['userToken'] = $userCheck->encrypted_token;
+
+However, if no token has been authorized, for this course, or for userID then one needs to be so Roots can be called to get all quizzes!
+see: LtiConfiguration.php lines 225 - 235
 
