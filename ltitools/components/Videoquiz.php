@@ -30,7 +30,7 @@ class Videoquiz extends ComponentBase
         ];
     }
 
-        /**
+    /**
      * This function will run every time this component runs. To use this component, drop it on a OctoberCMS page along with the dev component
      * (for development) or LTIConfiguration component (for production)
      */
@@ -38,9 +38,9 @@ class Videoquiz extends ComponentBase
     {
 
         //try{
-            echo 'videoquiz_instructor';
-            foreach($_POST as $key => $value ) { echo "$key = $value<br/>"; } 
-            die();
+            
+            //foreach($_POST as $key => $value ) { echo "$key = $value<br/>"; } 
+            //die();
             //NOTES:
             //Components have database instances. The logic for how they are created is as follows:
             //is an instance set in this component's properties? yes show it

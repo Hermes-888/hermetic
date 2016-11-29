@@ -2,7 +2,7 @@ Author.Plugin (component,model,controller)
 hermetic/ltitools/
 videoquiz
 popquiz
-quizlesson
+quizlesson?
 
 php artisan create:plugin hermetic.ltitools
 
@@ -38,8 +38,8 @@ Student:
     - after last question answered, auto submit quiz, graded as quiz
     
 
-remove from component.php
-    $this->page['recordId'] = $config->id;// UNUSED?
+removed from component.php
+    $this->page['recordId'] = $config->id;// UNUSED
     
     
     
@@ -49,7 +49,7 @@ roots line 575
 case "October\Rain\Database\Collection":
 
 had to switch in order to get quizzes from lms
-timed out but data is there now
+timed out but data is there now : Home build 382
 test on mediafiles server : build 316
 
 october login error:
@@ -73,17 +73,42 @@ class CreatePopquizzesTable extends Migration
 
 LtiConfiguration :type = editor
 
+But at first launch, courseID is Undefined
+Popquiz.php line 194: $courseId = $_SESSION['courseID'];
+
+SESSION variables get set in LtiConfiguration.php at doBltiHandshake()
+Does it need to be sooner? or is editor not calling handshake
+
+In Quizlession I solved the problem like so,
+$_SESSION['courseID'] = \Input::get('custom_canvas_course_id');
+$_SESSION['userID'] = \Input::get('custom_canvas_user_id');
+$_SESSION['domain'] = \Input::get('custom_canvas_api_domain');
+$_SESSION['lms'] = \Input::get('custom_canvas_lms');
+$_SESSION['roles'] = \Input::get('roles');// I added this for Editor version of LtiConfiguration.php
+
+next err: CanvasHelper
+$token = \Crypt::decrypt($_SESSION['userToken']);
+
+
+Solution:
+type=editor is skipping the doBltiHandshake()
+lti_message_type = ContentItemSelectionRequest
+
 config.xml includes editor options & custom:
+I removed ContentItemSelectionRequest from configuration.xml if $type == 'Editor', this needs to be a separate type in the dropdown
+lti_message_type = basic-lti-launch-request
+
 <lticm:options name="editor_button">
     <lticm:property name="icon_url">http://mediafiles.uvu.edu/delphinium/themes/delphinium-theme/assets/images/favicon.png
     </lticm:property>
     <lticm:property name="selection_width">1024</lticm:property>
     <lticm:property name="selection_height">800</lticm:property>
     <lticm:property name="url">https://mediafiles.uvu.edu/delphinium/apopquiz</lticm:property>
-    <lticm:property name="text">PopQuiz</lticm:property>
+    <lticm:property name="text">Pop Quiz Games</lticm:property>
     <lticm:property name="enabled">true</lticm:property>
-    <lticm:property name="message_type">ContentItemSelectionRequest</lticm:property>
 </lticm:options>
+
+I have also added the custom_canvas_lms variable. This is set when the developer id and secret are entered for the instance configruation.
 
 <blti:custom>
     <lticm:property name="custom_canvas_lms">canvas</lticm:property>
@@ -97,75 +122,3 @@ config.xml includes editor options & custom:
     <lticm:property name="lis_person_sourcedid">$Person.sourcedId</lticm:property>
 </blti:custom>
 
-But at first launch courseID is Undefined
-Popquiz.php line 194: $courseId = $_SESSION['courseID'];
-
-SESSION variables get set in LtiConfiguration.php at doBltiHandshake()
-Does it need to be sooner? or is editor not calling handshake
-
-
-In Quizlession I solved the problem like so,
-$_SESSION['courseID'] = \Input::get('custom_canvas_course_id');
-$_SESSION['userID'] = \Input::get('custom_canvas_user_id');
-$_SESSION['domain'] = \Input::get('custom_canvas_api_domain');
-$_SESSION['lms'] = \Input::get('custom_canvas_lms');
-$_SESSION['roles'] = \Input::get('roles');// I added this for Editor version of LtiConfiguration.php
-
-next err: CanvasHelper
-$token = \Crypt::decrypt($_SESSION['userToken']);
-
-
-Is type=editor skipping the doBltiHandshake() ???
-lti_message_type = ContentItemSelectionRequest
-Added doBltiHandshake() for case but still stuck at
-$token = \Crypt::decrypt($_SESSION['userToken']);
-because, context is not valid
-
-There is a problem. Please notify your instructor
-
-oauth_consumer_key = mfue-key
-oauth_signature_method = HMAC-SHA1
-oauth_timestamp = 1480359303
-oauth_nonce = S6KEUUzhsaXI4CxV6uxmRGsgOlyiReHOtMSCcCzw
-oauth_version = 1.0
-accept_media_types = image/*,text/html,application/vnd.ims.lti.v1.ltilink,*/*
-accept_multiple = false
-accept_presentation_document_targets = embed,frame,iframe,window
-accept_unsigned = true
-auto_create = false
-content_item_return_url = https://uvu.instructure.com/courses/420908/external_content/success/external_tool_dialog
-context_id = b20c31b9095e471c8ec00dd9a8fc0894742a34c8
-context_title = DEV_Ed Tech - Test Course 2
-custom_canvas_api_domain = uvu.instructure.com
-custom_canvas_course_id = 420908
-custom_canvas_lms = canvas
-custom_canvas_user_id = 1568377
-custom_canvas_user_login_id = tJones
-custom_lis_course_offering_sourcedid = DEV_EdTech-TestCourse2
-custom_lis_person_contact_email_primary = TJones@uvu.edu
-custom_lis_person_sourcedid = tJones
-custom_user_image = https://secure.gravatar.com/avatar/16ee198c53f9e7c04603fc8ea78005dd?s=50&d=https%3A%2F%2Fcanvas.instructure.com%2Fimages%2Fmessages%2Favatar-50.png
-data = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkZWZhdWx0X2xhdW5jaF91cmwiOiJodHRwczpcL1wvbWVkaWFmaWxlcy51dnUuZWR1XC9kZWxwaGluaXVtXC9hcG9wcXVpeiJ9.1ZtJyfti70wjMzF4xTAUI2JLJDbWhdyzf-slNnqnIUQ
-ext_roles = urn:lti:instrole:ims/lis/Instructor,urn:lti:role:ims/lis/Instructor,urn:lti:role:ims/lis/Learner/NonCreditLearner,urn:lti:role:ims/lis/Mentor,urn:lti:sysrole:ims/lis/User
-launch_presentation_document_target = iframe
-launch_presentation_locale = en
-lti_message_type = ContentItemSelectionRequest
-lti_version = LTI-1p0
-roles = Instructor
-tool_consumer_instance_guid = 53ff06d8f8dbd4741ff5bd57b3065b53c1cca411.uvu.instructure.com
-user_id = 052966325c0d3174b9099230eda241a345883689
-oauth_signature = BE9E06tvWyMkiQaLVGlKoBjo4Ls=
-
-
-
-
-
-
-
-
-
-  
-    
-    
-    
-    
