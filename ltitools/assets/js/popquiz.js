@@ -132,14 +132,36 @@ console.log(config);
 			//console.log('idArray:',idArray);
 			$('#Form-field-Popquiz-questions').val(idArray);
             config.questions=idArray.toString();// and internal array
-            console.log('config.id:',config.id);//yes
-            console.log('config:',config.questions);
+            console.log('config:', config.id, config.questions);
 			//$('#updateForm').submit();// update the db record
+            
+        /*
+        *   https://groups.google.com/forum/#!topic/canvas-lms-users/7N2CJL8P9xk
+        *   content item url launches this with a lti_message of basic-lti-launch-request
+        *   display the game with questions in the canvas iframe
+        *   
+        *   construct content_items, add it to instructor.htm by submitting form to return_url
+        */
+        var parameters = '?questionid='+config.questions;
+        
+        var contentval = '{"@context" : "http://purl.imsglobal.org/ctx/lti/v1/ContentItem",';
+            contentval += '"@graph":[{';
+            contentval += '"@type":"LtiLinkItem",';
+            contentval += '"@id":"https://mediafiles.uvu.edu/delphinium/popquiz",';
+            contentval += '"url":"https://mediafiles.uvu.edu/delphinium/popquiz'+parameters+'",';
+            contentval += '"title":"Pop Quiz","text":"placed in page",';
+            contentval += '"mediaType":"application/vnd.ims.lti.v1.ltilink",';
+            //  contentval += '"custom":{"quizid":'+orchidConfig.quiz_id+',"questionid":[ '+qids+']},';// append to url instead
+            contentval += '"placementAdvice":{ "presentationDocumentTarget" : "iframe",';
+            contentval += '"displayWidth":"970","displayHeight":"550"}}]}';// actual+10
+            
+            $('#content_items').val(contentval);// instructor.htm form
+            
             updateTable();//RestAPI
 			//open the game
             $('#accordion-3').collapse('hide');
 			$('#accordion-4').collapse('show');
-			showIntro();// restart game with updated questions
+            showIntro();// restart game with updated questions
 		}
 		// else no questions to use
 	});
@@ -155,13 +177,15 @@ console.log(config);
         updateTable();
     }
     function updateTable() {
-        // use RestAPI & Routes
+        // use RestAPI to update db table then submit to returnUrl
         console.log('config:',config);
         var promise = $.get('onUpdatePopquiz', {'Popquiz':config}, function (data) {
-				console.log('PROMISE result:',data);
-			}).fail(function (data1) { console.log('PROMISE failed:',data1); });
+            console.log('PROMISE result:',data);
+            // only? if messageType == "ContentItemSelectionRequest"
+            $('#contentSelector').submit();//Now autosubmit form
+        }).fail(function (data1) { console.log('PROMISE failed:',data1); });
     }
-    
+
     /*  see details of each question with answers and comments
         in #detailed modal
         nextcount is index of starting question

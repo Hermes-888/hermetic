@@ -129,19 +129,14 @@ Of course this now breaks Quizlesson, unless another Type = contentItem is defin
 
 May need contentItemSelectionRequest in order for Instructor to inject the popquiz iframe. similar to quizlesson.
 
-if contentItem is reinstated:
+if contentItem is reinstated for type=Editor:
+ LtiConfiguration.php set return_url and always doBltiHandshake
+ 
+set iframe for content return_url 
+ 
+<p><iframe style="width: 970px; height: 550px;" title="Pop Quiz" src="/courses/420908/external_tools/retrieve?display=borderless&amp;url=https%3A%2F%2Fmediafiles.uvu.edu%2Fdelphinium%2Fpopquiz%3Fquestionid%3D13030894%2C13030895%2C13030896%2C13030904%2C13030905%2C13030906%2C13030908%2C13030909%2C13030910%2C13030911%2C13030913%2C13030914" width="300" height="150" allowfullscreen="allowfullscreen" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen"></iframe></p>
 
-get session vars in component.php like this:
-    $_SESSION['courseID'] = \Input::get('custom_canvas_course_id');
-    $_SESSION['userID'] = \Input::get('custom_canvas_user_id');
-    $_SESSION['domain'] = \Input::get('custom_canvas_api_domain');
 
-    $_SESSION['lms'] = 'canvas';// \Input::get('custom_canvas_lms');
-
-    $dbHelper = new DbHelper();
-    $userCheck = $dbHelper->getCourseApprover($_SESSION['courseID']);
-    $_SESSION['userToken'] = $userCheck->encrypted_token;
-
-However, if no token has been authorized, for this course, or for userID then one needs to be so Roots can be called to get all quizzes!
-see: LtiConfiguration.php lines 225 - 235
+2nd launch is basic-lti-launch-request
+questions are store/retrieved from db so should be changable.
 

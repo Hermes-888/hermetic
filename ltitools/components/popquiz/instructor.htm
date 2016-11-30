@@ -93,6 +93,13 @@
     
 </div>
 
+<!-- content item submission form -->
+<form action="{{return_url}}" method="post" id="contentSelector" encType="application/x-www-form-urlencoded">
+    <input type="hidden" name="lti_message_type" value="ContentItemSelection" />
+    <input type="hidden" name="lti_version" value="LTI-1p0" />
+    <input type="hidden" id="content_items" name="content_items" value="" />
+</form>
+
 <!-- Modal: show details for a selected question -->
 <div class="control-popup modal fade" id="detailed" tabindex="-1" role="dialog">
     <div class="modal-dialog">

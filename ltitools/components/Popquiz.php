@@ -46,7 +46,7 @@ class Popquiz extends ComponentBase
 
         //try{
         
-        /*  // Type = Editor = 
+        /*  // Type = Editor = contentItemSelectionRequest
             if (!isset($_SESSION)) { session_start(); }
             $_SESSION['courseID'] = \Input::get('custom_canvas_course_id');
             $_SESSION['userID'] = \Input::get('custom_canvas_user_id');
@@ -59,10 +59,10 @@ class Popquiz extends ComponentBase
             $_SESSION['userToken'] = $userCheck->encrypted_token;
             
             if no token for user found, authorize a new one?
-            
-        foreach($_POST as $key => $value ) { echo "$key = $value<br/>"; } 
-        die();
         */
+        foreach($_POST as $key => $value ) { echo "<br/>$key = $value"; }
+        //die();
+
             $config = $this->getInstance();
             //use the record in the component and frontend form
             $this->page['config'] = json_encode($config);
@@ -83,6 +83,8 @@ class Popquiz extends ComponentBase
             $gameQuest = $this->getTheseQuestions($config->questions);
             $this->page['gameQuest'] = $gameQuest;
             $this->page['game'] = $config['game_style'];// student.htm
+        
+            
             
             // include the backend form with instructions for instructor.htm
             if(stristr($roleStr, 'Instructor')||stristr($roleStr, 'TeachingAssistant'))
@@ -91,16 +93,9 @@ class Popquiz extends ComponentBase
                 //See #10 in https://github.com/ProjectDelphinium/delphinium/wiki/1.-Installation#setup
                 //Include OctoberCMS' ui library (See https://octobercms.com/docs/ui/form)
 
-                $quizList = $this->getAllQuizzes();// choose quiz questions to use
-				$this->page['quizList'] = $quizList;
-                
                 $this->addCss('/modules/system/assets/ui/storm.css', 'core');
                 $this->addJs('/modules/system/assets/ui/js/flashmessage.js', 'core');
-                $this->addCss('/modules/system/assets/ui/storm.less', 'core');
-                
-                $this->addCss("/plugins/hermetic/ltitools/assets/css/popquiz.css");
-				$this->addJs('/plugins/hermetic/ltitools/assets/js/popquiz_instructor.js');
-                $this->addJs("/plugins/hermetic/ltitools/assets/js/popquiz.js");
+                //$this->addCss('/modules/system/assets/ui/storm.less', 'core');// UNUSED
                 
                 $formController = new popController();
                 $formController->create('frontend');
@@ -111,10 +106,39 @@ class Popquiz extends ComponentBase
                 //Append the Instructions to the page
                 $instructions = $formController->makePartial('popquizinstructions');
                 $this->page['popquizinstructions'] = $instructions;
+                
+                // UNUSED
+                $messageType = $_POST['lti_message_type'];// online
+                //$this->page['messageType'] = $messageType;
+                switch ($messageType) {
+                    case "ContentItemSelectionRequest": // first launch add questions
+                        // is also set in LtiConfiguration.php
+                        $this->page['return_url'] = $_POST["content_item_return_url"];// first launch
+                    break;
+
+                    case "basic-lti-launch-request": // second launch questions
+                        // display array of question_id's from content_items
+                        // retrieve from launch url
+                        //$postcontent = '{"questionid":"'.$_POST["questionid"].'"}';//$config->questions
+                        
+                        // used at quizlesson.js lines 80-93
+                        //$this->page['content_items'] = json_encode($postcontent);
+                    break;
+                }
+                
+                // get quiz questions to choose from
+                $quizList = $this->getAllQuizzes();
+				$this->page['quizList'] = $quizList;
+                
+                // used only for instructors
+                $this->addCss('/plugins/hermetic/ltitools/assets/css/popquiz.css');
+				$this->addJs('/plugins/hermetic/ltitools/assets/js/popquiz_instructor.js');
+                $this->addJs('/plugins/hermetic/ltitools/assets/js/popquiz.js');
+                
             }
             else if(stristr($roleStr, 'Learner'))
             {
-                //default.htm will load student.htm and view the game which loads gameQuest
+                //default.htm will load student.htm and view the game which loads gameQuest[questionid,
             }
             
 
