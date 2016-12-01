@@ -308,7 +308,7 @@ p.nominalBounds = new cjs.Rectangle(-3,-3,373,45);
 	this.text.textAlign = "center";
 	this.text.lineHeight = 18;
 	this.text.lineWidth = 127;
-	this.text.setTransform(78,4,1.5,1.5);
+	this.text.setTransform(78,7,1.5,1.5);
 
 	this.timeline.addTween(cjs.Tween.get(this.text).wait(2));
 
@@ -353,7 +353,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,163,34);
 	this.text.textAlign = "center";
 	this.text.lineHeight = 17;
 	this.text.lineWidth = 126;
-	this.text.setTransform(78.7,4.8,1.205,1.205);
+	this.text.setTransform(78.7,8,1.205,1.205);
 
 	this.timeline.addTween(cjs.Tween.get(this.text).wait(2));
 
@@ -398,7 +398,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,163,34);
 	this.text.textAlign = "center";
 	this.text.lineHeight = 17;
 	this.text.lineWidth = 126;
-	this.text.setTransform(78.7,4.8,1.205,1.205);
+	this.text.setTransform(79,9,1.205,1.205);
 
 	this.timeline.addTween(cjs.Tween.get(this.text).wait(2));
 
@@ -443,7 +443,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,163,34);
 	this.text.textAlign = "center";
 	this.text.lineHeight = 13;
 	this.text.lineWidth = 88;
-	this.text.setTransform(53.9,4,1.205,1.205);
+	this.text.setTransform(53.9,7,1.205,1.205);
 
 	this.timeline.addTween(cjs.Tween.get(this.text).wait(2));
 
@@ -492,7 +492,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,113,25);
 	this.text.textAlign = "center";
 	this.text.lineHeight = 13;
 	this.text.lineWidth = 88;
-	this.text.setTransform(53.4,4,1.205,1.205);
+	this.text.setTransform(53.4,7,1.205,1.205);
 
 	this.timeline.addTween(cjs.Tween.get(this.text).wait(2));
 
@@ -541,7 +541,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,113,25);
 	this.text.textAlign = "center";
 	this.text.lineHeight = 13;
 	this.text.lineWidth = 88;
-	this.text.setTransform(53.9,4,1.205,1.205);
+	this.text.setTransform(53.9,7,1.205,1.205);
 
 	this.timeline.addTween(cjs.Tween.get(this.text).wait(2));
 
@@ -679,7 +679,7 @@ p.nominalBounds = new cjs.Rectangle(0,0,1223.7,1223.7);
 	this.text.textAlign = "center";
 	this.text.lineHeight = 42;
 	this.text.lineWidth = 382;
-	this.text.setTransform(358,15);
+	this.text.setTransform(358,16);
 
 	this.again_btn = new lib.btnplayagain();
 	this.again_btn.setTransform(359.4,128.1,1,1,0,0,0,80.9,17);
@@ -850,7 +850,7 @@ new cjs.ButtonHelper(this.again_btn, 0, 1, 1, false, new lib.btnplayagain(), 0);
 	this.text.textAlign = "center";
 	this.text.lineHeight = 20;
 	this.text.lineWidth = 650;
-	this.text.setTransform(339.5,233.7);
+	this.text.setTransform(339.5,235);
 
 	// outroText
 	this.outroText = new cjs.Text("Vedana 14 pt. text. (Replace with your text here...).", "16px 'Arial'", "#FFFFFF");

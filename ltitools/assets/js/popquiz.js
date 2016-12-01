@@ -176,9 +176,13 @@ console.log(config);
         // use RestAPI to update db table then submit to returnUrl
         console.log('config:',config);
         var promise = $.get('onUpdatePopquiz', {'Popquiz':config}, function (data) {
-            console.log('PROMISE result:',data);
-            // only? if messageType == "ContentItemSelectionRequest"
-            $('#contentSelector').submit();//Now autosubmit form
+            console.log('PROMISE result:',data);// T/F
+            // if messageType == "ContentItemSelectionRequest"
+            //console.log('messageType:',messageType);
+            if (messageType == "ContentItemSelectionRequest") {
+                //Now autosubmit form to return_url to set iframe
+                $('#contentSelector').submit();
+            }
         }).fail(function (data1) { console.log('PROMISE failed:',data1); });
     }
 

@@ -74,7 +74,10 @@ class Popquiz extends ComponentBase
             if(isset($_POST['custom_canvas_assignment_id'])){
                 $assignmentID = $_POST['custom_canvas_assignment_id'];
             }
-            $this->page['assignmentID'] = $assignmentID;
+            $this->page['assignmentID'] = json_encode($assignmentID);
+            // used in popquiz.js - if contentItemSelectionRequest submit form to return_url
+            $messageType = $_POST['lti_message_type'];// online
+            $this->page['messageType'] = $messageType;
             
             // include the backend form with instructions for instructor.htm
             if(stristr($roleStr, 'Instructor')||stristr($roleStr, 'TeachingAssistant'))
