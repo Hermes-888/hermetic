@@ -116,7 +116,7 @@ console.log(config);
     $('#useit').click(function(e) {
         e.preventDefault();
 		//console.log('gameitems:',gameitems.length, gameitems);
-		if (gameitems.length>0) { 
+		if (gameitems.length>0) {
             /* gameitems = questions to use in game */
 			gameQuest=gameitems;
 			/* gameQuest is array of questions for game
@@ -126,32 +126,28 @@ console.log(config);
             */
 			var idArray = [];
 			for (var i=0; i<gameitems.length; i++) {
-            //ONLY? if type == "multiple_choice_question" ONLY?
+            //ONLY? if type == "multiple_choice_question"
 				idArray.push(gameitems[i].question_id);
 			}
 			//console.log('idArray:',idArray);
 			$('#Form-field-Popquiz-questions').val(idArray);
             config.questions=idArray.toString();// and internal array
             console.log('config:', config.id, config.questions);
-			//$('#updateForm').submit();// update the db record
             
         /*
         *   https://groups.google.com/forum/#!topic/canvas-lms-users/7N2CJL8P9xk
-        *   content item url launches this with a lti_message of basic-lti-launch-request
+        *   content item url launches this with an lti_message type of basic-lti-launch-request
         *   display the game with questions in the canvas iframe
-        *   
-        *   construct content_items, add it to instructor.htm by submitting form to return_url
+        *   submitting form to return_url
         */
-        var parameters = '?questionid='+config.questions;
-        
+        //var parameters = '?questionid='+config.questions;//UNUSED
         var contentval = '{"@context" : "http://purl.imsglobal.org/ctx/lti/v1/ContentItem",';
             contentval += '"@graph":[{';
             contentval += '"@type":"LtiLinkItem",';
             contentval += '"@id":"https://mediafiles.uvu.edu/delphinium/popquiz",';
-            contentval += '"url":"https://mediafiles.uvu.edu/delphinium/popquiz'+parameters+'",';
-            contentval += '"title":"Pop Quiz","text":"placed in page",';
+            contentval += '"url":"https://mediafiles.uvu.edu/delphinium/popquiz",';// dynamic!!! selfurl???
+            contentval += '"title":"Pop Quiz","text":"placed in assignment",';
             contentval += '"mediaType":"application/vnd.ims.lti.v1.ltilink",';
-            //  contentval += '"custom":{"quizid":'+orchidConfig.quiz_id+',"questionid":[ '+qids+']},';// append to url instead
             contentval += '"placementAdvice":{ "presentationDocumentTarget" : "iframe",';
             contentval += '"displayWidth":"970","displayHeight":"550"}}]}';// actual+10
             

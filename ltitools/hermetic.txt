@@ -101,30 +101,6 @@ I removed ContentItemSelectionRequest from configuration.xml if $type == 'Editor
 Testing:
 lti_message_type = basic-lti-launch-request
 
-<lticm:options name="editor_button">
-    <lticm:property name="icon_url">http://mediafiles.uvu.edu/delphinium/themes/delphinium-theme/assets/images/favicon.png
-    </lticm:property>
-    <lticm:property name="selection_width">1024</lticm:property>
-    <lticm:property name="selection_height">800</lticm:property>
-    <lticm:property name="url">https://mediafiles.uvu.edu/delphinium/apopquiz</lticm:property>
-    <lticm:property name="text">Pop Quiz Games</lticm:property>
-    <lticm:property name="enabled">true</lticm:property>
-</lticm:options>
-
-I have also added the custom_canvas_lms variable. This is set when the developer id and secret are entered for the instance configruation.
-
-<blti:custom>
-    <lticm:property name="custom_canvas_lms">canvas</lticm:property>
-    <lticm:property name="custom_canvas_api_domain">$Canvas.api.domain</lticm:property>
-    <lticm:property name="custom_canvas_course_id">$Canvas.course.id</lticm:property>
-    <lticm:property name="custom_canvas_user_id">$Canvas.user.id</lticm:property>
-    <lticm:property name="custom_canvas_user_login_id">$Canvas.user.loginId</lticm:property>
-    <lticm:property name="lis_person_contact_email_primary">$Person.email.primary</lticm:property>
-    <lticm:property name="user_image">$User.image</lticm:property>
-    <lticm:property name="lis_course_offering_sourcedid">$CourseSection.sourcedId</lticm:property>
-    <lticm:property name="lis_person_sourcedid">$Person.sourcedId</lticm:property>
-</blti:custom>
-
 Of course this now breaks Quizlesson, unless another Type = contentItem is defined in LtiConfiguration.php
 
 May need contentItemSelectionRequest in order for Instructor to inject the popquiz iframe. similar to quizlesson.
@@ -134,9 +110,15 @@ if contentItem is reinstated for type=Editor:
  
 set iframe for content return_url 
  
-<p><iframe style="width: 970px; height: 550px;" title="Pop Quiz" src="/courses/420908/external_tools/retrieve?display=borderless&amp;url=https%3A%2F%2Fmediafiles.uvu.edu%2Fdelphinium%2Fpopquiz%3Fquestionid%3D13030894%2C13030895%2C13030896%2C13030904%2C13030905%2C13030906%2C13030908%2C13030909%2C13030910%2C13030911%2C13030913%2C13030914" width="300" height="150" allowfullscreen="allowfullscreen" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen"></iframe></p>
+<p><iframe style="width: 970px; height: 550px;" title="Pop Quiz" src="/courses/420908/external_tools/retrieve
+?display=borderless
+&amp;url=https%3A%2F%2Fmediafiles.uvu.edu%2Fdelphinium%2Fpopquiz" 
+width="300" height="150" allowfullscreen="allowfullscreen" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen"></iframe></p>
 
 
 2nd launch is basic-lti-launch-request
 questions are store/retrieved from db so should be changable.
 
+Need assignment id to submit score
+$assignmentID = $_POST['custom_canvas_assignment_id'];
+look at viewStudent

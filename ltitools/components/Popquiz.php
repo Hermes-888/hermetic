@@ -46,23 +46,10 @@ class Popquiz extends ComponentBase
 
         //try{
         
-        /*  // Type = Editor = contentItemSelectionRequest
-            if (!isset($_SESSION)) { session_start(); }
-            $_SESSION['courseID'] = \Input::get('custom_canvas_course_id');
-            $_SESSION['userID'] = \Input::get('custom_canvas_user_id');
-            $_SESSION['domain'] = \Input::get('custom_canvas_api_domain');
-            $_SESSION['lms'] = \Input::get('custom_canvas_lms');
-            $_SESSION['roles'] = \Input::get('roles');// I added this for Editor version of LtiConfiguration.php
+            // Type = Editor = contentItemSelectionRequest
+            foreach($_POST as $key => $value ) { echo "<br/>$key = $value"; }
+            //die();
         
-            $dbHelper = new DbHelper();
-            $userCheck = $dbHelper->getCourseApprover($_SESSION['courseID']);// or for userID ?
-            $_SESSION['userToken'] = $userCheck->encrypted_token;
-            
-            if no token for user found, authorize a new one?
-        */
-        foreach($_POST as $key => $value ) { echo "<br/>$key = $value"; }
-        //die();
-
             $config = $this->getInstance();
             //use the record in the component and frontend form
             $this->page['config'] = json_encode($config);
@@ -82,9 +69,12 @@ class Popquiz extends ComponentBase
              */
             $gameQuest = $this->getTheseQuestions($config->questions);
             $this->page['gameQuest'] = $gameQuest;
-            $this->page['game'] = $config['game_style'];// student.htm
-        
-            
+            $this->page['game'] = $config['game_style'];// select in frontend form
+            $assignmentID = '';
+            if(isset($_POST['custom_canvas_assignment_id'])){
+                $assignmentID = $_POST['custom_canvas_assignment_id'];
+            }
+            $this->page['assignmentID'] = $assignmentID;
             
             // include the backend form with instructions for instructor.htm
             if(stristr($roleStr, 'Instructor')||stristr($roleStr, 'TeachingAssistant'))
@@ -106,25 +96,6 @@ class Popquiz extends ComponentBase
                 //Append the Instructions to the page
                 $instructions = $formController->makePartial('popquizinstructions');
                 $this->page['popquizinstructions'] = $instructions;
-                
-                // UNUSED
-                $messageType = $_POST['lti_message_type'];// online
-                //$this->page['messageType'] = $messageType;
-                switch ($messageType) {
-                    case "ContentItemSelectionRequest": // first launch add questions
-                        // is also set in LtiConfiguration.php
-                        $this->page['return_url'] = $_POST["content_item_return_url"];// first launch
-                    break;
-
-                    case "basic-lti-launch-request": // second launch questions
-                        // display array of question_id's from content_items
-                        // retrieve from launch url
-                        //$postcontent = '{"questionid":"'.$_POST["questionid"].'"}';//$config->questions
-                        
-                        // used at quizlesson.js lines 80-93
-                        //$this->page['content_items'] = json_encode($postcontent);
-                    break;
-                }
                 
                 // get quiz questions to choose from
                 $quizList = $this->getAllQuizzes();
@@ -274,9 +245,5 @@ class Popquiz extends ComponentBase
         return json_encode($config);// back to instructor view  
     }
     */
-    
-    
-    
-    
-    
+
 }
