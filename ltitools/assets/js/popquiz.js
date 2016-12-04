@@ -134,25 +134,27 @@ console.log(config);
             config.questions=idArray.toString();// and internal array
             console.log('config:', config.id, config.questions);
             
-        /*
-        *   https://groups.google.com/forum/#!topic/canvas-lms-users/7N2CJL8P9xk
-        *   content item url launches this with an lti_message type of basic-lti-launch-request
-        *   display the game with questions in the canvas iframe
-        *   submitting form to return_url
-        */
-        //var parameters = '?questionid='+config.questions;//UNUSED
-        var contentval = '{"@context" : "http://purl.imsglobal.org/ctx/lti/v1/ContentItem",';
-            contentval += '"@graph":[{';
-            contentval += '"@type":"LtiLinkItem",';
-            contentval += '"@id":"https://mediafiles.uvu.edu/delphinium/popquiz",';
-            contentval += '"url":"https://mediafiles.uvu.edu/delphinium/popquiz",';// dynamic!!! selfurl???
-            contentval += '"title":"Pop Quiz","text":"placed in assignment",';
-            contentval += '"mediaType":"application/vnd.ims.lti.v1.ltilink",';
-            contentval += '"placementAdvice":{ "presentationDocumentTarget" : "iframe",';
-            contentval += '"displayWidth":"970","displayHeight":"550"}}]}';// actual+10
-            
-            $('#content_items').val(contentval);// instructor.htm form
-            
+            console.log('messageType:',messageType);
+            if (messageType == "ContentItemSelectionRequest") {
+                /*
+                *   https://groups.google.com/forum/#!topic/canvas-lms-users/7N2CJL8P9xk
+                *   content item url launches this with an lti_message type of basic-lti-launch-request
+                *   display the game with questions in the canvas iframe
+                *   submitting form to return_url
+                */
+                //var parameters = '?questionid='+config.questions;//UNUSED
+                var contentval = '{"@context" : "http://purl.imsglobal.org/ctx/lti/v1/ContentItem",';
+                    contentval += '"@graph":[{';
+                    contentval += '"@type":"LtiLinkItem",';
+                    contentval += '"@id":"https://mediafiles.uvu.edu/delphinium/popquiz",';
+                    contentval += '"url":"https://mediafiles.uvu.edu/delphinium/popquiz",';// dynamic!!! selfurl???
+                    contentval += '"title":"Pop Quiz","text":"placed in assignment",';
+                    contentval += '"mediaType":"application/vnd.ims.lti.v1.ltilink",';
+                    contentval += '"placementAdvice":{ "presentationDocumentTarget" : "iframe",';
+                    contentval += '"displayWidth":"970","displayHeight":"550"}}]}';// actual+10
+                    
+                $('#content_items').val(contentval);// instructor.htm form
+            }
             updateTable();//RestAPI
 			//open the game
             $('#accordion-3').collapse('hide');
@@ -173,15 +175,22 @@ console.log(config);
         updateTable();
     }
     function updateTable() {
-        // use RestAPI to update db table then submit to returnUrl
+        // use RestAPI to update db table then submit to return_url
         console.log('config:',config);
         var promise = $.get('onUpdatePopquiz', {'Popquiz':config}, function (data) {
             console.log('PROMISE result:',data);// T/F
-            // if messageType == "ContentItemSelectionRequest"
             //console.log('messageType:',messageType);
             if (messageType == "ContentItemSelectionRequest") {
                 //Now autosubmit form to return_url to set iframe
-                $('#contentSelector').submit();
+                $('#contentSelector').submit();// UNUSED
+            }
+            if (assignmentID == '') {
+                // https://www.edu-apps.org/extensions/content.html
+                var returnurl = "<?php echo $returnurl; ?>";
+                var toolurl = "<?php echo $toolurl; ?>";
+                var url = returnurl+"?return_type=lti_launch_url&url="+encodeURIComponent(toolurl);
+                window.location.href = url;// first launch
+                /*launch_presentation_return_url with parameters ?type &url*/
             }
         }).fail(function (data1) { console.log('PROMISE failed:',data1); });
     }

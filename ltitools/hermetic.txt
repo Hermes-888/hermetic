@@ -10,16 +10,6 @@ php artisan create:controller hermetic.ltitools videoquiz
 php artisan create:model hermetic.ltitools videoquiz
 php artisan create:component hermetic.ltitools videoquiz
 
-php artisan create:controller hermetic.ltitools popquiz
-php artisan create:model hermetic.ltitools popquiz
-php artisan create:component hermetic.ltitools popquiz
-
-Popquiz : 
-    could have several in a course. instance name should include/be quiz_name?
-    no way to retrieve assignment id from post? 2967075
-    grade as assignment
-
-
 Videoquiz : Similar to Quizlesson
     create Assignment, insert with Editor?
     or Resource Selection? 
@@ -38,12 +28,22 @@ Student:
     - after last question answered, auto submit quiz, graded as quiz
     
 
+php artisan create:controller hermetic.ltitools popquiz
+php artisan create:model hermetic.ltitools popquiz
+php artisan create:component hermetic.ltitools popquiz
+
+Popquiz : 
+    could have several in a course. Instance name should include/be quiz_name?
+    retrieve assignment id
+    grade as assignment
+
+-------- Notes:
 removed from component.php
     $this->page['recordId'] = $config->id;// UNUSED
+    $this->addCss('/modules/system/assets/ui/storm.less', 'core');// UNUSED
     
     
-    
-error:
+-------- error:
 roots line 575
 //case "Illuminate\Database\Eloquent\Collection":
 case "October\Rain\Database\Collection":
@@ -52,6 +52,23 @@ had to switch in order to get quizzes from lms
 timed out but data is there now : Home build 382
 test on mediafiles server : build 316
 
+After installing in a new course on server, had to switch back.
+Does this need to be ( or visa versa )
+case "October\Rain\Database\Collection":
+    if($data->isEmpty()||($request->getInclude_questions()&& count($data->first()->questions)<1))
+    {
+        return $this->getQuizzesFromLms($request);
+    } else { return $data; }
+    
+case "Illuminate\Database\Eloquent\Collection":
+//default:
+    if(is_null($data)||($request->getInclude_questions()&&count($data->questions)<1))
+    {
+        return $this->getQuizzesFromLms($request);
+    } else { return $data; }
+
+
+--------
 october login error:
 Hermetic\Ltitools\Updates\CreatePopquizzesTable::Hermetic\Ltitools\Updates\{closure}() must be an instance of October\Rain\Database\Schema\Blueprint, instance of Illuminate\Database\Schema\Blueprint given, 
 called in /var/www/html/delphinium/vendor/laravel/framework/src/Illuminate/Database/Schema/Builder.php on line 129 and defined
@@ -105,7 +122,7 @@ Of course this now breaks Quizlesson, unless another Type = contentItem is defin
 
 May need contentItemSelectionRequest in order for Instructor to inject the popquiz iframe. similar to quizlesson.
 
-if contentItem is reinstated for type=Editor:
+contentItem is reinstated for type=Editor:
  LtiConfiguration.php set return_url and always doBltiHandshake
  
 set iframe for content return_url 
@@ -117,8 +134,36 @@ width="300" height="150" allowfullscreen="allowfullscreen" webkitallowfullscreen
 
 
 2nd launch is basic-lti-launch-request
-questions are store/retrieved from db so should be changable.
+questions are store/retrieved from db so questions are changable by instructor.
+
+-------- // https://www.edu-apps.org/extensions/content.html
+Added ResourceSelection type to LtiConfiguation.php
+Moved config xml, custom variables so they are available for all types.
+Also includes lms
+
+Installed Popquiz in new course. working!
 
 Need assignment id to submit score
 $assignmentID = $_POST['custom_canvas_assignment_id'];
-look at viewStudent
+
+is there a Roots submitAssignment ?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

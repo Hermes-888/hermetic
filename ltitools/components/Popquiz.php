@@ -70,8 +70,9 @@ class Popquiz extends ComponentBase
             $gameQuest = $this->getTheseQuestions($config->questions);
             $this->page['gameQuest'] = $gameQuest;
             $this->page['game'] = $config['game_style'];// select in frontend form
-            $assignmentID = '';
+            $assignmentID = '';//1st launch
             if(isset($_POST['custom_canvas_assignment_id'])){
+                //2nd launch return_url is set. Use to score assignment
                 $assignmentID = $_POST['custom_canvas_assignment_id'];
             }
             $this->page['assignmentID'] = json_encode($assignmentID);
@@ -103,6 +104,10 @@ class Popquiz extends ComponentBase
                 // get quiz questions to choose from
                 $quizList = $this->getAllQuizzes();
 				$this->page['quizList'] = $quizList;
+                
+                $toolurl  = @( $_SERVER["HTTPS"] != 'on' ) ? 'http://'.$_SERVER["SERVER_NAME"] :  'https://'.$_SERVER["SERVER_NAME"];
+                $toolurl .= $_SERVER["REQUEST_URI"];
+                $returnurl = $_POST['launch_presentation_return_url'];
                 
                 // used only for instructors
                 $this->addCss('/plugins/hermetic/ltitools/assets/css/popquiz.css');

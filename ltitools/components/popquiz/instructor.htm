@@ -93,7 +93,7 @@
     
 </div>
 
-<!-- content item submission form -->
+<!-- content item selection UNUSED switched to resource selection-->
 <form action="{{return_url}}" method="post" id="contentSelector" encType="application/x-www-form-urlencoded">
     <input type="hidden" name="lti_message_type" value="ContentItemSelection" />
     <input type="hidden" name="lti_version" value="LTI-1p0" />
@@ -167,7 +167,7 @@
 </div>
 
 <style>
-    /*override backend styles*/
+    /*override backend styles & hide instance*/
     .modal-header {background:none !important;border-bottom:1px solid #e5e5e5 !important;color:#333333 !important}
     .modal-header .close{color:black !important;background:transparent !important;}
     .modal-body {padding-bottom: 10px;}
@@ -180,8 +180,7 @@
 	var gameitems=[];// questions selected for game
 	
 	quizList = {{quizList|raw}};// instructors only
-	if(gameQuest != null && gameQuest.length > 1) {
-        gameitems = {{gameQuest|raw}};// have to twig here
-        //showSelected();// from config.questions
+	if (gameQuest != null && gameQuest.length > 1) {
+        gameitems = {{gameQuest|raw}};// twig here
     }
 </script>

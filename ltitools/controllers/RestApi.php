@@ -30,6 +30,19 @@ class RestApi extends Controller
         $result = $config->save();// update record
         return json_encode($result);// T/F back to js
     }
+    
+    /**
+     *  called from {game} upon completion
+     *  grade assignment
+     *  https://canvas.instructure.com/doc/api/submissions.html
+     *  https://github.com/Hermes-888/delphinium/blob/master/dev/components/TestRoots.php
+     *  post submission: POST /api/v1/courses/:course_id/assignments/:assignment_id/submissions 
+     */
+    public function onGradePopquiz()
+    {
+        
+    }
+     
 }
 
 
