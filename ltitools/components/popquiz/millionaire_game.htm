@@ -8,6 +8,7 @@
 
 <!-- body onload="init();" style="background-color:#D4D4D4"-->
 <canvas id="canvas" width="960" height="540" style="background-color:#FFFFFF"></canvas>
+<button type="button" onClick="sendGrade()">Test Grading</button>
 
 <script>
 
@@ -44,4 +45,11 @@
 		createjs.Ticker.addEventListener("tick", stage);
 	}
 
+    function sendGrade() {
+        // use RestAPI 
+        console.log('sendGrade: assignmentID:',assignmentID);// course in session
+        var promise = $.get('onGradePopquiz', {'assignment':assignmentID, 'grade':1}, function (data) {
+            console.log('PROMISE result:',data);// retruns submission
+        }).fail(function (data1) { console.log('PROMISE failed:',data1.responseText); });
+    }
 </script>

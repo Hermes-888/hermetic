@@ -105,9 +105,12 @@ class Popquiz extends ComponentBase
                 $quizList = $this->getAllQuizzes();
 				$this->page['quizList'] = $quizList;
                 
-                $toolurl  = @( $_SERVER["HTTPS"] != 'on' ) ? 'http://'.$_SERVER["SERVER_NAME"] :  'https://'.$_SERVER["SERVER_NAME"];
-                $toolurl .= $_SERVER["REQUEST_URI"];
-                $returnurl = $_POST['launch_presentation_return_url'];
+                //$toolurl  = @( $_SERVER["HTTPS"] != 'on' ) ? 'http://'.$_SERVER["SERVER_NAME"] :  'https://'.$_SERVER["SERVER_NAME"];
+                //$toolurl = 'https://'.$_SERVER["SERVER_NAME"];
+                //$toolurl .= $_SERVER["REQUEST_URI"];
+                $this->page['toolurl'] = 'https://'.$_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];//$toolurl;
+                //$returnurl = $_POST['launch_presentation_return_url'];
+                $this->page['returnurl'] = $_POST['launch_presentation_return_url'];
                 
                 // used only for instructors
                 $this->addCss('/plugins/hermetic/ltitools/assets/css/popquiz.css');

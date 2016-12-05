@@ -138,32 +138,101 @@ questions are store/retrieved from db so questions are changable by instructor.
 
 -------- // https://www.edu-apps.org/extensions/content.html
 Added ResourceSelection type to LtiConfiguation.php
-Moved config xml, custom variables so they are available for all types.
-Also includes lms
+Moved custom variables in config xml, so they are available for all types.
+Also included lms in custom variables
 
 Installed Popquiz in new course. working!
 
 Need assignment id to submit score
 $assignmentID = $_POST['custom_canvas_assignment_id'];
 
-is there a Roots submitAssignment ?
+is there a Roots submitAssignment ? testing: $roots->submissions($req, $params);
+
+studentId = $_SESSION['userID']
+courseId = $_SESSION['courseID']
+assignment_id is set after return_url is set, 2nd launch
+send assignmentID to RestApi onGradePopquiz
+
+https://canvas.instructure.com/doc/api/submissions.html#method.submissions.create
+
+POST /api/v1/courses/:course_id/assignments/:assignment_id/submissions 
+
+
+
+This function must be within each game
+function sendGrade() {
+    // use RestAPI 
+    console.log('assignmentID:',assignmentID);// course in session
+    var promise = $.get('onGradePopquiz', {'assignment':assignmentID, 'grade':1}, function (data) {
+        console.log('PROMISE result:',data);// retruns submission
+    }).fail(function (data1) { console.log('PROMISE failed:',data1); });
+}
 
 
 
 
+TestStudent Authorized token, Post:
+oauth_consumer_key = mfue-key
+oauth_signature_method = HMAC-SHA1
+oauth_timestamp = 1480959606
+oauth_nonce = slWxWh3rjQxklHJZpUBPI9jCeQamYcI08aPFeersDY
+oauth_version = 1.0
+context_id = c983cc6e877f399dfc4a62dac191c1cf8b8730a9
+context_label = Ed Tech Test Course 2
+context_title = DEV_Ed Tech - Test Course 2
+custom_canvas_api_domain = uvu.instructure.com
+**** custom_canvas_assignment_id = 2972295
+custom_canvas_assignment_points_possible = 10
+custom_canvas_assignment_title = PopQuiz1
+custom_canvas_course_id = 434530
+custom_canvas_enrollment_state = active
+custom_canvas_lms = canvas
+custom_canvas_user_id = 1688499
+custom_canvas_user_login_id = 21a64d54cb594be6f1748c1ad4599a23ae6d7d79
+custom_lis_course_offering_sourcedid = DEV_EdTech-TestCourse2
+custom_lis_person_contact_email_primary =
+custom_lis_person_sourcedid =
+custom_user_image = https://secure.gravatar.com/avatar/000?s=50&d=https%3A%2F%2Fcanvas.instructure.com%2Fimages%2Fmessages%2Favatar-50.png
+ext_ims_lis_basic_outcome_url = https://uvu.instructure.com/api/lti/v1/tools/63671/ext_grade_passback
+ext_outcome_data_values_accepted = url,text
+ext_outcome_result_total_score_accepted = true
+ext_outcomes_tool_placement_url = https://uvu.instructure.com/api/lti/v1/turnitin/outcomes_placement/63671
+ext_roles = urn:lti:instrole:ims/lis/Student,urn:lti:role:ims/lis/Learner,urn:lti:sysrole:ims/lis/User
+launch_presentation_document_target = iframe
+launch_presentation_locale = en
+launch_presentation_return_url = https://uvu.instructure.com/courses/434530/external_content/success/external_tool_redirect
+lis_course_offering_sourcedid = DEV_EdTech-TestCourse2
+lis_outcome_service_url = https://uvu.instructure.com/api/lti/v1/tools/63671/grade_passback
+lis_person_contact_email_primary =
+lis_person_name_family = Student
+lis_person_name_full = Test Student
+lis_person_name_given = Test
+**** lis_result_sourcedid = 63671-434530-2972295-1688499-48778799581598dba7d8d53bbac7b303d99befe5
+lti_message_type = basic-lti-launch-request
+lti_version = LTI-1p0
+oauth_callback = about:blank
+resource_link_id = c1ab6dc176ed12a00997fb9461ff745dfaf1c63c
+resource_link_title = PopQuiz1
+roles = Learner
+tool_consumer_info_product_family_code = canvas
+tool_consumer_info_version = cloud
+tool_consumer_instance_contact_email = notifications@instructure.com
+tool_consumer_instance_guid = 53ff06d8f8dbd4741ff5bd57b3065b53c1cca411.uvu.instructure.com
+tool_consumer_instance_name = Utah Valley University
+user_id = 7aac895f0d3c071eac687c46b9b0a7afaf8a2bb3
+user_image = https://secure.gravatar.com/avatar/000?s=50&d=https%3A%2F%2Fcanvas.instructure.com%2Fimages%2Fmessages%2Favatar-50.png
+oauth_signature = 6beYQSovsmaV1hK9BgVDnt7htyM= 
 
 
+click TestGrading button:
+promise failed:
+responseText:""Client error: `POST https://uvu.instructure.com/api/v1/courses/434530/assignments/2972295/submissions?submission%5Bsubmission_type%5D=basic_lti_launch&submission%5Bbody%5D=Present&access_token=14~q1IsPhThGqD6CYMa39AH9tMDqNuWZo8wp3UynObQUSX4kP4Ej09TcOV3XgHYHHhK` resulted in a `401 Unauthorized` response:
+{"status":"unauthorized","errors":[{"message":"user not authorized to perform that action"}]}
+" on line 107 of /var/www/html/delphinium/plugins/october/drivers/vendor/guzzlehttp/guzzle/src/Exception/RequestException.php"
 
 
+responseText:""Client error: `POST https://uvu.instructure.com/api/v1/courses/434530/assignments/2972295/submissions?submission%5Bsubmission_type%5D=online_text_entry&submission%5Bbody%5D=Present&access_token=14~q1IsPhThGqD6CYMa39AH9tMDqNuWZo8wp3UynObQUSX4kP4Ej09TcOV3XgHYHHhK` resulted in a `401 Unauthorized` response:{"status":"unauthorized","errors":[{"message":"user not authorized to perform that action"}]}" on line 107 of /var/www/html/delphinium/plugins/october/drivers/vendor/guzzlehttp/guzzle/src/Exception/RequestException.php"
 
-
-
-
-
-
-
-
-
-
-
-
+responseText:""Client error: `POST https://uvu.instructure.com/api/v1/courses/434530/assignments/2972295/submissions?submission%5Bsubmission_type%5D=online_text_entry&submission%5Bbody%5D=Present&submission%5Bassignment_id%5D=2972295&submission%5Bscore%5D=1&submission%5Buser_id%5D=1688499&access_token=14~q1IsPhThGqD6CYMa39AH9tMDqNuWZo8wp3UynObQUSX4kP4Ej09TcOV3XgHYHHhK` resulted in a `401 Unauthorized` response:
+{"status":"unauthorized","errors":[{"message":"user not authorized to perform that action"}]}
+" on line 107 of /var/www/html/delphinium/plugins/october/drivers/vendor/guzzlehttp/guzzle/src/Exception/RequestException.php"

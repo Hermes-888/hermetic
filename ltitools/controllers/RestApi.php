@@ -4,9 +4,10 @@ namespace Hermetic\Ltitools\Controllers;
 use Illuminate\Routing\Controller;
 use Delphinium\Roots\Roots;
 use Delphinium\Roots\Enums\ActionType;
+use Delphinium\Roots\Models\Assignment as AssignmentModel;// for submissions
 use Delphinium\Roots\Requestobjects\AssignmentsRequest;// for submissions
 use Delphinium\Roots\Requestobjects\SubmissionsRequest;// student progress
-use Delphinium\Roots\Models\Assignment as AssignmentModel;// for submissions
+use Delphinium\Roots\Lmsclasses\CanvasHelper;
 use Hermetic\Ltitools\Models\Popquiz as popModel;// db Table
 
 class RestApi extends Controller 
@@ -40,7 +41,35 @@ class RestApi extends Controller
      */
     public function onGradePopquiz()
     {
+        //$data = \Input::get('Popquiz');
+        $assignmentId = intval( \Input::get('assignment') );// convert string to integer
+        $grade = intval( \Input::get('grade') );// 0~1
         
+        if (!isset($_SESSION)) {
+            session_start();
+        }
+        $courseId = $_SESSION['courseID'];
+        $studentIds = array($_SESSION['userID']);
+        $assignmentIds = array($assignmentId);
+        $multipleStudents = false;
+        $multipleAssignments = false;
+        $allStudents = false;
+        $allAssignments = false;
+        //can have the student Id param null if multipleUsers is set to false (we'll only get the current user's submissions)
+        $req = new SubmissionsRequest(ActionType::POST, $studentIds, $allStudents,
+            $assignmentIds, $allAssignments, $multipleStudents, $multipleAssignments);
+        
+        $params[] = "submission[submission_type]=online_text_entry";//basic_lti_launch ???
+        $params[] = "submission[body]=Present";// xmlbody???
+        // added
+        $params[] = "submission[assignment_id]=".$assignmentId;
+        $params[] = "submission[score]=".$grade;
+        $params[] = "submission[user_id]=".$_SESSION['userID'];
+        
+        $roots = new Roots();
+        $res = $roots->submissions($req, $params);
+        echo json_encode($res);
+        return $res;
     }
      
 }

@@ -31,6 +31,8 @@ var selecteditems=[];// quiz question_id selections
 var chosenitems=[];// question_id of gameitems to use, view, remove, clear all
 var quests=[];// quiz questions to selected from
 console.log(config);
+console.log('toolurl:',toolurl);
+console.log('returnurl:',returnurl);
 	/*	Note: these functions are only for instructor view
 		list of all quizzes to choose questions for game
         //ONLY? if type == "multiple_choice_question" ONLY?
@@ -134,7 +136,7 @@ console.log(config);
             config.questions=idArray.toString();// and internal array
             console.log('config:', config.id, config.questions);
             
-            console.log('messageType:',messageType);
+            console.log('messageType:',messageType);// UNUSED
             if (messageType == "ContentItemSelectionRequest") {
                 /*
                 *   https://groups.google.com/forum/#!topic/canvas-lms-users/7N2CJL8P9xk
@@ -186,12 +188,11 @@ console.log(config);
             }
             if (assignmentID == '') {
                 // https://www.edu-apps.org/extensions/content.html
-                var returnurl = "<?php echo $returnurl; ?>";
-                var toolurl = "<?php echo $toolurl; ?>";
                 var url = returnurl+"?return_type=lti_launch_url&url="+encodeURIComponent(toolurl);
                 window.location.href = url;// first launch
                 /*launch_presentation_return_url with parameters ?type &url*/
             }
+            // 2nd launch custom_canvas_assignment_id = 2972295
         }).fail(function (data1) { console.log('PROMISE failed:',data1); });
     }
 
