@@ -7,7 +7,7 @@ use Delphinium\Roots\Enums\ActionType;
 use Delphinium\Roots\Models\Assignment as AssignmentModel;// for submissions
 use Delphinium\Roots\Requestobjects\AssignmentsRequest;// for submissions
 use Delphinium\Roots\Requestobjects\SubmissionsRequest;// student progress
-use Delphinium\Roots\Lmsclasses\CanvasHelper;
+use Delphinium\Roots\Guzzle\GuzzleHelper;// post grade
 use Hermetic\Ltitools\Models\Popquiz as popModel;// db Table
 
 class RestApi extends Controller 
@@ -41,10 +41,10 @@ class RestApi extends Controller
      */
     public function onGradePopquiz()
     {
-        //$data = \Input::get('Popquiz');
-        $assignmentId = intval( \Input::get('assignment') );// convert string to integer
-        $grade = intval( \Input::get('grade') );// 0~1
+        $outcomeurl = \Input::get('outcomeurl');
         $sourcedid = \Input::get('sourcedid');
+        $grade = \Input::get('grade');// 0~1
+        //$grade = intval( \Input::get('grade') );// 0~1
         
         //create XML body to set grade
 		$body = '<?xml version = "1.0" encoding = "UTF-8"?>
@@ -71,11 +71,33 @@ class RestApi extends Controller
 			</replaceResultRequest>
 		  </imsx_POXBody>
 		</imsx_POXEnvelopeRequest>';
-        // test return to ensure data?
         
+        // POST $body to $outcomeurl with curl
+        //$data_string = json_encode($body);
+        
+        if (!isset($_SESSION)) { session_start(); }
+        $token = \Crypt::decrypt($_SESSION['userToken']);
+        $tokenHeader = array("Content-type:application/xml","Authorization: Bearer ".$token);
+        //GuzzleHelper::postOrPutWithCurl($url, $questionsWrap, $token);
+        // 
+        $ch = curl_init();
+        curl_setopt_array($ch, array(
+            CURLOPT_URL => $outcomeurl,
+            CURLOPT_POST => true,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => $body,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => $tokenHeader
+        ));
+        $result = curl_exec($ch);
+        curl_close($ch);
+        return json_encode($result);//PROMISE result: "{\"errors\":[{\"message\":\"Invalid authorization header\"}],\"error_report_id\":79832388}"
+        
+        /*
         if (!isset($_SESSION)) {
             session_start();
         }
+        $assignmentId = intval( \Input::get('assignment') );// convert string to integer
         $courseId = $_SESSION['courseID'];
         $studentIds = array($_SESSION['userID']);
         $assignmentIds = array($assignmentId);
@@ -96,8 +118,9 @@ class RestApi extends Controller
         
         $roots = new Roots();
         $res = $roots->submissions($req, $params);
-        echo json_encode($res);
-        return $res;
+        //echo json_encode($res);
+        return json_encode($res);
+        */
     }
      
 }

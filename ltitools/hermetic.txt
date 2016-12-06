@@ -202,7 +202,7 @@ launch_presentation_document_target = iframe
 launch_presentation_locale = en
 launch_presentation_return_url = https://uvu.instructure.com/courses/434530/external_content/success/external_tool_redirect
 lis_course_offering_sourcedid = DEV_EdTech-TestCourse2
-lis_outcome_service_url = https://uvu.instructure.com/api/lti/v1/tools/63671/grade_passback
+**** lis_outcome_service_url = https://uvu.instructure.com/api/lti/v1/tools/63671/grade_passback
 lis_person_contact_email_primary =
 lis_person_name_family = Student
 lis_person_name_full = Test Student
@@ -241,15 +241,23 @@ responseText:""Client error: `POST https://uvu.instructure.com/api/v1/courses/43
 
 new test: gradepassback
 
-**** custom_canvas_assignment_id = 2972295
-**** ext_ims_lis_basic_outcome_url = https://uvu.instructure.com/api/lti/v1/tools/63671/ext_grade_passback
-**** lis_result_sourcedid = 63671-434530-2972295-1688499-48778799581598dba7d8d53bbac7b303d99befe5
+custom_canvas_assignment_id = 2972295
+ext_ims_lis_basic_outcome_url = https://uvu.instructure.com/api/lti/v1/tools/63671/ext_grade_passback
+lis_outcome_service_url =       https://uvu.instructure.com/api/lti/v1/tools/63671/grade_passback
+lis_result_sourcedid = 63671-434530-2972295-1688499-48778799581598dba7d8d53bbac7b303d99befe5
 
-try sending xmlbody to roots submissions
+try sending xmlbody directly to lis_outcome_service_url using curl
+https://canvas.instructure.com/doc/api/file.assignment_tools.html
+https://www.imsglobal.org/specs/ltiomv1p0/specification
+
+sendGrade: outcomeurl: https://uvu.instructure.com/api/lti/v1/tools/63671/ext_grade_passback
+PROMISE result: "{\"errors\":[{\"message\":\"Invalid authorization header\"}],\"error_report_id\":79824957}
+Add authorization token header
 
 
+GuzzleHelper::postOrPutWithCurl($url, $questionsWrap, $token);
 
-try adding blti/OAuthBody.php ???
+try adding blti/OAuthBody.php to /roots/classes
 adjust classes OAuthSignatureMethod_HMAC as needed
 
 

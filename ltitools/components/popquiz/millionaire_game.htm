@@ -46,11 +46,46 @@
 	}
 
     function sendGrade() {
-        // use RestAPI 
-        var sourcedid = '{{sourcedid|raw}}';//Canvas: lis_result_sourcedid
-        console.log('sendGrade: assignmentID:',assignmentID);// course in session
+        // use RestAPI
+        var outcomeurl = {{outcomeurl|raw}};//
+        var sourcedid = {{sourcedid|raw}};//Canvas: lis_result_sourcedid
+        var grade = 1;// 0~1, 0.5=50%
+        console.log('sendGrade: outcomeurl:',outcomeurl);// course in session
+        /*
+        var xmlbody = '<?xml version = "1.0" encoding = "UTF-8"?>\
+		<imsx_POXEnvelopeRequest xmlns="http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0">\
+		  <imsx_POXHeader>\
+			<imsx_POXRequestHeaderInfo>\
+			  <imsx_version>V1.0</imsx_version>\
+			  <imsx_messageIdentifier>999999123</imsx_messageIdentifier>\
+			</imsx_POXRequestHeaderInfo>\
+		  </imsx_POXHeader>\
+		  <imsx_POXBody>\
+			<replaceResultRequest>\
+			  <resultRecord>\
+				<sourcedGUID>\
+				  <sourcedId>'+sourcedid+'</sourcedId>\
+				</sourcedGUID>\
+				<result>\
+				  <resultScore>\
+					<language>en</language>\
+					<textString>'+grade+'</textString>\
+				  </resultScore>\
+				</result>\
+			  </resultRecord>\
+			</replaceResultRequest>\
+		  </imsx_POXBody>\
+		</imsx_POXEnvelopeRequest>';
+        */
+        //var promise = $.post(outcomeurl, {'xmlbody':xmlbody}, function (data) {
+        var promise = $.get('onGradePopquiz', {'outcomeurl':outcomeurl,'sourcedid':sourcedid,'grade':grade}, function (data) {
+            console.log('PROMISE result:',data);
+        }).fail(function (data) { console.log('PROMISE failed:',data.responseText); });
+        
+        /*
         var promise = $.get('onGradePopquiz', {'assignment':assignmentID, 'grade':1, 'sourcedid':sourcedid}, function (data) {
             console.log('PROMISE result:',data);// retruns submission
         }).fail(function (data) { console.log('PROMISE failed:',data.responseText); });
+        */
     }
 </script>

@@ -77,12 +77,7 @@ class Popquiz extends ComponentBase
             }
             $this->page['assignmentID'] = json_encode($assignmentID);
             
-            $sourcedid = '';//1st launch
-            if(isset($_POST['lis_result_sourcedid'])){
-                //2nd launch return_url is set. Use to score assignment
-                $sourcedid = $_POST['lis_result_sourcedid'];
-            }
-            $this->page['sourcedid'] = json_encode($sourcedid);
+            
             
             // used in popquiz.js - if contentItemSelectionRequest submit form to return_url
             $messageType = $_POST['lti_message_type'];// online
@@ -123,12 +118,15 @@ class Popquiz extends ComponentBase
                 // used only for instructors
                 $this->addCss('/plugins/hermetic/ltitools/assets/css/popquiz.css');
 				$this->addJs('/plugins/hermetic/ltitools/assets/js/popquiz_instructor.js');
-                $this->addJs('/plugins/hermetic/ltitools/assets/js/popquiz.js');
+                $this->addJs('/plugins/hermetic/ltitools/assets/js/popquiz.js');//instructor only
                 
             }
             else if(stristr($roleStr, 'Learner'))
             {
                 //default.htm will load student.htm and view the game which loads gameQuest[questionid,
+                //outcomeurl & sourcedid are sent with grade
+                $this->page['sourcedid'] = json_encode($_POST['lis_result_sourcedid']);
+                $this->page['outcomeurl'] = json_encode($_POST['ext_ims_lis_basic_outcome_url']);
             }
             
 
