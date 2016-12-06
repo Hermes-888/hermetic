@@ -76,6 +76,14 @@ class Popquiz extends ComponentBase
                 $assignmentID = $_POST['custom_canvas_assignment_id'];
             }
             $this->page['assignmentID'] = json_encode($assignmentID);
+            
+            $sourcedid = '';//1st launch
+            if(isset($_POST['lis_result_sourcedid'])){
+                //2nd launch return_url is set. Use to score assignment
+                $sourcedid = $_POST['lis_result_sourcedid'];
+            }
+            $this->page['sourcedid'] = json_encode($sourcedid);
+            
             // used in popquiz.js - if contentItemSelectionRequest submit form to return_url
             $messageType = $_POST['lti_message_type'];// online
             $this->page['messageType'] = $messageType;

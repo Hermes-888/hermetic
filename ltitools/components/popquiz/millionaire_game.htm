@@ -47,9 +47,10 @@
 
     function sendGrade() {
         // use RestAPI 
+        var sourcedid = '{{sourcedid|raw}}';//Canvas: lis_result_sourcedid
         console.log('sendGrade: assignmentID:',assignmentID);// course in session
-        var promise = $.get('onGradePopquiz', {'assignment':assignmentID, 'grade':1}, function (data) {
+        var promise = $.get('onGradePopquiz', {'assignment':assignmentID, 'grade':1, 'sourcedid':sourcedid}, function (data) {
             console.log('PROMISE result:',data);// retruns submission
-        }).fail(function (data1) { console.log('PROMISE failed:',data1.responseText); });
+        }).fail(function (data) { console.log('PROMISE failed:',data.responseText); });
     }
 </script>

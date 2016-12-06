@@ -44,6 +44,34 @@ class RestApi extends Controller
         //$data = \Input::get('Popquiz');
         $assignmentId = intval( \Input::get('assignment') );// convert string to integer
         $grade = intval( \Input::get('grade') );// 0~1
+        $sourcedid = \Input::get('sourcedid');
+        
+        //create XML body to set grade
+		$body = '<?xml version = "1.0" encoding = "UTF-8"?>
+		<imsx_POXEnvelopeRequest xmlns="http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0">
+		  <imsx_POXHeader>
+			<imsx_POXRequestHeaderInfo>
+			  <imsx_version>V1.0</imsx_version>
+			  <imsx_messageIdentifier>999999123</imsx_messageIdentifier>
+			</imsx_POXRequestHeaderInfo>
+		  </imsx_POXHeader>
+		  <imsx_POXBody>
+			<replaceResultRequest>
+			  <resultRecord>
+				<sourcedGUID>
+				  <sourcedId>' . $sourcedid . '</sourcedId>
+				</sourcedGUID>
+				<result>
+				  <resultScore>
+					<language>en</language>
+					<textString>'.$grade.'</textString>
+				  </resultScore>
+				</result>
+			  </resultRecord>
+			</replaceResultRequest>
+		  </imsx_POXBody>
+		</imsx_POXEnvelopeRequest>';
+        // test return to ensure data?
         
         if (!isset($_SESSION)) {
             session_start();
@@ -60,11 +88,11 @@ class RestApi extends Controller
             $assignmentIds, $allAssignments, $multipleStudents, $multipleAssignments);
         
         $params[] = "submission[submission_type]=online_text_entry";//basic_lti_launch ???
-        $params[] = "submission[body]=Present";// xmlbody???
+        $params[] = "submission[body]=".$body;
         // added
-        $params[] = "submission[assignment_id]=".$assignmentId;
-        $params[] = "submission[score]=".$grade;
-        $params[] = "submission[user_id]=".$_SESSION['userID'];
+        //$params[] = "submission[assignment_id]=".$assignmentId;
+        //$params[] = "submission[score]=".$grade;
+        //$params[] = "submission[user_id]=".$_SESSION['userID'];
         
         $roots = new Roots();
         $res = $roots->submissions($req, $params);
