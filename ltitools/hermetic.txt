@@ -254,11 +254,15 @@ sendGrade: outcomeurl: https://uvu.instructure.com/api/lti/v1/tools/63671/ext_gr
 PROMISE result: "{\"errors\":[{\"message\":\"Invalid authorization header\"}],\"error_report_id\":79824957}
 Add authorization token header
 
-
 GuzzleHelper::postOrPutWithCurl($url, $questionsWrap, $token);
 
-try adding blti/OAuthBody.php to /roots/classes
-adjust classes OAuthSignatureMethod_HMAC as needed
+
+new test: sendOAuthBodyPOST
+try adding OAuthBody.php
+
+add a getSecret function to LtiConfiguration.php for gradeMedia/RestApi
+$instanceFromDB
+add OAuthBody.php to /delphinium/roots/classes/
 
 
 

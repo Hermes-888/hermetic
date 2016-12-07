@@ -72,6 +72,15 @@ class RestApi extends Controller
 		  </imsx_POXBody>
 		</imsx_POXEnvelopeRequest>';
         
+        //Set variables to be used in the sendOAuthBodyPOST function
+		$method = 'POST';
+		$key = 'mfue-key';// hardcode for tes
+		$secret = 'delphinium-rocks';
+		$content_type = 'application/xml';
+		$result = sendOAuthBodyPOST($method, $endpoint, $key, $secret, $content_type, $body);
+        return json_encode($result);
+        
+        /*
         // POST $body to $outcomeurl with curl
         //$data_string = json_encode($body);
         
@@ -92,6 +101,7 @@ class RestApi extends Controller
         $result = curl_exec($ch);
         curl_close($ch);
         return json_encode($result);//PROMISE result: "{\"errors\":[{\"message\":\"Invalid authorization header\"}],\"error_report_id\":79832388}"
+        */
         
         /*
         if (!isset($_SESSION)) {
@@ -119,7 +129,7 @@ class RestApi extends Controller
         $roots = new Roots();
         $res = $roots->submissions($req, $params);
         //echo json_encode($res);
-        return json_encode($res);
+        return json_encode($res);// {"status":"unauthorized","errors":[{"message":"user not authorized to perform that action"}]}
         */
     }
      
