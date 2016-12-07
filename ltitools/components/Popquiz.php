@@ -46,8 +46,8 @@ class Popquiz extends ComponentBase
 
         //try{
         
-            // Type = Editor = contentItemSelectionRequest
-            foreach($_POST as $key => $value ) { echo "<br/>$key = $value"; }
+            // Type = Editor = ResourceSelection
+            //foreach($_POST as $key => $value ) { echo "<br/>$key = $value"; }
             //die();
         
             $config = $this->getInstance();
@@ -108,11 +108,7 @@ class Popquiz extends ComponentBase
                 $quizList = $this->getAllQuizzes();
 				$this->page['quizList'] = $quizList;
                 
-                //$toolurl  = @( $_SERVER["HTTPS"] != 'on' ) ? 'http://'.$_SERVER["SERVER_NAME"] :  'https://'.$_SERVER["SERVER_NAME"];
-                //$toolurl = 'https://'.$_SERVER["SERVER_NAME"];
-                //$toolurl .= $_SERVER["REQUEST_URI"];
-                $this->page['toolurl'] = 'https://'.$_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];//$toolurl;
-                //$returnurl = $_POST['launch_presentation_return_url'];
+                $this->page['toolurl'] = 'https://'.$_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
                 $this->page['returnurl'] = $_POST['launch_presentation_return_url'];
                 
                 // used only for instructors
@@ -126,7 +122,7 @@ class Popquiz extends ComponentBase
                 //default.htm will load student.htm and view the game which loads gameQuest[questionid,
                 //outcomeurl & sourcedid are sent with grade
                 $this->page['sourcedid'] = json_encode($_POST['lis_result_sourcedid']);
-                $this->page['outcomeurl'] = json_encode($_POST['ext_ims_lis_basic_outcome_url']);
+                $this->page['outcomeurl'] = json_encode($_POST['lis_outcome_service_url']);
             }
             
 

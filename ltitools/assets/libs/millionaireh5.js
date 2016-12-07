@@ -1399,16 +1399,9 @@ p.nominalBounds = new cjs.Rectangle(-131.8,-423.8,1223.7,1223.7);
 		var phoneUsed=false;
 		var audncUsed=false;
 		var optionsOut = false;
-		
+		var timerID=null;
 		var questionArray=[];
 		
-		/*
-		var countdownTimer:Timer = new Timer(1000, 30);
-		countdownTimer.addEventListener(TimerEvent.TIMER, countdownTick);
-		countdownTimer.addEventListener(TimerEvent.TIMER_COMPLETE, countdownDone);
-		*/
-		var timerID=null;
-	
 		congratsBox.visible = false;
 		askAudienceBox.visible = false;
 		phoneAFriendBox.visible = false;
@@ -1427,9 +1420,6 @@ p.nominalBounds = new cjs.Rectangle(-131.8,-423.8,1223.7,1223.7);
 		popup.youLoseBox.again_btn.on("click", playAgainClick);
 		popup.timeUpBox.again_btn.on("click", restartGame);
 		
-		/// questionBox.fifty_btn.on("click", fiftyClick);
-		///	questionBox.friend_btn.on("click", friendClick);
-		///	questionBox.aud_btn.on("click", audClick);
 		addListeners();//to answers only once
 		
 		createQuestions();// only once
@@ -1453,7 +1443,6 @@ p.nominalBounds = new cjs.Rectangle(-131.8,-423.8,1223.7,1223.7);
 			console.log(gameQuest[1].name);
 			console.log(questionArray.length);
 			//only needs 15 if more dont worry about it
-			
 		}
 		
 		function shuffleArray(arr)
@@ -1503,6 +1492,7 @@ p.nominalBounds = new cjs.Rectangle(-131.8,-423.8,1223.7,1223.7);
 			if(questionNumber>13) {
 				console.log('One more question to go');
 				//window.parent.postMessage({"score":1},"*");// go to mark grade
+                sendGrade();// function in html
 			}
 			
 			var txt = question.text;
@@ -1663,141 +1653,59 @@ p.nominalBounds = new cjs.Rectangle(-131.8,-423.8,1223.7,1223.7);
 			var moveOn = false;
 			phoneUsed=true;
 			questionBox.highlight.visible = false;
-	//		if(!fiftyClicked)
-	//		{
-				for(var i=0; i<optins.length; i+=1)
-				{
-					if(optins[i].isRight) { tempInt=i+1; }
-				}
-				
-				console.log("friendClicked: "+tempInt);
-				while(moveOn==false)
-				{
-					switch(tempInt)
-					{
-						case 1:
-							rand1 = Math.floor(getRandom(0,100))+30;
-							rand2 = Math.floor(getRandom(0,100))-rand1;
-							rand3 = Math.floor(getRandom(0,100))-(rand1+rand2);
-							rand4 = Math.floor(getRandom(0,100))-(rand1+rand2+rand3);
-							
-							finalPercent = findHighest(rand1, rand2, rand3, rand4);
-							break;
-						case 2:
-							rand2 = Math.floor(getRandom(0,100))+30;
-							rand1 = Math.floor(getRandom(0,100))-rand2;
-							rand3 = Math.floor(getRandom(0,100))-(rand1+rand2);
-							rand4 = Math.floor(getRandom(0,100))-(rand1+rand2+rand3);
-							
-							finalPercent = findHighest(rand1, rand2, rand3, rand4);
-							break;
-						case 3:
-							rand3 = Math.floor(getRandom(0,100))+30;
-							rand1 = Math.floor(getRandom(0,100))-rand3;
-							rand2 = Math.floor(getRandom(0,100))-(rand1+rand3);
-							rand4 = Math.floor(getRandom(0,100))-(rand1+rand2+rand3);
-							
-							finalPercent = findHighest(rand1, rand2, rand3, rand4);
-							break;
-						case 4:
-							rand4 = Math.floor(getRandom(0,100))+30;
-							rand1 = Math.floor(getRandom(0,100))-rand4;
-							rand2 = Math.floor(getRandom(0,100))-(rand1+rand4);
-							rand3 = Math.floor(getRandom(0,100))-(rand1+rand2+rand4);
-							
-							finalPercent = findHighest(rand1, rand2, rand3, rand4);
-							break;
-						default:
-							moveOn=true;// force exit while(
-							console.log("the tempInt switch in friendClick() failed:", tempInt, finalPercent);
-					}
-					if(finalPercent<=100 && finalPercent!=0)
-					{
-						moveOn = true;
-					}
-				}
-	//		}
-	/*Commented out = +Above: FIXED I think 		
-			if(fiftyClicked)
-			{
-                console.log('while Hangs line 1723');
-                
-                // Hanging up here?
-				//while(moveOn==false){
-					rand1 = Math.round(getRandom(0,100))+30;
-					rand2 = Math.round(getRandom(0,100)) - rand1;
-					
-					if(opt1.isRight && opt1.visible)
-					{
-						if(opt2.visible)
-						{
-							finalPercent = findHighest(rand1, rand2);
-						}
-						if(opt3.visible)
-						{
-							finalPercent = findHighest(rand1, 0, rand2);
-						}
-						if(opt4.visible)
-						{
-							finalPercent = findHighest(rand1, 0, 0, rand2);
-						}
-					}
-					
-					if(opt2.isRight && opt2.visible)
-					{
-						if(opt1.visible)
-						{
-							finalPercent = findHighest(rand2, rand1);
-						}
-						if(opt3.visible)
-						{
-							finalPercent = findHighest(0, rand1, rand2);
-						}
-						if(opt4.visible)
-						{
-							finalPercent = findHighest(0, rand1, 0, rand2);
-						}
-					}
-				
-					if(opt3.isRight && opt3.visible)
-					{
-						if(opt1.visible)
-						{
-							finalPercent = findHighest(rand2, 0, rand1);
-						}
-						if(opt2.visible)
-						{
-							finalPercent = findHighest(0, rand2, rand1);
-						}
-						if(opt4.visible)
-						{
-							finalPercent = findHighest(0, 0, rand1, rand2);
-						}
-					}
-				
-					if(opt4.isRight && opt4.visible)
-					{
-						if(opt1.visible)
-						{
-							finalPercent = findHighest(rand2, 0, 0, rand1);
-						}
-						if(opt2.visible)
-						{
-							finalPercent = findHighest(0, rand2, 0, rand1);
-						}
-						if(opt3.visible)
-						{
-							finalPercent = findHighest(0, 0, rand2, rand1);
-						}
-					}
-					if(finalPercent<=100 && finalPercent!=0)
-					{
-						moveOn = true;
-					}
-					console.log('finalPercent='+finalPercent);
-				//}
-			}
-	*/
+
+            for(var i=0; i<optins.length; i+=1)
+            {
+                if(optins[i].isRight) { tempInt=i+1; }
+            }
+
+            console.log("friendClicked: "+tempInt);
+            while(moveOn==false)
+            {
+                switch(tempInt)
+                {
+                    case 1:
+                        rand1 = Math.floor(getRandom(0,100))+30;
+                        rand2 = Math.floor(getRandom(0,100))-rand1;
+                        rand3 = Math.floor(getRandom(0,100))-(rand1+rand2);
+                        rand4 = Math.floor(getRandom(0,100))-(rand1+rand2+rand3);
+
+                        finalPercent = findHighest(rand1, rand2, rand3, rand4);
+                        break;
+                    case 2:
+                        rand2 = Math.floor(getRandom(0,100))+30;
+                        rand1 = Math.floor(getRandom(0,100))-rand2;
+                        rand3 = Math.floor(getRandom(0,100))-(rand1+rand2);
+                        rand4 = Math.floor(getRandom(0,100))-(rand1+rand2+rand3);
+
+                        finalPercent = findHighest(rand1, rand2, rand3, rand4);
+                        break;
+                    case 3:
+                        rand3 = Math.floor(getRandom(0,100))+30;
+                        rand1 = Math.floor(getRandom(0,100))-rand3;
+                        rand2 = Math.floor(getRandom(0,100))-(rand1+rand3);
+                        rand4 = Math.floor(getRandom(0,100))-(rand1+rand2+rand3);
+
+                        finalPercent = findHighest(rand1, rand2, rand3, rand4);
+                        break;
+                    case 4:
+                        rand4 = Math.floor(getRandom(0,100))+30;
+                        rand1 = Math.floor(getRandom(0,100))-rand4;
+                        rand2 = Math.floor(getRandom(0,100))-(rand1+rand4);
+                        rand3 = Math.floor(getRandom(0,100))-(rand1+rand2+rand4);
+
+                        finalPercent = findHighest(rand1, rand2, rand3, rand4);
+                        break;
+                    default:
+                        moveOn=true;// force exit while(
+                        console.log("the tempInt switch in friendClick() failed:", tempInt, finalPercent);
+                }
+                if(finalPercent<=100 && finalPercent!=0)
+                {
+                    moveOn = true;
+                }
+            }
+	
 			lifelinesLeft -= 1;
 			phoneAFriendBox.visible = true;
 			phoneAFriendBox.percentBox.text = finalPercent;
