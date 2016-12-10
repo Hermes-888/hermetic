@@ -1,69 +1,59 @@
-Poppies:
-Use Vanilla to create the Poppies plugin and component Popquiz
-bootstrap has an accordion:
-http://www.tutorialrepublic.com/twitter-bootstrap-tutorial/bootstrap-accordion.php
-Does minimal load the bootstrap.theme?
-"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+Popquiz presents quiz questions in a game.
 
--replace jquery.ui : Does bootstrap have a selectable like j-UI?
--limit question count, defined by game
--add gradeMedia.php to roots? uses key to lookup secret
+Configure popquiz with lti type set to resource selection.
+Add the app in Canvas.
+Create an assignment, set the points and select submission type, External Tool.
 
-popquiz should be an Assignment that returns a grade
-Use [Editor] in LtiConfiguration, similar to Quizlesson
-content item selection modal lets you select the quiz & questions, (choose game)
-basic_launch displays only the game with questions.
-student launch grades media
+The first launch will let the instructor choose a quiz.
+Select some questions. You can select questions from multiple quizzes.
+Use the cog to change the game style. The default game is Millionare Game Show.
 
-stand alone plugin has multiple game types
-Millionaire, Jeopardy, YouGotThis?, look for others
-===
+Select Use These Questions to finish the tool setup and preview the game.
+Close the dialog modal and save the assignment.
 
-Use bootstrap not jqUI selection list-group and accordion
-http://v4-alpha.getbootstrap.com/components/collapse/
-http://v4-alpha.getbootstrap.com/components/list-group/
+The instructor can change the questions used in the game if desired.
 
-===
-pass back a grade similar to Attendance?
+Popquiz has multiple game types: Millionaire, Jeopardy, YouGotThis
+The assignment is graded when a student plays the game.
 
-there could be several popquizzes in a course. instance name should include/be quiz_name???
+Limited to multiple choice type questions.
+
+The quiz can be unpublished if desired.
+
+
+ToDo:
+use key to lookup secret
+
+there could be several popquizzes in a course. instance name should include/be quiz_name?
 
 depending on game style, define minimum questions needed
 millionare = 15
-
-===
+YouGotThis = unlimited
 
 Is there a way to get question banks?
-modify reusable games to accept quiz data
-- Millionare
-- Gameshow Challenge
-incorporate them into A New plugin/component
-===
+intro and outro Text in db field or use generic outro?
 
-GetQuizQuestions()
-load questions into HTML5 reusable. (json)
-on completion, send back grade with LTI tool gradePassBack or Assignment or Quiz submission
-an extension of orchid?
+Instructor builds a multiple choice quiz. It can be unpublished.
 
-Instructor builds a multiple choice quiz for content creation.
+gameshow_h5:
+analizeXML function looks for categories... oops no categories
+<categoryName>JAA</categoryName>
+4 categories with 3 questions per category 
+Gameshow Challenge h5
+v1 to run, add filename = xml to url
+file:///H:/zwamp-x64/vdrive/web/work/BAKUP/gameshow_h5/index.html?filename=AAquestions.xml
 
-if a quiz is unpublished is it still available to code in student view? YES!
+millionare_h5:
+<categoryName>Costs</categoryName>
+<introText>A cost can be defined in many ways. Individuals preparing reports for management need to recognize which costs to include and what those costs will mean. In this activity you'll practice distinguishing between costs. Read each description and select the cost that best fits the situation.</introText>
+<outroText>Thank you for playing our game! You can click "Play Again" if you'd like to try for a better score.</outroText>
 
-The quiz separate in the Grades. 
-Assignment that uses the quiz data has a grade.
+====
 
 Student view: Play game
 Instructor view: Edit game options. Choose questions.
 
-Gameshow Challenge h5
-v1 to run, add xml filename to url
-file:///H:/zwamp-x64/vdrive/web/work/BAKUP/gameshow_h5/index.html?filename=AAquestions.xml
-
-
-v2 will accept array of canvas question objs
-array defined by Poppies instructor and stored in db
-
-delphinium_poppies_popquizzes
+table fields
 name : instance if you want
 quiz_name : a title in game?
 quiz_description : info/instructions in game
@@ -71,9 +61,7 @@ questions : Array of selected question_id
 game_style : ygt, gameshow, millionare, ?
 
 
-delphinium_roots_quiz_questions : contains all questions
-
-/*question object
+question object
 answers: "[
 	{"weight":0,"id":2028,"migration_id":"RESPONSE_1113","text":"Organizational change is..."},
 	{"weight":60,"id":5595,"migration_id":"RESPONSE_2746","text":"Organizational change..."},
@@ -90,26 +78,5 @@ question_id: 8369896
 quiz_id: 464878
 text: "Which of the following statements regarding change is INCORRECT?"
 type: "multiple_choice_question"
-*/
 
-gameshow_h5:
-analizeXML function looks for categories... oops no categories
-<categoryName>JAA</categoryName>
-4 categories with 3 questions per category 
 
-millionare_h5:
-<categoryName>Costs</categoryName>
-<introText>A cost can be defined in many ways. Individuals preparing reports for management need to recognize which costs to include and what those costs will mean. In this activity you'll practice distinguishing between costs. Read each description and select the cost that best fits the situation.</introText>
-<outroText>Thank you for playing our game! You can click "Play Again" if you'd like to try for a better score.</outroText>
-	
-category never used
-15 questions
-replace xml with array gameQuest
-
-xmlplaylist.getElementsByTagName("outroText")[0].childNodes[0].nodeValue;
-May need an outroText in db field? or use generic?
-Already have intro
-
-  createQuestions() converts xml to array 
-  and shuffles array!
-  

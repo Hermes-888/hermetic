@@ -75,8 +75,12 @@ class Popquiz extends ComponentBase
                 //2nd launch return_url is set. Use to score assignment
                 $assignmentID = $_POST['custom_canvas_assignment_id'];
             }
-            $this->page['assignmentID'] = json_encode($assignmentID);
-            
+            $this->page['assignmentID'] = json_encode($assignmentID);//UNUSED
+            $consumerkey = '';// localhost
+            if(isset($_POST['oauth_consumer_key'])){
+                $consumerkey = json_encode($_POST['oauth_consumer_key']);// from lms
+            }
+            $this->page['consumerkey'] = $consumerkey;
             
             
             // used in popquiz.js - if contentItemSelectionRequest submit form to return_url
@@ -228,10 +232,9 @@ class Popquiz extends ComponentBase
                 $name = $this->alias . '_' . $courseId;
             }
             $config = popModel::firstOrNew(array('name' => $name));
-            if(is_null($config->name)){$config->name = $name;}
-            //if(is_null($config->animate)){$config->animate = 1;}
-            //if(is_null($config->size)){$config->size = 100;}
-            //TODO: finish setting default values
+            if (is_null($config->name)) { $config->name = $name; }
+            if (is_null($config->game_style)) { $config->game_style = 'mgs'; }
+            //TODO: set any default values
         }
         $config->save();
         return $config;
