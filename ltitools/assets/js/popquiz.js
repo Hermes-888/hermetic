@@ -58,7 +58,7 @@ console.log('returnurl:',returnurl);
         //console.log('currentAttrValue:', currentAttrValue);
         if (currentAttrValue == '#accordion-4') { showIntro(); }
         //$('.panel-trigger').addClass('collapsed');//.collapse('hide');// ALL
-        $(this).collapse('show');
+        $('#accordion-4').collapse('show');
 	});
     
     /* Add Selected Questions button in accordion-2 */

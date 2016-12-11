@@ -76,16 +76,28 @@ class Popquiz extends ComponentBase
                 $assignmentID = $_POST['custom_canvas_assignment_id'];
             }
             $this->page['assignmentID'] = json_encode($assignmentID);//UNUSED
-            $consumerkey = '';// localhost
+            $consumerkey = 'x';// localhost
             if(isset($_POST['oauth_consumer_key'])){
                 $consumerkey = json_encode($_POST['oauth_consumer_key']);// from lms
             }
             $this->page['consumerkey'] = $consumerkey;
             
-            
             // used in popquiz.js - if contentItemSelectionRequest submit form to return_url
-            $messageType = $_POST['lti_message_type'];// online
+            $messageType = '';
+            if(isset($_POST['lti_message_type'])){
+                $messageType = $_POST['lti_message_type'];// online
+            }
             $this->page['messageType'] = $messageType;
+            
+            //outcomeurl & sourcedid are sent with grade
+            $sourcedid = 'x';
+            $outcomeurl = 'x';
+            if(isset($_POST['lis_result_sourcedid'])){
+                $sourcedid = json_encode($_POST['lis_result_sourcedid']);
+                $outcomeurl = json_encode($_POST['lis_outcome_service_url']);
+            }
+            $this->page['sourcedid'] = $sourcedid;
+            $this->page['outcomeurl'] = $outcomeurl;
             
             // include the backend form with instructions for instructor.htm
             if(stristr($roleStr, 'Instructor')||stristr($roleStr, 'TeachingAssistant'))
@@ -113,7 +125,11 @@ class Popquiz extends ComponentBase
 				$this->page['quizList'] = $quizList;
                 
                 $this->page['toolurl'] = 'https://'.$_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
-                $this->page['returnurl'] = $_POST['launch_presentation_return_url'];
+                $returnurl = '';
+                if(isset($_POST['launch_presentation_return_url'])){
+                    $returnurl = $_POST['launch_presentation_return_url'];
+                }
+                $this->page['returnurl'] = $returnurl;
                 
                 // used only for instructors
                 $this->addCss('/plugins/hermetic/ltitools/assets/css/popquiz.css');
@@ -124,9 +140,6 @@ class Popquiz extends ComponentBase
             else if(stristr($roleStr, 'Learner'))
             {
                 //default.htm will load student.htm and view the game which loads gameQuest[questionid,
-                //outcomeurl & sourcedid are sent with grade
-                $this->page['sourcedid'] = json_encode($_POST['lis_result_sourcedid']);
-                $this->page['outcomeurl'] = json_encode($_POST['lis_outcome_service_url']);
             }
             
 

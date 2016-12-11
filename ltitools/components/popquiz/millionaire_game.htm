@@ -13,12 +13,12 @@
 <script>
 
 	var canvas, stage, exportRoot, loader;
+    var graded = false;
 	gameQuest = {{gameQuest|raw}};
 	//console.log('millionaire gameQuest:',gameQuest.length, gameQuest);
 	// warn if less than 15 questions
-	//console.log('millionaire role:',role);
-	if(role == 'Learner') { showIntro(); }
-	function showIntro() {
+    init();
+	function init() {
 		canvas = document.getElementById("canvas");
 		images = images||{};
 
@@ -34,7 +34,7 @@
 
 	function handleComplete() {
 		exportRoot = new lib.millionaireh5();
-		console.log('Millionaire handleComplete:');// 4th
+		//console.log('Millionaire handleComplete:');// 4th
 		
 		stage = new createjs.Stage(canvas);
 		stage.addChild(exportRoot);
@@ -45,15 +45,23 @@
 		createjs.Ticker.addEventListener("tick", stage);
 	}
 
+    function showIntro() {
+        stage.removeChild(exportRoot);
+        handleComplete();//init();
+    }
+    
     function sendGrade() {
+        if (graded) { return false; }
+        graded = true;// only once
         // use RestAPI grade is always 100%
-        var outcomeurl = {{outcomeurl|raw}};//Canvas: lis_outcome_service_url 
-        var sourcedid = {{sourcedid|raw}};//Canvas: lis_result_sourcedid
+        var consumerkey = '{{consumerkey|raw}}';//Canvas: oauth_consumer_key
+        var outcomeurl = '{{outcomeurl|raw}}';//Canvas: lis_outcome_service_url 
+        var sourcedid = '{{sourcedid|raw}}';//Canvas: lis_result_sourcedid
         var grade = 1;// 0~1 (0.5=50%)
         //console.log('sendGrade: outcomeurl:',outcomeurl);
-        
-        var promise = $.get('onGradePopquiz', {'outcomeurl':outcomeurl,'sourcedid':sourcedid,'grade':grade}, function (data) {
-            console.log('PROMISE result:',data);
+        if (sourcedid == 'x') { return false; }
+        var promise = $.get('onGradePopquiz', {'consumerkey':consumerkey,'outcomeurl':outcomeurl,'sourcedid':sourcedid,'grade':grade}, function (data) {
+            //console.log('PROMISE result:',data);
         }).fail(function (data) { console.log('PROMISE failed:',data.responseText); });
     }
 </script>

@@ -442,17 +442,13 @@ p.nominalBounds = new cjs.Rectangle(-11.6,-10.1,22.3,21.3);
 
 
 // stage content:
-
-
-
 (lib.ygtgame = function(mode,startPosition,loop) {
 if (loop == null) { loop = false; }	this.initialize(mode,startPosition,loop,{});
 
 	// timeline functions:
     this.frame_0 = function() {
 		/*
-			title screen
-		
+			notes
 		*/
 		this.stop();
         var qtotal = 0;// total questions
@@ -476,7 +472,7 @@ if (loop == null) { loop = false; }	this.initialize(mode,startPosition,loop,{});
         beginBtn.cursor='pointer';
 		//beginBtn.visible=false;// until intro animation done?
         // on click start game
-        beginBtn.on('click', function() {
+        beginBtn.on('mousedown', function() {
             cjs.Tween.get(title).to({scaleX:2.5,scaleY:2.5,alpha:0},150);
             cjs.Tween.get(bluePanel).wait(200).to({y:710},150);
             //cjs.Tween.get(beginBtn).wait(300).to({y:560},250);
@@ -517,16 +513,17 @@ if (loop == null) { loop = false; }	this.initialize(mode,startPosition,loop,{});
             questionPanel.visible=true;
             questionPanel.y=-100;
             answers = [];//reset
-            
-            questionPanel.txt.text = gameQuest.items[qnum].question;
+            //beginBtn.off('mousedown');
+            questionPanel.txt.text = gameQuest[qnum].text;
             // create answerPanels with text
-            //console.log('answers:', gameQuest.items[qnum].answers);
-            for (var i=0; i<gameQuest.items[qnum].answers.length; i++) {
+            var ans = JSON.parse(gameQuest[qnum].answers);
+            console.log('answers:', ans.length, ans);
+            for (var i=0; i<ans.length; i++) {
                 var ansbtn = new lib.answerPanel();
-                ansbtn.txt.text = gameQuest.items[qnum].answers[i].text;
-                ansbtn.id = gameQuest.items[qnum].answers[i].id;
-                ansbtn.weight = gameQuest.items[qnum].answers[i].weight;
-                
+                ansbtn.txt.text = ans[i].text;
+                ansbtn.id = ans[i].id;
+                ansbtn.weight = ans[i].weight;
+                console.log('answer:', qnum, i, ans[i].text);
                 stage.addChild(ansbtn);
                 ansbtn.mouseChildren = false;
                 ansbtn.setTransform(400,560);//centered off bottom of screen
@@ -601,7 +598,7 @@ if (loop == null) { loop = false; }	this.initialize(mode,startPosition,loop,{});
                                 //resultsPanel.y=-170;
                                 cjs.Tween.get(questionPanel).to({y:560,alpha:0},350);
                                 cjs.Tween.get(resultsPanel).wait(600).to({y:260},200);
-                                // grade assignment
+                                // grade assignment if student is viewing game
                                 sendGrade();
                                 
                             } else {
@@ -616,7 +613,7 @@ if (loop == null) { loop = false; }	this.initialize(mode,startPosition,loop,{});
                                 //updateScore();
                             }
                             //tween answer back to origin
-                            console.log('obj origin', o.origin.x, o.origin.y);
+                            //console.log('obj origin', o.origin.x, o.origin.y);
                             cjs.Tween.get(e.target).to({x:o.origin.x, y:o.origin.y}, 500);
                             
                             //if incorrect_comments, show it
@@ -650,8 +647,10 @@ if (loop == null) { loop = false; }	this.initialize(mode,startPosition,loop,{});
             score=qnum=0;
             updateScore();
             updateTime();
-            qtotal = gameQuest.items.length;
-            console.log('Total:',qtotal);
+            qtotal = gameQuest.length;
+            //console.log('Total:',qtotal,gameQuest[1]);
+            //var ans = JSON.parse(gameQuest[1].answers);
+            //console.log('Total:',ans.length, ans);
             updateQuestion();
 
             title.gotoAndPlay(1);// not playing correctly

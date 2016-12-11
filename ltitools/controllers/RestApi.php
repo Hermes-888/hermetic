@@ -8,8 +8,8 @@ use Illuminate\Routing\Controller;
 //use Delphinium\Roots\Requestobjects\AssignmentsRequest;// for submissions
 //use Delphinium\Roots\Requestobjects\SubmissionsRequest;// student progress
 use Hermetic\Ltitools\Models\Popquiz as popModel;// db Table
-use Delphinium\Roots\Classes\OAuthRequest as ltii;// sendOAuthBodyPOST
-
+use Delphinium\Roots\Classes\OAuthRequest as auth;// sendOAuthBodyPOST
+use Delphinium\Roots\Models\LtiConfiguration as LtiConfigurations;
 
 class RestApi extends Controller 
 {
@@ -43,6 +43,9 @@ class RestApi extends Controller
         $outcomeurl = \Input::get('outcomeurl');//Canvas: lis_outcome_service_url
         $sourcedid = \Input::get('sourcedid');//Canvas: lis_result_sourcedid
         $grade = \Input::get('grade');// 0~1
+        $key = \Input::get('consumerkey');
+        $record = LtiConfigurations::where('consumer_key', $key)->first();
+		$secret = $record['shared_secret'];//look up secret
         
         //create XML body to set grade
 		$body = '<?xml version = "1.0" encoding = "UTF-8"?>
@@ -72,14 +75,9 @@ class RestApi extends Controller
         
         //Set variables to be used in the sendOAuthBodyPOST function
 		$method = 'POST';
-        
-        //ToDo: get key, to find secret
-		$key = 'mfue-key';// hardcode for test
-		$secret = 'delphinium-rocks';
-        
 		$content_type = 'application/xml';
         //function added to OAuthRequest;
-		$result = ltii::sendOAuthBodyPOST($method, $outcomeurl, $key, $secret, $content_type, $body);
+		$result = auth::sendOAuthBodyPOST($method, $outcomeurl, $key, $secret, $content_type, $body);
         return json_encode($result);
     }
      
