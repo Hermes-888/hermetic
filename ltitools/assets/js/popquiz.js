@@ -64,10 +64,10 @@
             showIntro();
             console.log('showIntro now');
         }
-        //$('.panel-trigger').collapse('hide');//.addClass('collapsed');// ALL
-        //$(this).collapse('show');
+        $('.panel-body').collapse('hide');//.addClass('collapsed');// ALL
+        $(this).collapse('show');
 	});
-    
+   
     /* Add Selected Questions button in accordion-2 */
     $('#confirmit').click(function(e) {
         e.preventDefault();
