@@ -1,0 +1,31 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+# Record name
+name: Quizlesson
+
+# Model Form Field configuration
+form: $/hermetic/ltitools/models/quizlesson/fields.yaml
+
+# Model Class name
+modelClass: Hermetic\Ltitools\Models\Quizlesson
+
+# Default redirect location
+defaultRedirect: hermetic/ltitools/quizlesson
+
+# Create page
+create:
+    title: Create Quizlesson
+    redirect: hermetic/ltitools/quizlesson/update/:id
+    redirectClose: hermetic/ltitools/quizlesson
+
+# Update page
+update:
+    title: Edit Quizlesson
+    redirect: hermetic/ltitools/quizlesson
+    redirectClose: hermetic/ltitools/quizlesson
+
+# Preview page
+preview:
+    title: Preview Quizlesson

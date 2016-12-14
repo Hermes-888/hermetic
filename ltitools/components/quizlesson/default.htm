@@ -1,0 +1,35 @@
+<!--default.htm-->
+<div class="loading-indicator-container">
+    <div class="loading-indicator indicator-center">
+        <span></span>
+    </div>
+</div>
+<script>
+	/* component DB table fields:
+		[id,name, <Your Fields>, course_id]
+	*/
+	var orchidConfig = {{orchidConfig|raw}};
+	console.log('orchidConfig', orchidConfig);
+	
+	var quizList = {{quizList|raw}};// all quizzes
+	/*
+        initialize main variables
+        get variables from the php with twig
+        
+        use messageType to determine if this launch is for
+        ContentItemSelectionRequest : select quiz & questions
+        or
+        basic-lti-launch-request : show content
+    */
+	var role = '{{role}}';//string
+    console.log('Role:', role);
+    
+    var messageType = '{{messageType}}';
+    console.log('messageType:', messageType);
+    
+</script>
+{% if ('basic-lti-launch-request' in messageType) %}
+{% partial __SELF__~'::renderQuestion' %}
+{% elseif ('ContentItemSelectionRequest' in messageType) %}
+{% partial __SELF__~'::instructor' %}
+{% endif %}

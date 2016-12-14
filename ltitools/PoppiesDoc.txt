@@ -22,18 +22,20 @@ The quiz can be unpublished if desired.
 
 
 ToDo:
-use key to lookup secret
+use key to lookup secret TEST
 
-there could be several popquizzes in a course. instance name should include/be quiz_name?
+There could be several popquizzes in a course. Use assignmentId for instance name! TEST
+quiz_name just for instructor reference.
 
-depending on game style, define minimum questions needed
+Depending on game style, define minimum questions needed within each game.
 millionare = 15
-YouGotThis = unlimited
+YouGotThis = 0 = unlimited
 
 Is there a way to get question banks?
 intro and outro Text in db field or use generic outro?
 
 Instructor builds a multiple choice quiz. It can be unpublished.
+cannot use question groups. must use individual questions!
 
 gameshow_h5:
 analizeXML function looks for categories... oops no categories

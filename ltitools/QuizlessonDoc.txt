@@ -1,0 +1,778 @@
+9/6
+moved onUpdateTable & onGetSubmissions to RestApi.php
+
+get all submissions for user and find by quiz:id the return only 1
+PROMISE submissions: 
+[{"submission_id":49091086,"assignment_id":2736584,"course":null,"attempt":1,
+
+"body":"user: 1603772, quiz: 697063, score: 2.3333333333333335, time: 2016-09-01 21:42:57 +0000",
+
+"grade":"2.3333333333333335",
+"grade_matches_current_submission":true,"html_url":null,
+"preview_url":"https:\/\/uvu.instructure.com\/courses\/418348\/assignments\/2736584\/submissions\/1603772?preview=1&version=1","score":2.3333333333333,
+"submission_comments":null,"submission_type":"online_quiz",
+"submitted_at":"2016-09-01T21:42:57Z","url":null,"user_id":1603772,
+"grader_id":-697063,"late":false,"assignment_visible":null,
+"graded_at":"2016-09-01T21:42:57Z"},
+
+{"submission_id":48720471,"assignment_id":2736586,"course":null,"attempt":1,
+"body":"user: 1603772, quiz: 697065, score: 1.0, time: 2016-08-19 15:38:59 +0000",
+"grade":"1","grade_matches_current_submission":true,"html_url":null,
+"preview_url":"https:\/\/uvu.instructure.com\/courses\/418348\/assignments\/2736586\/submissions\/1603772?preview=1&version=1","score":1,
+"submission_comments":null,"submission_type":"online_quiz","submitted_at":"2016-08-19T15:38:59Z","url":null,"user_id":1603772,
+"grader_id":-697065,"late":false,"assignment_visible":null,
+"graded_at":"2016-08-19T15:38:59Z"}]
+
+
+9/2
+Cleaned up code and notes.
+Figure out a solution for iframe height qhite
+
+Dont Forget about: changes on mediafiles:
+roots/components/LtiConfiguration.php 
+        line 190 : replaced with $_SESSION['roles'] = $roleStr;
+        line 201: $_SESSION['lms'] = $instanceFromDB['lms'];
+
+roots/classes/Blti.php line 153 : added 
+if(isset($_REQUEST["resource_link_id"])) {
+    $resource_link_id = $_REQUEST["resource_link_id"];
+}
+
+
+NEW Plugin Configuration: 9/1
+roots_quiz_question did not pull in COMMENTS?
+CanvasHelper processSingleQuizQuestion looks correct but are missing in db table
+
+after adding a question, canvas couldnt find valid settings for this link: 
+Canvas has confused this tool with first orchidtest tool installed.
+<iframe style="width: 100%; height: 250px;" title="Quiz Questions" src="/courses/418348/external_tools/retrieve?display=borderless&amp;url=https%3A%2F%2Fmediafiles.uvu.edu%2Fdelphinium%2Forchidtest%3Fquizid%3D697063%26questionid%3D12652261" width="300" height="150" allowfullscreen="allowfullscreen" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen"></iframe>
+
+I repaired the url manually: /quizlesson not /orchidtest! This wont happen in a new course.
+Maybe Export, Reset and Import the course to get rid of the original Deleted tool orchidtest
+ 
+The branding mark is annoying in this component. Disabled it in minimal.htm on server.
+<!--div class="brand"><i><a href="https://delphinium.uvu.edu">Powered by Project Delphinium</a></i></div-->
+the link should open in a new tab  target="_blank" and is currently broken.
+
+Setting the LtiConfiguration to Editor, generates this in the config.xml
+<lticm:property name="message_type">ContentItemSelectionRequest</lticm:property>
+Navigation does not
+
+content_item_return_url is sent from canvas, not LtiConfiguration
+tool_consumer_info_product_family_code is not sent if lti_message_type is ContentItemSelectionRequest
+
+if set to Navigation does doBltiHandshake ever get called? or only when lti app is installed?
+
+first launch of Quizlesson is a ContentItemSelectionRequest within the Rich Editor
+
+Ask Jared if any other components use Editor yet: nope 
+
+When I select the component in the Canvas Page Rich Text Editor dropdown, 
+none of the SESSION variables have been set. ['lms'], ['domain'], ['userToken']
+
+Do you know where the SESSION varaiables get set from?
+
+Quizlesson can get quizzes through roots if I set the variables in the component before calling roots.
+I thought these were set by LtiConfiguration->doBltiHandshake but I dont see it in the error stack trace at all.
+maybe LtiConfiguration only runs when the app is installed.
+
+His reply:
+We copied my code from greenhouse front end and it worked there, 
+the Navigation setting we use all the time, 
+but we've never really tested the Editor setting, I only know that it is based on code that worked before.
+
+I think that LtiConfiguration only runs when installing the app.
+
+Test removing it after install and see if Quizlesson still runs.
+Confirmed Yes it does run without LtiConfiguration!!! 
+LtiConfiguration only executes returnXML() ??? then doBltiHandshake?
+Test only returnXML version on a new install
+Test Navigation too
+the custom post variables are now part of the Canvas app launch
+
+Is there a way to add 'lms' to the config.xml custom variables?
+use: $instanceFromDB['lms'] ???
+
+======================================
+8/29 use Routes to fix POST error in console
+instead of $.request('onUpdateTable', ...)
+$.request probably works too. 
+Err was from posting autosubmit before onUpdateTable was done.
+Wait till updateTable is done, then autosubmit the form!
+======================================
+
+ToDo: TJones: glyphicon at gmail
+
+Decide the best way to display the feedback:
+    overlay onto question
+    with gradeRetry() button added to feedback if not correct
+    OR
+    replace answers and show the correct answer
+    with feedback
+    DONT increase iframe height
+    
+Submit Answer button:
+    each question needs a submit button.
+    multiple_answers_question can have multiple answer ids [1,2,3]
+    ADDED function to inject the selected answer.id(s) into the Submit Answer button
+    button passes quiz_id, question_id, answer.id(s) to php onGradeQuestion()
+    
+    Selected answers are sent by their id
+    https://canvas.instructure.com/doc/api/quiz_submission_questions.html#method.quizzes/quiz_submission_questions.answer
+    Answers have different types
+    https://canvas.instructure.com/doc/api/quiz_submission_questions.html#Question+Answer+Formats-appendix
+    
+Submit the Quiz button:
+    clear the instance, orchidConfig: quiz_name, quiz_id and questions_used for next time
+    only needs to call the onSubmitQuiz function
+    user_id (studentId) and quiz_id are retrieved from SESSION in the function
+    if post parameter quizid == 'submit' render the Submit Quiz button instead of questions
+
+Get Submissions for quiz:
+
+if (role == 'Learner' && $_POST['quiz_id'] != '') {
+
+    Display submission data for answered questions in js render(quizid, questions) 
+    renderQuestion.html retrieves var submission
+    if workflow_state = complete render question + correct answer
+}
+
+
+===
+Quiz must NOT have question groups and should be set to unlimited multiple attempts?
+
+Orchid configuration xml uses the CMS page name for the app
+
+
+REMOVED FRONT END FORM and modal tabs
+KEEP instructions (needs more work)
+    Instruct user to complete one page at a time.
+    Added the workflow to instructions.
+    
+Rebuilt /updates/update_questions_used.php & version.yaml  Watch for errors at October login
+upload blossom Experience to mediafiles. it show error in backend greenhouse
+
+Each question on a page is a separate launch of the component.
+
+One major bottleneck is repeatedly getting all quizzes for quizList.
+
+in Quizlesson.php check if quiz_id has been selected
+Done: 8/16
+1st Launch: quiz_id may not be set yet
+     if ($config->quiz_id == '') {
+        $quizList = $this->getAllQuizzes();// to select one
+    } else { 
+        $quizList = $this->getQuiz($config->quiz_id);//only get selected quiz
+    }
+2nd launch: quiz_id is in the post
+    $quizId = intval($_POST["quizid"]);
+    $quizList = $this->getQuiz($quizId);
+
+always: array of one or all quizzes
+$this->page['quizList'] = $quizList;
+
+8/26
+    tested getSubmission (above) $assignment was empty because there is no entry in _roots_assignments for this course or assignment
+
+8/25
+Note:
+delphinium_roots_quizzes    field description needs more than 255 chars.
+                                             field allowed_attempts -1 = allow multiple attempts
+
+8/23
+Submit Quiz button inserted.
+html inserted for the Submit Quiz button
+
+<p><iframe style="width: 100%; height: 60px;" title="Quiz Submit Button" src="/courses/418348/external_tools/retrieve?display=borderless&amp;url=https%3A%2F%2Fmediafiles.uvu.edu%2Fdelphinium%2Forchidtest%3Fquizid%3Dsubmit%26questionid%3D" width="300" height="150" allowfullscreen="allowfullscreen" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen"></iframe></p>
+
+authorize this app occurs way too often.
+Submit quiz button displays error:
+
+Client error: `GET https://uvu.instructure.com/api/v1/courses/418348/quizzes/0/questions?access_token=14~DYy&per_page=5000` resulted in a `404 Not Found` response: {"errors":[{"message":"The specified resource does not exist."}],"error_report_id":72359717}
+/var/www/html/delphinium/plugins/october/drivers/vendor/guzzlehttp/guzzle/src/Exception/RequestException.php line 107
+
+Realized I need to be getting submissions also, for pages that have questions answered.
+
+8/19
+Submit Answer button is working: //TEST in js: role=student
+
+$result = $canvasHelper->postAnswerQuestion($quizSubmission, $answerArr, $studentId);
+echo json_encode($result);
+retuned:
+data: postAnswerQuestion WIP. {"quiz_submission_questions":[{
+    "id":12278249,"quiz_id":697065,"quiz_group_id":null,
+    "assessment_question_id":23557667,"position":1,
+    "question_name":"According to Company Officer Bob Silverthorne",
+    "question_type":"multiple_choice_question",
+    "question_text":"According to Company Officer Bob Silverthorne, enforcing code through inspections benefits firefighters in that they",
+    "answers":[
+        {"id":16457,"text":"Get to go home"},
+        {"id":66492,"text":"Will put out fires more quickly"},
+        {"id":48462,"text":"Get to meet people"},
+        {"id":17396,"text":"Can patronize local businesses"}
+        ],
+        "matches":null,"flagged":false,"answer":"16457"
+    }]
+}[]
+
+//submit the quiz
+$res = $roots->postTurnInQuiz($quizId, $quizSubmission);
+echo json_encode($res);
+returned:
+data: postAnswerQuestion WIP. {"quiz_submission_id":"9504404","user_id":"1603772","quiz_id":"697065","submission_id":"48720471",
+    "validation_token":"6d01e10e745c948ab31db0b2c3e99c9312060bbd857ad74bea0e97dffa86c684",
+    "quiz_version":"4","attempt":"1",
+    "extra_attempts":null,"attempts_left":"0",
+    "time_spent":"3281","extra_time":null,
+    "started_at":"2016-08-19T14:44:18Z",
+    "finished_at":"2016-08-19T15:38:59Z",
+    "end_at":"2016-12-31T07:00:00Z",
+    "workflow_state":"complete","has_seen_results":null,"manually_unlocked":null,
+    "overdue_and_needs_submission":false,
+    "score":"1","score_before_regrade":null,
+    "quiz_points_possible":"5",
+    "kept_score":"1","fudge_points":null,
+    "html_url":"https:\/\/uvu.instructure.com\/courses\/418348\/quizzes\/697065\/submissions\/9504404",
+    "created_at":"2016-08-19 14:45:24","updated_at":"2016-08-19 15:40:05"
+}[]
+
+$result = $roots->updateStudentQuizScore($quizId, $quizSubmission, $questions, $totalPointsToFudge);
+echo json_encode($result);
+returned:
+data: postAnswerQuestion WIP. {"status":"bad_request","message":"invalid attempt","error_report_id":72236802}[]
+
+
+8/12
+quizlesson.js:
+Dont replace " &quot; in contentval
+append parameters to url. quizid, questionid
+
+1st Post:
+message_type: ContentItemSelectionRequest
+course_id: 418348
+oauth_consumer_key = mf2key
+oauth_signature_method = HMAC-SHA1
+oauth_timestamp = 1471271315
+oauth_nonce = 7quWaD7oR38dJIsVGUQ4jvgLdPR4CAjsVznH5hgV9Y
+oauth_version = 1.0
+accept_media_types = image/*,text/html,application/vnd.ims.lti.v1.ltilink,*/*
+accept_multiple = false
+accept_presentation_document_targets = embed,frame,iframe,window
+accept_unsigned = true
+auto_create = false
+content_item_return_url = https://uvu.instructure.com/courses/418348/external_content/success/external_tool_dialog
+context_id = cd0f20f53fe2b943b4b68f454509db300f534f20
+context_title = DEV_Aviation-Course2-2015
+custom_canvas_api_domain = uvu.instructure.com
+custom_canvas_course_id = 418348
+custom_canvas_user_id = 1568377
+custom_canvas_user_login_id = tJones
+custom_lis_course_offering_sourcedid =
+custom_lis_person_contact_email_primary = TJones@uvu.edu
+custom_lis_person_sourcedid = tJones
+custom_user_image = https://secure.gravatar.com/avatar/16ee198c53f9e7c04603fc8ea78005dd?s=50&d=https%3A%2F%2Fcanvas.instructure.com%2Fimages%2Fmessages%2Favatar-50.png
+data = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkZWZhdWx0X2xhdW5jaF91cmwiOiJodHRwczpcL1wvbWVkaWFmaWxlcy51dnUuZWR1XC9kZWxwaGluaXVtXC9vcmNoaWR0ZXN0In0.v4-21PzSeW92T5Bx1JKnvv3KvIBxpvnFqQcI1KoXPQc
+ext_roles = urn:lti:instrole:ims/lis/Instructor,urn:lti:role:ims/lis/Instructor,urn:lti:role:ims/lis/Learner/NonCreditLearner,urn:lti:sysrole:ims/lis/User
+launch_presentation_document_target = iframe
+launch_presentation_locale = en
+lti_message_type = ContentItemSelectionRequest
+lti_version = LTI-1p0
+roles = Instructor
+tool_consumer_instance_guid = 53ff06d8f8dbd4741ff5bd57b3065b53c1cca411.uvu.instructure.com
+user_id = 052966325c0d3174b9099230eda241a345883689
+oauth_signature = Zh2S6kSTd1Xlv1rYfUXHYK+fUnc= 
+
+2nd Post:
+message_type: basic-lti-launch-request
+course_id: 418348
+oauth_consumer_key = mf2key
+oauth_signature_method = HMAC-SHA1
+oauth_timestamp = 1471271455
+oauth_nonce = qmALAgtHQpWAJIkJw5jSiU4Tb0zOAmqtYOKc94Aw
+oauth_version = 1.0
+context_id = cd0f20f53fe2b943b4b68f454509db300f534f20
+context_label = DEV_Aviation-Course2-2015
+context_title = DEV_Aviation-Course2-2015
+custom_canvas_api_domain = uvu.instructure.com
+custom_canvas_course_id = 418348
+custom_canvas_enrollment_state = active
+custom_canvas_user_id = 1568377
+custom_canvas_user_login_id = tJones
+custom_lis_course_offering_sourcedid =
+custom_lis_person_contact_email_primary = TJones@uvu.edu
+custom_lis_person_sourcedid = tJones
+custom_user_image = https://secure.gravatar.com/avatar/16ee198c53f9e7c04603fc8ea78005dd?s=50&d=https%3A%2F%2Fcanvas.instructure.com%2Fimages%2Fmessages%2Favatar-50.png
+ext_roles = urn:lti:instrole:ims/lis/Instructor,urn:lti:role:ims/lis/Instructor,urn:lti:role:ims/lis/Learner/NonCreditLearner,urn:lti:sysrole:ims/lis/User
+launch_presentation_document_target = iframe
+launch_presentation_height = 400
+launch_presentation_locale = en
+launch_presentation_return_url = https://uvu.instructure.com/courses/418348
+launch_presentation_width = 800
+lis_person_contact_email_primary = TJones@uvu.edu
+lis_person_name_family = Jones
+lis_person_name_full = Travis Jones
+lis_person_name_given = Travis
+lis_person_sourcedid = tJones
+lti_message_type = basic-lti-launch-request
+lti_version = LTI-1p0
+oauth_callback = about:blank
+questionid = 12278249
+quizid = 697065
+resource_link_id = cd0f20f53fe2b943b4b68f454509db300f534f20
+resource_link_title = A-Quizlesson
+roles = Instructor
+tool_consumer_info_product_family_code = canvas
+tool_consumer_info_version = cloud
+tool_consumer_instance_contact_email = notifications@instructure.com
+tool_consumer_instance_guid = 53ff06d8f8dbd4741ff5bd57b3065b53c1cca411.uvu.instructure.com
+tool_consumer_instance_name = Utah Valley University
+user_id = 052966325c0d3174b9099230eda241a345883689
+user_image = https://secure.gravatar.com/avatar/16ee198c53f9e7c04603fc8ea78005dd?s=50&d=https%3A%2F%2Fcanvas.instructure.com%2Fimages%2Fmessages%2Favatar-50.png
+oauth_signature = 0vrc+BG/hN4HQitsGyL4tHinJDs= 
+
+8/9
+Swapped out roots for an earlier version. -OLD
+I ran modulemap and it asked for approval
+Now orchid quizlesson. lticonfiguration is not approving context: There is a problem. Please notify your instructor
+reverted back to roots 8.16
+changed the token in course to the new one
+reinstalled A-Quizlesson in course 418348 :  context FIXED
+
+getting ERROR:
+NetworkError: 500 Internal Server Error - https://uvu.instructure.com/courses/418348/external_content/success/external_tool_dialog
+with both mine and test contentSelection posts
+Due to contentval.replace(/"/g, &quot;) 
+
+8/8:
+Damaris confirmed that roots is broken.
+
+8/5: Test:
+Created a new LtiConfiguration to force Approval : Did Not request approval
+Note: original configuration has lms set to uvu.instructure.com 
+did I get that from the wiki instructions?
+LMS Should be: canvas
+
+Installed with Quizlesson into DEV_Aviation-Course2 https://uvu.instructure.com/courses/418348
+course_id: 381622 Should be: 418348  
+
+first Post: OK
+message_type: ContentItemSelectionRequest
+course_id: 418348
+
+Upon Add Selected questions:
+ERROR: 2nd post? message_type must be basic-lti-launch-request : resource_link_id is only available in 2nd post
+Undefined index: resource_link_id
+/var/www/html/delphinium/plugins/delphinium/roots/classes/Blti.php line 153
+$resource_link_id = $_REQUEST["resource_link_id"];
+
+STACK:
+46 	Delphinium\Roots\Classes\Blti->is_basic_lti_request() 	 ~/plugins/delphinium/roots/classes/Blti.php 	25
+45 	Delphinium\Roots\Classes\Blti->__construct(…) 	         ~/plugins/delphinium/roots/components/LtiConfiguration.php 	211
+44 	Delphinium\Roots\Components\LtiConfiguration->doBltiHandshake() 	~/plugins/delphinium/roots/components/LtiConfiguration.php 	45
+43 	Delphinium\Roots\Components\LtiConfiguration->checkLTIMessageType() ~/plugins/delphinium/roots/components/LtiConfiguration.php 	30
+
+FIX:
+changed /roots/classes/Blti.php
+if(isset($_REQUEST["resource_link_id"])) {
+    $resource_link_id = $_REQUEST["resource_link_id"];
+}
+
+try again breaks orchid completely. Nothing to do with Blti.php change
+ERROR: no domain!
+
+Unable to parse URI: https:///api/v1/courses/418348/quizzes?access_token=14~NS&per_page=5000
+/var/www/html/delphinium/plugins/october/drivers/vendor/guzzlehttp/psr7/src/Uri.php line 52
+public function __construct($uri = '')
+{
+    if ($uri != null) {
+        $parts = parse_url($uri);
+        if ($parts === false) {
+            throw new \InvalidArgumentException("Unable to parse URI: $uri");// line 52
+        }
+        $this->applyParts($parts);
+    }
+}
+
+
+
+roots AND canvasHelper were updated on 8.6 Try Again.
+travis branch may also work better on the server.
+https://github.com/ProjectDelphinium/delphinium/tree/travis
+
+==================================
+I think I was looking for this once: Canvas.rootAccount.id
+https://canvas.instructure.com/doc/api/file.tools_variable_substitutions.html
+
+
+8/4 delphinium_roots_users
+was missing fields: encrypted_token & course_id
+Added to db table
+
+
+Undefined index: lms
+/var/www/html/delphinium/plugins/delphinium/roots/requestobjects/RootsRequest.php line 57
+$lms = strtoupper($_SESSION['lms']);
+
+re installed Quizlesson tool
+
+same error. Look a LtiConfiguration.php line 204
+$_SESSION['lms'] = \Input::get('tool_consumer_info_product_family_code');
+
+tool_consumer_info_product_family_code is not set in the first post but is in the 2nd post
+
+1st: lti_message_type = ContentItemSelectionRequest
+2nd: lti_message_type = basic-lti-launch-request
+
+install post:
+{"id":53747,"domain":"https://mediafiles.uvu.edu/delphinium/","url":"https://mediafiles.uvu.edu/delphinium
+/orchidtest","consumer_key":"mfue-key","name":"A-Quizlesson","description":"Quizlesson in Editor to add
+ questions to a page","created_at":"2016-08-04T14:23:30Z","updated_at":"2016-08-04T14:23:30Z","privacy_level"
+:"public",
+"custom_fields":{
+    "custom_canvas_api_domain":"$Canvas.api.domain",
+    "custom_canvas_course_id":"$Canvas.course.id",
+    "custom_canvas_user_id":"$Canvas.user.id",
+    "custom_canvas_user_login_id":"$Canvas.user.loginId",
+    "lis_person_contact_email_primary":"$Person.email.primary",
+    "user_image":"$User.image",
+    "lis_course_offering_sourcedid":"$CourseSection.sourcedId",
+    "lis_person_sourcedid":"$Person.sourcedId"
+},
+
+"workflow_state":"public","vendor_help_link":null,"account_navigation":null,"assignment_menu":null
+,"assignment_selection":null,"collaboration":null,"course_home_sub_navigation":null,"course_navigation"
+:null,"course_settings_sub_navigation":null,"discussion_topic_menu":null,"editor_button":{"icon_url"
+:"https://mediafiles.uvu.edu/delphinium/themes/demo/assets/images/favicon.png","selection_width":1024
+,"selection_height":800,"url":"https://mediafiles.uvu.edu/delphinium/orchidtest","text":"Orchidtest"
+,"enabled":"true","message_type":"ContentItemSelectionRequest","label":"Orchidtest"},"file_menu":null
+,"global_navigation":null,"homework_submission":null,"link_selection":null,"migration_selection":null
+,"module_menu":null,"post_grades":null,"quiz_menu":null,"resource_selection":null,"tool_configuration"
+:null,"user_navigation":null,"wiki_page_menu":null,"icon_url":"https://mediafiles.uvu.edu/delphinium
+/themes/demo/assets/images/favicon.png","not_selectable":false}
+
+install xml: name comes from backend CMS page name
+<cartridge_basiclti_link xmlns="http://www.imsglobal.org/xsd/imslticc_v1p0" xmlns:blti="http://www.imsglobal.org/xsd/imsbasiclti_v1p0" xmlns:lticm="http://www.imsglobal.org/xsd/imslticm_v1p0" xmlns:lticp="http://www.imsglobal.org/xsd/imslticp_v1p0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/imslticc_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticc_v1p0.xsd http://www.imsglobal.org/xsd/imsbasiclti_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imsbasiclti_v1p0.xsd http://www.imsglobal.org/xsd/imslticm_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticm_v1p0.xsd http://www.imsglobal.org/xsd/imslticp_v1p0 http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticp_v1p0.xsd">
+    <blti:title>Orchidtest</blti:title>
+    <blti:description>Quizlesson in Editor to add questions to a page</blti:description>
+    <blti:icon>
+    http://mediafiles.uvu.edu/delphinium/themes/demo/assets/images/favicon.png
+    </blti:icon>
+    <blti:launch_url>https://mediafiles.uvu.edu/delphinium/orchidtest</blti:launch_url>
+    <blti:extensions platform="canvas.instructure.com">
+        <lticm:property name="tool_id">Orchidtest</lticm:property>
+        <lticm:property name="privacy_level">public</lticm:property>
+        <lticm:property name="domain">https://mediafiles.uvu.edu/delphinium/</lticm:property>
+        <lticm:options name="editor_button">
+            <lticm:property name="icon_url">
+                http://mediafiles.uvu.edu/delphinium/themes/demo/assets/images/favicon.png
+            </lticm:property>
+        <lticm:property name="selection_width">800</lticm:property>
+        <lticm:property name="selection_height">800</lticm:property>
+        <lticm:property name="url">https://mediafiles.uvu.edu/delphinium/orchidtest</lticm:property>
+        <lticm:property name="text">Orchidtest</lticm:property>
+        <lticm:property name="enabled">true</lticm:property>
+        <lticm:property name="message_type">ContentItemSelectionRequest</lticm:property>
+        </lticm:options>
+    </blti:extensions>
+    <blti:custom>
+        <lticm:property name="custom_canvas_api_domain">$Canvas.api.domain</lticm:property>
+        <lticm:property name="custom_canvas_course_id">$Canvas.course.id</lticm:property>
+        <lticm:property name="custom_canvas_user_id">$Canvas.user.id</lticm:property>
+        <lticm:property name="custom_canvas_user_login_id">$Canvas.user.loginId</lticm:property>
+        <lticm:property name="lis_person_contact_email_primary">$Person.email.primary</lticm:property>
+        <lticm:property name="user_image">$User.image</lticm:property>
+        <lticm:property name="lis_course_offering_sourcedid">$CourseSection.sourcedId</lticm:property>
+        <lticm:property name="lis_person_sourcedid">$Person.sourcedId</lticm:property>
+    </blti:custom>
+<cartridge_bundle identifierref="BLTI001_Bundle"/>
+<cartridge_icon identifierref="BLTI001_Icon"/>
+</cartridge_basiclti_link>
+
+
+8/3 roots errors: reinstalled into DEV_Aviation-Course2-2015
+https://uvu.instructure.com/courses/418348
+OK
+
+first post: OK
+message_type: ContentItemSelectionRequest
+
+Clicked: Add Selected Question
+
+ERROR: Undefined offset: 0
+/var/www/html/delphinium/plugins/delphinium/roots/components/LtiConfiguration.php line 199
+$_SESSION['roles'] =$userRolesArr[0];
+
+Try again ERROR:
+Unable to parse URI: https:///api/v1/courses/418348/quizzes?access_token=14~UtN&per_page=5000
+/var/www/html/delphinium/plugins/october/drivers/vendor/guzzlehttp/psr7/src/Uri.php line 52
+
+7/30
+greenhouse.frontend example:
+{"@context": "http://purl.imsglobal.org/ctx/lti/v1/ContentItem",
+    "@graph": [{
+        "@type": "LtiLinkItem",
+        "@id": "{{ url_full() }}",
+        "url": "{{ url_full() }}?' + parameters + '",
+        "title": "Greenhouse",
+        "text": "Embed Greenhouse components",
+        "mediaType": "application/vnd.ims.lti.v1.launch+json",
+        "placementAdvice": {
+            ,"presentationDocumentTarget" : "iframe",
+            "displayWidth" : ' + width + '"displayHeight" : ' + height + '
+        }}
+    ]
+}
+
+orchid contentItem:
+{"@context" : "http://purl.imsglobal.org/ctx/lti/v1/ContentItem",';
+    "@graph":[{
+        "@type":"LtiLinkItem",
+        "@id" : ":item1",           <- use url here too OR set to unique?
+        "url":"https://mediafiles.uvu.edu/delphinium/orchidtest" + ?quizId=...&questionid=... ,
+        "mediaType":"application/vnd.ims.lti.v1.ltilink",
+        //NOT SUPPORTED//"custom":{ "quizid":'+orchidConfig.quiz_id+',"questionid":[ '+qids+']}, <- add quiz name?
+        "placementAdvice":{
+            "presentationDocumentTarget" : "iframe",
+            "displayWidth":"100%","displayHeight":'+qhite+'
+        }}
+    ]
+}
+
+https://www.imsglobal.org/specs/lticiv1p0/specification-3
+
+Submit button would be a different content item to insert Canvas quiz submit button.
+  "@type" : "ContentItem",
+  "mediaType" : "text/html",
+  "text" : "<iframe src=' lms+/quizid?question=questId'></iframe>",
+  "placementAdvice" : {
+    "presentationDocumentTarget" : "embed"
+  }
+
+RESOURCES:-------------------------------------------
+https://canvas.instructure.com/courses/913512/pages/content-item-placements
+https://www.eduappcenter.com/docs/extensions/content
+
+https://groups.google.com/forum/#!topic/canvas-lms-users/7N2CJL8P9xk
+https://www.imsglobal.org/lti/model/mediatype/application/vnd/ims/lti/v1/contentitems%2Bjson/index.html
+
+https://github.com/IMSGlobal/LTI-Tool-Provider-Library-PHP
+
+http://ltiapps.net/test/tc.php
+http://lti.tools/test/tp.php
+
+Refer to TestRoots testQuizTakingWorkflow
+
+
+7/28
+myserver/ delphinium/orchid/Quizlesson.php
+// session course id is the wrong course due to Canvas multiple tool from same domain issue
+$courseID = $_POST['custom_canvas_course_id'];//$_SESSION['courseID'];
+$_SESSION['courseID']=$_POST['custom_canvas_course_id'];
+
+
+7/24/16
+Match Canvas question css? (displays kinda big, no access to canvas css)
+
+multiple_answers_question = check boxes
+multiple_choice_question = radio buttons
+
+quiz_id, question_id, each answer has an id
+
+All questions are in a form for submit button.
+How would this work for separated questions?
+Does each question group need a submit? or does the submit button need question ids?
+
+How to handle multiple pages? will each page in a course try to use the same instance?
+Should a new page update the instance[name] to be unique for the page it belongs to.
+unique name would have to come from the post and check if it has already been used upon adding questions to the page.
+possibly .referrer? possibly $_SERVER['REQUEST_URI']
+OR
+A field holds the page name or tool_consumer_instance_guid ( test if this is the same for a given page )
+and instance is chosen accordingly
+
+
+postQuizTakingSession($quizId, $studentId);
+with manual student id
+returns
+data: {"result":"{
+    \"quiz_submission_id\":9443207,\"user_id\":1604486,\"quiz_id\":464865,\"submission_id\":42509416,
+    \"validation_token\":\"22108c76fbae0865d9ecffcb45bb1469470bf9ad578cb47d95fbd45eaadb5e41\",
+    \"quiz_version\":5,\"attempt\":1,\"extra_attempts\":null,\"attempts_left\":-1,\"time_spent\":null,\"extra_time\":null,
+    \"started_at\":\"2016-07-25 17:35:28\",
+    \"finished_at\":null,\"end_at\":\"2018-09-13 06:00:00\",
+    \"workflow_state\":\"untaken\",
+    \"has_seen_results\":null,\"manually_unlocked\":null,\"overdue_and_needs_submission\":0,
+    \"score\":0,\"score_before_regrade\":null,\"quiz_points_possible\":66,
+    \"kept_score\":null,\"fudge_points\":null,
+    \"html_url\":\"https:\\\/\\\/uvu.instructure.com\\\/courses\\\/343331\\\/quizzes\\\/464865\\\/submissions\\\/9443207\",
+    \"created_at\":\"2016-07-25 17:36:31\",\"updated_at\":\"2016-07-25 17:36:31\"}"}
+
+
+Canvas first:post
+message_type: ContentItemSelectionRequest
+
+accept_presentation_document_targets = embed,frame,iframe,window
+accept_unsigned = true
+content_item_return_url = https://uvu.instructure.com/courses/418348/external_content/success/external_tool_dialog
+context_title = DEV_Aviation-Course1-2015
+custom_canvas_api_domain = uvu.instructure.com
+custom_canvas_course_id = 418348
+custom_canvas_user_id = 1568377
+custom_canvas_user_login_id = tJones
+custom_lis_course_offering_sourcedid =
+custom_lis_person_contact_email_primary = TJones@uvu.edu
+custom_lis_person_sourcedid = tJones
+lti_message_type = ContentItemSelectionRequest
+lti_version = LTI-1p0
+roles = Instructor
+tool_consumer_instance_guid = 53ff06d8f8dbd4741ff5bd57b3065b53c1cca411.uvu.instructure.com
+
+2nd post Did NOT contain custom content items, they will need to be appended to the launch url
+
+quizlesson.js add selected questions button
+    var parameters = '?quizid='+orchidConfig.quiz_id+'&questionid='+qids;
+
+    var contentval = '{"@context" : "http://purl.imsglobal.org/ctx/lti/v1/ContentItem",';
+        contentval += '"@graph":[{';
+        contentval += '"@type":"LtiLinkItem",';
+        contentval += '"@id":"https://mediafiles.uvu.edu/delphinium/orchidtest",';
+        contentval += '"url":"https://mediafiles.uvu.edu/delphinium/orchidtest'+parameters+'",';
+        contentval += '"title":"Quiz Questions","text":"placed in page",';
+        contentval += '"mediaType":"application/vnd.ims.lti.v1.ltilink",';
+        //NA//  contentval += '"custom":{"quizid":'+orchidConfig.quiz_id+',"questionid":[ '+qids+']},';// append to url instead
+        contentval += '"placementAdvice":{ "presentationDocumentTarget" : "iframe",';
+        contentval += '"displayWidth":"100%","displayHeight":'+qhite+'}}]}';
+
+    $('#content_items').val(contentval);
+    $('#contentSelector').submit();// autosubmit form
+
+
+instructor.htm form sets up content_items
+<form action="{{return_url}}" method="post" id="contentSelector" encType="application/x-www-form-urlencoded">
+    <input type="hidden" name="lti_message_type" value="ContentItemSelection" />
+    <input type="hidden" name="lti_version" value="LTI-1p0" />
+    <input type="hidden" id="content_items" name="content_items" value="" />
+</form>
+
+
+html inserted into Canvas page:
+<iframe style="width: 100%; height: 250px;" title="Quiz Questions"
+src="/courses/418348/external_tools/retrieve?display=borderless&amp;url=https%3A%2F%2Fmediafiles.uvu.edu%2Fdelphinium%2Forchidtest%3Fquizid%3D678841%26questionid%3D12127914" 
+width="300" height="150" allowfullscreen="allowfullscreen" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen"></iframe>
+
+renderQuestion.htm displays the questions sent in iframe
+
+
+Sample Canvas question html
+
+<div data-group-id="" style="" id="" class="quiz_sortable question_holder " aria-label="Question" role="region">
+  <div style="display: block; height: 1px; overflow: hidden;">&nbsp;</div>
+  <a name="question_12206441"></a>
+  <div id="question_12206441" class="display_question question multiple_choice_question">
+    <div class="move">
+  <a role="button" class="draggable-handle" tabindex="0">
+    <i class="icon-drag-handle">
+      <span class="screenreader-only">Move To...</span>
+      <span class="accessibility-warning screenreader-only">
+        This element is a more accessible alternative to drag &amp; drop reordering. Press Enter or Space to move this question.
+      </span>
+    </i>
+  </a>
+</div>
+
+      <a aria-checked="false" role="checkbox" class="flag_question" href="#">
+        <span class="screenreader-only">Flag this Question</span>
+      </a>
+    <div class="header">
+      <span aria-level="2" role="heading" class="name question_name">Question 3</span>
+      <span style="" class="question_points_holder">
+        <span class="points question_points">1</span> pts
+    </span>
+    </div>
+    <div style="display: none;" class="links">
+      <a title="Edit this Question" class="edit_question_link no-hover" href="#"><i class="icon-edit standalone-icon"><span class="screenreader-only">Edit this Question</span></i></a>
+      <a title="Delete this Question" class="delete_question_link no-hover" href="#"><i class="icon-end standalone-icon"><span class="screenreader-only">Delete this Question</span></i></a>
+    </div>
+    <div style="display: none;">
+      <span class="regrade_option"></span>
+      <span class="regrade_disabled">0</span>
+      <span class="question_type">multiple_choice_question</span>
+      <span class="answer_selection_type"></span>
+        <a class="update_question_url" href="/courses/418348/quizzes/678841/questions/12206441">&nbsp;</a>
+      <span class="assessment_question_id">18042615</span>
+    </div>
+    <div class="text">
+      <div style="display: none;" class="original_question_text">
+        <textarea class="textarea_text_after_answers" name="text_after_answers" style="display: none;"></textarea>
+        <textarea class="textarea_question_text" name="question_text" style="display: none;">What was the primary purpose of data processing in the 1970s?</textarea>
+      </div>
+      <div class="question_text user_content enhanced" id="question_12206441_question_text">
+          What was the primary purpose of data processing in the 1970s?
+      </div>
+      <div class="answers">
+              <div class="answer">
+    <table>
+      <tbody><tr>
+        <td class="answer_input">
+            <input type="radio" id="question_12206441_answer_95280" value="95280" name="question_12206441" class="question_input">
+        </td>
+        <td class="answer_label">
+          <label for="question_12206441_answer_95280">improve how employees contacted customers</label>
+        </td>
+      </tr>
+    </tbody></table>
+</div>
+<div class="answer">
+    <table>
+      <tbody><tr>
+        <td class="answer_input">
+            <input type="radio" id="question_12206441_answer_48979" value="48979" name="question_12206441" class="question_input">
+        </td>
+        <td class="answer_label">
+          <label for="question_12206441_answer_48979">improve the flow of communication between networks</label>
+        </td>
+      </tr>
+    </tbody></table>
+</div>
+<div class="answer">
+    <table>
+      <tbody><tr>
+        <td class="answer_input">
+            <input type="radio" id="question_12206441_answer_41104" value="41104" name="question_12206441" class="question_input">
+        </td>
+        <td class="answer_label">
+          <label for="question_12206441_answer_41104">improve how businesses communicated with other businesses</label>
+        </td>
+      </tr>
+    </tbody></table>
+</div>
+<div class="answer">
+    <table>
+      <tbody><tr>
+        <td class="answer_input">
+            <input type="radio" id="question_12206441_answer_44372" value="44372" name="question_12206441" class="question_input">
+        </td>
+        <td class="answer_label">
+          <label for="question_12206441_answer_44372">improve the flow of financial information</label>
+        </td>
+      </tr>
+    </tbody></table>
+</div>
+
+      </div>
+      <div class="after_answers">
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+</div>
+
+
+Sample submit quiz button
+<div class="form-actions">
+    <span id="last_saved_indicator">Quiz saved at 12:52pm</span>
+    <button data-action="/courses/418348/quizzes/678841/submissions?user_id=1568377" id="submit_quiz_button" class="btn submit_button quiz_submit btn-secondary" type="submit">
+      Submit Quiz
+    </button>
+</div>
+  

@@ -46,11 +46,21 @@ class Popquiz extends ComponentBase
 
         //try{
         
-            // Type = Editor = ResourceSelection
+            // Type = ResourceSelection
             //foreach($_POST as $key => $value ) { echo "<br/>$key = $value"; }
-            //die();
-        
-            $config = $this->getInstance();
+            
+            $assignmentID = '';//1st launch no questions yet
+            if (isset($_POST['custom_canvas_assignment_id'])) {
+                //2nd launch return_url is set. Questions set. instance name set
+                $assignmentID = $_POST['custom_canvas_assignment_id'];
+                $name = $this->alias . '_' . $assignmentID;
+                $config = $this->getInstance($name);//set at updateTable
+            } else {
+                $config = $this->getInstance();
+            }
+            // used to determine if first launch
+            $this->page['assignmentID'] = json_encode($assignmentID);
+            
             //use the record in the component and frontend form
             $this->page['config'] = json_encode($config);
             //Use the primary key of the record you want to update
@@ -70,29 +80,26 @@ class Popquiz extends ComponentBase
             $gameQuest = $this->getTheseQuestions($config->questions);
             $this->page['gameQuest'] = $gameQuest;
             $this->page['game'] = $config['game_style'];// select in frontend form
-            $assignmentID = '';//1st launch
-            if(isset($_POST['custom_canvas_assignment_id'])){
-                //2nd launch return_url is set. Use to score assignment
-                $assignmentID = $_POST['custom_canvas_assignment_id'];
-            }
-            $this->page['assignmentID'] = json_encode($assignmentID);//UNUSED
+            
             $consumerkey = 'x';// localhost
-            if(isset($_POST['oauth_consumer_key'])){
-                $consumerkey = json_encode($_POST['oauth_consumer_key']);// from lms
+            if (isset($_POST['oauth_consumer_key'])) {
+                // from roots_lti_configuration
+                $consumerkey = json_encode($_POST['oauth_consumer_key']);
             }
+            // used to find secret for onGradePopquiz
             $this->page['consumerkey'] = $consumerkey;
             
             // used in popquiz.js - if contentItemSelectionRequest submit form to return_url
-            $messageType = '';
-            if(isset($_POST['lti_message_type'])){
+            $messageType = '';// if lti type = Editor
+            if (isset($_POST['lti_message_type'])) {
                 $messageType = $_POST['lti_message_type'];// online
             }
-            $this->page['messageType'] = $messageType;
+            $this->page['messageType'] = $messageType;//OBSOLETE
             
             //outcomeurl & sourcedid are sent with grade
-            $sourcedid = 'x';
+            $sourcedid = 'x';// localhost
             $outcomeurl = 'x';
-            if(isset($_POST['lis_result_sourcedid'])){
+            if (isset($_POST['lis_result_sourcedid'])) {
                 $sourcedid = json_encode($_POST['lis_result_sourcedid']);
                 $outcomeurl = json_encode($_POST['lis_outcome_service_url']);
             }
@@ -100,7 +107,7 @@ class Popquiz extends ComponentBase
             $this->page['outcomeurl'] = $outcomeurl;
             
             // include the backend form with instructions for instructor.htm
-            if(stristr($roleStr, 'Instructor')||stristr($roleStr, 'TeachingAssistant'))
+            if (stristr($roleStr, 'Instructor')||stristr($roleStr, 'TeachingAssistant'))
             {
                 //include your js & css. Note: bootstrap.min.css is part of minimal layout.
                 //See #10 in https://github.com/ProjectDelphinium/delphinium/wiki/1.-Installation#setup
@@ -126,7 +133,7 @@ class Popquiz extends ComponentBase
                 
                 $this->page['toolurl'] = 'https://'.$_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
                 $returnurl = '';
-                if(isset($_POST['launch_presentation_return_url'])){
+                if (isset($_POST['launch_presentation_return_url'])) {
                     $returnurl = $_POST['launch_presentation_return_url'];
                 }
                 $this->page['returnurl'] = $returnurl;
@@ -137,7 +144,7 @@ class Popquiz extends ComponentBase
                 $this->addJs('/plugins/hermetic/ltitools/assets/js/popquiz.js');//instructor only
                 
             }
-            else if(stristr($roleStr, 'Learner'))
+            else if (stristr($roleStr, 'Learner'))
             {
                 //default.htm will load student.htm and view the game which loads gameQuest[questionid,
             }

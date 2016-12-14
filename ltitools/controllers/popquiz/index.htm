@@ -1,2 +1,20 @@
+<div class="control-tabs content-tabs tabs-flush" data-control="tab">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#primarytab-1"  data-toggle="tab" title="Settings">
+            <span class="title">Instances</span></a>
+        </li>
+        <li class=""><a href="#primarytab-2" data-toggle="tab" title="Instructions">
+            <span class="title">Instructions</span></a>
+        </li>
+    </ul>
+    
+    <div class="tab-content">
+        <div id="primarytab-1" class="tab-pane fade in active">
+            <?= $this->listRender() ?>
+        </div>
 
-<?= $this->listRender() ?>
+        <div id="primarytab-2" class="tab-pane fade in"  style="padding: 0px 20px;">
+            <?= $this->makePartial('popquizinstructions') ?>
+        </div>
+    </div>
+</div>

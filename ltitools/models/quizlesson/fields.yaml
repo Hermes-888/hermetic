@@ -1,0 +1,27 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
+fields:
+    id:
+        label: ID
+        disabled: true
+
+    name:
+        label: Name
+        span: auto
+        comment: Enter the name of this instance
+        tab: Settings
+
+    quiz_name:
+        label: Quiz Name
+        span: auto
+        comment: Selected quiz name
+        tab: Settings
+ 
+    quiz_id:
+        label: Quiz
+        comment: Quiz id
+        span: auto
+        tab: Settings
+

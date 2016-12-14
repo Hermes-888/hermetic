@@ -5,3 +5,6 @@
 1.0.3:
 - Add video quiz table
 - create_videoquizzes_table.php
+1.0.4:
+- Add quiz lesson table
+- create_quizlessons_table.php

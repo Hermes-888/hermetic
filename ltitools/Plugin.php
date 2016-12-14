@@ -40,6 +40,7 @@ class Plugin extends PluginBase
     {
         return [
             'Hermetic\Ltitools\Components\Popquiz' => 'PopQuiz',
+            'Hermetic\Ltitools\Components\Quizlesson' => 'QuizLesson',
             'Hermetic\Ltitools\Components\Videoquiz' => 'VideoQuiz'
         ];
     }
@@ -54,14 +55,21 @@ class Plugin extends PluginBase
         Event::listen('backend.menu.extendItems', function($manager) {
             $manager->addSideMenuItems('Delphinium.Roots', 'delphinium', [
                 'Popquiz' => [
-                  'label' => 'PopQuiz',
+                  'label' => 'Pop Quiz',
                   'icon'  => 'icon-gamepad',
                   'owner' => 'Hermetic.Ltitools',
                   'group' => 'Quiz Tools',
                   'url' => Backend::url('hermetic/ltitools/popquiz')
                 ],
+                'Quizlesson' => [
+                  'label' => 'Quiz Lesson',
+                  'icon'  => 'icon-newspaper-o',
+                  'owner' => 'Hermetic.Ltitools',
+                  'group' => 'Quiz Tools',
+                  'url' => Backend::url('hermetic/ltitools/quizlesson')
+                ],
                 'Videoquiz' => [
-                  'label' => 'VideoQuiz',
+                  'label' => 'Video Quiz',
                   'icon'  => 'icon-film',
                   'owner' => 'Hermetic.Ltitools',
                   'group' => 'Quiz Tools',

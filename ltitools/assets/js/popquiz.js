@@ -23,21 +23,28 @@
 		see Intro text, Play game
 		
 		pass back points for the assignment, not a quiz
-*/
 
-// Instructor view vars & functions
-// globals
-var selecteditems=[];// quiz question_id selections
-var chosenitems=[];// question_id of gameitems to use, view, remove, clear all
-var quests=[];// quiz questions to selected from
-console.log(config);
-console.log('toolurl:',toolurl);
-console.log('returnurl:',returnurl);
-	/*	Note: these functions are only for instructor view
-		list of all quizzes to choose questions for game
-        //ONLY? if type == "multiple_choice_question" ONLY?
-        instructions are in the cog instructions tab
-    */
+    Note: these functions are only for the instructor view
+    ONLY? if type == "multiple_choice_question" ONLY?
+    instructions are in the cog instructions tab
+*/
+    // globals
+    var selecteditems=[];// quiz question_id selections
+    var chosenitems=[];// question_id of gameitems to use, view, remove, clear all
+    var viewitems=[];// view question details
+    var quests=[];// quiz questions to selected from
+    console.log(config);
+    console.log('toolurl:',toolurl);
+    console.log('returnurl:',returnurl);
+    console.log('assignmentID:',assignmentID);
+    console.log('INSTANCE:',config.name);
+    //set instance name after first launch
+    if (assignmentID != '') {
+        var temp = config.name.split('_');
+        config.name = temp[0] +'_'+ assignmentID;//after first launch
+        console.log('INSTANCE:',config.name);
+    }
+    
 	//quizList = {{quizList|raw}};
     //console.log('quizList:', quizList.length, quizList);
     showQuizzes();// all quizzes to choose from
@@ -53,12 +60,12 @@ console.log('returnurl:',returnurl);
 	/* activate accordion and button functions */
     $('.panel-trigger').click(function(e) {
         //e.preventDefault();
-		// Grab current anchor value
-		var currentAttrValue = $(this).attr('href');
-        //console.log('currentAttrValue:', currentAttrValue);
-        if (currentAttrValue == '#accordion-4') { showIntro(); }
-        //$('.panel-trigger').addClass('collapsed');//.collapse('hide');// ALL
-        $('#accordion-4').collapse('show');
+        if ($(this).attr('href') == '#accordion-4' && $(this).hasClass('collapsed')) {
+            showIntro();
+            console.log('showIntro now');
+        }
+        //$('.panel-trigger').collapse('hide');//.addClass('collapsed');// ALL
+        //$(this).collapse('show');
 	});
     
     /* Add Selected Questions button in accordion-2 */
@@ -136,27 +143,6 @@ console.log('returnurl:',returnurl);
             config.questions=idArray.toString();// and internal array
             console.log('config:', config.id, config.questions);
             
-            console.log('messageType:',messageType);// UNUSED
-            if (messageType == "ContentItemSelectionRequest") {
-                /*
-                *   https://groups.google.com/forum/#!topic/canvas-lms-users/7N2CJL8P9xk
-                *   content item url launches this with an lti_message type of basic-lti-launch-request
-                *   display the game with questions in the canvas iframe
-                *   submitting form to return_url
-                */
-                //var parameters = '?questionid='+config.questions;//UNUSED
-                var contentval = '{"@context" : "http://purl.imsglobal.org/ctx/lti/v1/ContentItem",';
-                    contentval += '"@graph":[{';
-                    contentval += '"@type":"LtiLinkItem",';
-                    contentval += '"@id":"https://mediafiles.uvu.edu/delphinium/popquiz",';
-                    contentval += '"url":"https://mediafiles.uvu.edu/delphinium/popquiz",';// dynamic!!! selfurl???
-                    contentval += '"title":"Pop Quiz","text":"placed in assignment",';
-                    contentval += '"mediaType":"application/vnd.ims.lti.v1.ltilink",';
-                    contentval += '"placementAdvice":{ "presentationDocumentTarget" : "iframe",';
-                    contentval += '"displayWidth":"970","displayHeight":"550"}}]}';// actual+10
-                    
-                $('#content_items').val(contentval);// instructor.htm form
-            }
             updateTable();//RestAPI
 			//open the game
             $('#accordion-3').collapse('hide');
@@ -181,16 +167,14 @@ console.log('returnurl:',returnurl);
         console.log('config:',config);
         var promise = $.get('onUpdatePopquiz', {'Popquiz':config}, function (data) {
             console.log('PROMISE result:',data);// T/F
-            //console.log('messageType:',messageType);
-            if (messageType == "ContentItemSelectionRequest") {
-                //Now autosubmit form to return_url to set iframe
-                $('#contentSelector').submit();// UNUSED
-            }
+            
             if (assignmentID == '') {
                 // https://www.edu-apps.org/extensions/content.html
                 var url = returnurl+"?return_type=lti_launch_url&url="+encodeURIComponent(toolurl);
                 window.location.href = url;// first launch
-                /*launch_presentation_return_url with parameters ?type &url*/
+                /*launch_presentation_return_url with parameters ?type &url
+                    assignmentId is now available
+                */
             }
             // 2nd launch custom_canvas_assignment_id = 2972295
         }).fail(function (data1) { console.log('PROMISE failed:',data1); });
@@ -201,7 +185,6 @@ console.log('returnurl:',returnurl);
         nextcount is index of starting question
         use next btn to view each question
     */
-    var viewitems =[];
     $('#viewit').click(function(e) {
         e.preventDefault();
         viewitems = quests;
@@ -302,112 +285,113 @@ console.log('returnurl:',returnurl);
 */
 
 
-/* show all quizzes as buttons */
-function showQuizzes()
-{
-	//console.log('quizList.length:',quizList.length);
-	/* put 1/3 in each column inc to count, reset : inc colm */
-	var count = Math.ceil(quizList.length/3);
-	var col=0;
-	var row=0;
-	for (var i=0; i<quizList.length; i++) {
-		content = '<div id='+quizList[i].quiz_id+' class="alert alert-info" data-title="'+quizList[i].title+'">';// blue
-		content += quizList[i].title;
-		content += ': total questions: '+quizList[i].questions.length;//.question_count;
-		//content += ' worth: '+quizList[i].points_possible;
-		content += '</div>';
-		$('#col_'+col).append(content);
-		row++;
-		if (row==count) { row=0; col++; }
-	}
-	//click quiz to view questions
-	$('.alert').on('click', function(e){
-        $('#accordion-1').collapse('hide');
-        $('#Form-field-Popquiz-quiz_name').val($(this).data('title'));
-		showQuizQuestions(e.target.id);// quiz_id
-	});
-	// open All Quizzes panel
-    $('#accordion-1').collapse('show');
-}
+    /* show all quizzes as buttons */
+    function showQuizzes()
+    {
+        //console.log('quizList.length:',quizList.length);
+        /* put 1/3 in each column inc to count, reset : inc colm */
+        var count = Math.ceil(quizList.length/3);
+        var col=0;
+        var row=0;
+        for (var i=0; i<quizList.length; i++) {
+            content = '<div id='+quizList[i].quiz_id+' class="alert alert-info" data-title="'+quizList[i].title+'">';// blue
+            content += quizList[i].title;
+            content += ': total questions: '+quizList[i].questions.length;//.question_count;
+            //content += ' worth: '+quizList[i].points_possible;
+            content += '</div>';
+            $('#col_'+col).append(content);
+            row++;
+            if (row==count) { row=0; col++; }
+        }
+        //click quiz to view questions
+        $('.alert').on('click', function(e){
+            $('#accordion-1').collapse('hide');
+            $('#Form-field-Popquiz-quiz_name').val($(this).data('title'));
+            config.quiz_name = $(this).data('title');// for #useit updateTable 
+            showQuizQuestions(e.target.id);// quiz_id
+        });
+        // open All Quizzes panel
+        $('#accordion-1').collapse('show');
+    }
 
-/*	show all questions from selected quiz
-	Questions are selectable or all
-	submit btn adds questions to gameitems
-*/
-function showQuizQuestions(id)
-{
-	// fill id=quizdata with selected quiz and show it
-	// qtitle quiz_details, quizdata
-	console.log('view quiz_id:'+id);
-	var quiz = $.grep(quizList, function(elem, indx){
-        return elem.quiz_id == id; }
-	);
-	console.log('quiz:', quiz);
-	quests=quiz[0].questions;
-	//console.log('quests:',quests);
-	//properties of quiz, title, q_count, points, id?
-	$('#qtitle').text(quiz[0].title+' Points: '+quiz[0].points_possible);
-	
-	// show the quiz questions in modal when clicked?
-	$('#quizselectable').empty();
-	selecteditems=[];// no questions selected
-	for (var i=0; i<quests.length; i++) {
-		//ONLY? if type == "multiple_choice_question" ONLY?
-        if (quests[i].type == "multiple_choice_question") {
-            var txt = quests[i].text;
+    /*	show all questions from selected quiz
+        Questions are selectable or all
+        submit btn adds questions to gameitems
+    */
+    function showQuizQuestions(id)
+    {
+        // fill id=quizdata with selected quiz and show it
+        // qtitle quiz_details, quizdata
+        console.log('view quiz_id:'+id);
+        var quiz = $.grep(quizList, function(elem, indx){
+            return elem.quiz_id == id; }
+        );
+        console.log('quiz:', quiz);
+        quests=quiz[0].questions;
+        //console.log('quests:',quests);
+        //properties of quiz, title, q_count, points, id?
+        $('#qtitle').text(quiz[0].title+' Points: '+quiz[0].points_possible);
+        
+        // show the quiz questions in modal when clicked?
+        $('#quizselectable').empty();
+        selecteditems=[];// no questions selected
+        for (var i=0; i<quests.length; i++) {
+            //ONLY? if type == "multiple_choice_question" ONLY?
+            if (quests[i].type == "multiple_choice_question") {
+                var txt = quests[i].text;
+                //console.log(txt);// &lt;strong&gt; ...
+                txt = $.parseHTML(txt);
+                txt = txt[0].textContent;
+                //console.log(txt);//<strong>
+                $('#quizselectable').append('<li class="list-group-item questgrp" data-id="'+quests[i].question_id+'">'+txt+'</li>');
+                selecteditems.push(quests[i].question_id);// all questions selected
+            }
+        }
+        $('.questgrp').on('click', function(){
+            $(this).toggleClass('active');
+            selecteditems=[];// accumulated selections if mouse dragged
+            $("#quizselectable .active").each(function() {
+                var qid = $(this).attr('data-id');
+                selecteditems.push(qid);
+            });// or only one clicked
+            console.log('selecteditems:', selecteditems.length, selecteditems);// array of question_ids
+        });
+        $('#accordion-2').collapse('show');
+    }
+
+    /* Display questions selected for game */
+    function showSelected()
+    {
+        $('#qtitle').text(config.quiz_name);
+        //gameitems [question, ]
+        $('#gameselectable').empty();
+        $('#questcount').html(gameitems.length+' Game Questions');
+        chosenitems=[];// none yet
+        for (var i=0; i<gameitems.length; i++) {
+            var txt = gameitems[i].text;//.toString();
             //console.log(txt);// &lt;strong&gt; ...
             txt = $.parseHTML(txt);
             txt = txt[0].textContent;
             //console.log(txt);//<strong>
-            $('#quizselectable').append('<li class="list-group-item questgrp" data-id="'+quests[i].question_id+'">'+txt+'</li>');
-            selecteditems.push(quests[i].question_id);// all questions selected
+            $('#gameselectable').append('<li class="list-group-item ugrp" data-id="'+gameitems[i].question_id+'">'+txt+'</li>');
+            chosenitems.push(gameitems[i].question_id);
         }
-	}
-	$('.questgrp').on('click', function(){
-        $(this).toggleClass('active');
-        selecteditems=[];// accumulated selections if mouse dragged
-        $("#quizselectable .active").each(function() {
-            var qid = $(this).attr('data-id');
-            selecteditems.push(qid);
-        });// or only one clicked
-        console.log('selecteditems:', selecteditems.length, selecteditems);// array of question_ids
-    });
-    $('#accordion-2').collapse('show');
-}
-
-/* Display questions selected for game */
-function showSelected()
-{
-    $('#qtitle').text(config.quiz_name);
-    //gameitems [question, ]
-    $('#gameselectable').empty();
-	$('#questcount').html(gameitems.length+' Game Questions');
-	chosenitems=[];// none yet
-    for (var i=0; i<gameitems.length; i++) {
-		var txt = gameitems[i].text;//.toString();
-		//console.log(txt);// &lt;strong&gt; ...
-		txt = $.parseHTML(txt);
-		txt = txt[0].textContent;
-		//console.log(txt);//<strong>
-		$('#gameselectable').append('<li class="list-group-item ugrp" data-id="'+gameitems[i].question_id+'">'+txt+'</li>');
-		chosenitems.push(gameitems[i].question_id);
-	}
-	$('.ugrp').on('click', function(){
-        $(this).toggleClass('active');
-        chosenitems=[];// accumulated selections if mouse dragged
-        $("#gameselectable .active").each(function() {
-            var qid = $(this).attr('data-id');
-            chosenitems.push(qid);// push id for each to an array
-        });// or only one clicked
-        //set nextcount to gameitems.indexOf(chosenitems[0]) for constructQuestion
-		for (var i=0; i<gameitems.length; i++) {
-			if (chosenitems[0]==gameitems[i].question_id) { nextcount=i; }
-		}
-        console.log('chosenitems:', chosenitems.length, chosenitems);// array of question_ids
-		console.log('nextcount:',nextcount);
-    });
-    $('#accordion-3').collapse('show');
-}
+        $('.ugrp').on('click', function(){
+            $(this).toggleClass('active');
+            chosenitems=[];// accumulated selections if mouse dragged
+            $("#gameselectable .active").each(function() {
+                var qid = $(this).attr('data-id');
+                chosenitems.push(qid);// push id for each to an array
+            });// or only one clicked
+            //set nextcount to gameitems.indexOf(chosenitems[0]) for constructQuestion
+            for (var i=0; i<gameitems.length; i++) {
+                if (chosenitems[0]==gameitems[i].question_id) { nextcount=i; }
+            }
+            console.log('chosenitems:', chosenitems.length, chosenitems);// array of question_ids
+            console.log('nextcount:',nextcount);
+        });
+        $('#accordion-3').collapse('show');
+    }
 
 
 

@@ -1,0 +1,40 @@
+<!-- Quizlesson Instructions partial -->
+<div class="divInstructions">
+    <h4>Quizlesson Component</h4>
+    <div id="orchidInstruct">
+        <ul>
+        <li>Create a Quiz with 2-5 questions for a topic.</li>
+        <li>Create a Page and write content for a topic.</li>
+        <li>Select Quizlesson from the Rich Editor dropdown.</li>
+        <li>Choose the Quiz you created for this topic.</li>
+        </ul>
+        <div class="orchidinstructext">
+            <p>Now select a question you want to insert into the page. Add more text and questions to the page until all questions are used. 
+            When all questions have been added, you will add the Submit Quiz button.</p>
+        </div>
+    </div>
+    <div id="orchidinstructimage" title="What it looks like" width="460" height="234"></div>
+</div>
+<style>
+    .divInstructions {
+        width: 100%;
+        padding:0px 0px;
+    }
+    #orchidInstruct {
+        width: 40%;
+        float: left;
+    }
+    #orchidinstructimage {
+        width: 460px;
+        height: 234px;
+        float: right;
+        background-image: url('<?= Config::get("app.url", "backend") ?>plugins/hermetic/ltitools/assets/images/orchidEditor.png');
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+    .orchidinstructext {
+        float:left;
+        padding-top: 10px;
+    }
+    
+</style>

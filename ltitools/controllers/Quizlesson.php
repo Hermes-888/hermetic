@@ -1,14 +1,14 @@
 <?php
 namespace Hermetic\Ltitools\Controllers;
 
-use Flash;
 use BackendMenu;
 use Backend\Classes\Controller;
+use Flash;
 
 /**
- * Popquiz Back-end Controller
+ * Quizlesson Back-end Controller
  */
-class Popquiz extends Controller
+class Quizlesson extends Controller
 {
     public $implement = [
         'Backend.Behaviors.FormController',
@@ -21,11 +21,10 @@ class Popquiz extends Controller
     public function __construct()
     {
         parent::__construct();
-
-        //BackendMenu::setContext('Hermetic.Ltitools', 'ltitools', 'popquiz');
-        BackendMenu::setContext('Delphinium.Roots', 'delphinium', 'popquiz');
+        BackendMenu::setContext('Delphinium.Roots', 'delphinium', 'quizlesson');
     }
-    
+
+
     public function index()
     {
         $this->listRefresh();
@@ -55,4 +54,5 @@ class Popquiz extends Controller
         return $this->listRefresh();
 
     }
+
 }

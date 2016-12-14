@@ -1,0 +1,83 @@
+<!-- Instructor View with Settings cog -->
+<div style="position:fixed; top:0px; right:0px; z-index:950;">
+    <a id="orchid-popinfo" title="Info" tabindex="0" role="button" data-trigger-condition="" data-trigger-action="" data-trigger="focus" data-container="body" data-toggle="popover" data-placement="left" data-content="Setup below" style="position:absolute; top:0; right:5px;">
+        <i class="icon-question"></i>
+    </a>
+	<div id="orchid-cog" href="#orchid-configuration" style="position:absolute; top:0; right:15px;">
+		<a data-toggle="tooltip" title="Instructions" data-placement="left"><i class="icon-cog"></i></a>
+    </div>
+</div>
+
+<div class="tools">
+    <div id="quizlist" class="quizpanel scrollingBox">
+           <h4 class="text-center">Select a quiz to use for this page.</h4>
+           <div id="col_0" class="col-md-4"></div>
+           <div id="col_1" class="col-md-4"></div>
+           <div id="col_2" class="col-md-4"></div>
+           <div class="clear"></div>
+    </div>
+
+    <div id="questiongroup" class="scrollingBox">
+        <div class="btngroup">
+            <button class="btn btn-success btn-sm" type="submit" id="addselected" name="addselected">Add Selected Questions</button>
+            <button class="btn btn-success btn-sm" type="submit" id="addsubmit" name="addsubmit">Add Submit Quiz Button</button>
+            <button class="btn btn-info btn-sm" type="submit" id="replacequiz" name="replacequiz">Choose a Different Quiz</button>
+        </div>
+        <div id="qtitle"></div>
+        <div id="questionlist"></div>
+    </div>
+</div>
+
+<!-- Configuration modal with Instructions, FrontEnd Form Removed -->
+<div class="control-popup modal fade" id="orchid-configuration" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Quiz Lesson Instructions</h4>
+            </div>
+            <div class="modal-body">
+                <div id="orchid-instruct" class="tab-pane fade in" style="padding: 0px 10px; height: auto;">
+                  {{ quizlessoninstructions|raw }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: show details for a selected question -->
+<div class="control-popup modal fade" id="quest-details" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 id="quest-details-title" class="modal-title">Quiz Questions</h4>
+            </div>
+            <div class="modal-body">
+                <div class="clearfix">
+                    <div id="qtype" class="left questype">Type:</div>
+                    <div id="qpoints" class="right questype">Points:</div>
+                </div>
+				<hr/>
+				<div>
+					<div id="qtext"></div>
+                </div>
+				<div>
+					<div id="qanswers"></div>
+					<div id="qfeedback"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+				<button id="backbtn" type="button" class="btn btn-primary"> <- Back </button>
+                <button id="nextbtn" type="button" class="btn btn-primary"> Next -> </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- content item submission form -->
+<form action="{{return_url}}" method="post" id="contentSelector" encType="application/x-www-form-urlencoded">
+    <input type="hidden" name="lti_message_type" value="ContentItemSelection" />
+    <input type="hidden" name="lti_version" value="LTI-1p0" />
+    <input type="hidden" id="content_items" name="content_items" value="" />
+</form>
