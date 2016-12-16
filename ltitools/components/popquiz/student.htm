@@ -1,6 +1,8 @@
 <!-- determine game style to load -->
 {% if ('mgs' in game) %}
     {% partial __SELF__~'::millionaire_game' %}
+{% elseif ('gsc' in game) %}
+    {% partial __SELF__~'::gameshow' %}
 {% elseif ('ygt' in game) %}
     {% partial __SELF__~'::ygt_game' %}
 {% endif %}

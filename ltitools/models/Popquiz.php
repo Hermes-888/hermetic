@@ -18,7 +18,7 @@ class Popquiz extends Model
      */
     public function getGameStyleOptions()
     {
-        return ['mgs' => 'Millionaire Game Show', 'ygt' => 'You Got This'];
+        return ['mgs' => 'Millionaire Game Show', 'ygt' => 'You Got This', 'gsc' => 'Gameshow Challenge'];
     }
     
     /**
