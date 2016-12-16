@@ -1,5 +1,7 @@
 Popquiz presents quiz questions in a game.
+12/16
 
+Instructor view:
 Configure popquiz with lti type set to resource selection.
 Add the app in Canvas.
 Create an assignment, set the points and select submission type, External Tool.
@@ -7,18 +9,41 @@ Create an assignment, set the points and select submission type, External Tool.
 The first launch will let the instructor choose a quiz.
 Select some questions. You can select questions from multiple quizzes.
 Use the cog to change the game style. The default game is Millionare Game Show.
+The quiz name is set when a quiz is selected, it can be changed as needed and is displayed in a game.
+The description is displed in a game introduction.
 
 Select Use These Questions to finish the tool setup and preview the game.
 Close the dialog modal and save the assignment.
 
-The instructor can change the questions used in the game if desired.
+The instructor can change the questions used in the game if desired, without editing the assignment.
 
-Popquiz has multiple game types: Millionaire, Jeopardy, YouGotThis
-The assignment is graded when a student plays the game.
+Popquiz has multiple game types: Millionaire, Gameshow Challenge, YouGotThis
+The assignment is graded as 100% when a student finishes the game.
 
 Limited to multiple choice type questions.
 
 The quiz can be unpublished if desired.
+
+These functions must be within each game
+    function showIntro() {
+        stage.removeChild(exportRoot);
+        handleComplete();//init();
+    }
+
+    function sendGrade() {
+        if (graded) { return false; }
+        graded = true;// only once
+        // use RestAPI grade is always 100%
+        var consumerkey = '{{consumerkey|raw}}';//Canvas: oauth_consumer_key
+        var outcomeurl = '{{outcomeurl|raw}}';//Canvas: lis_outcome_service_url 
+        var sourcedid = '{{sourcedid|raw}}';//Canvas: lis_result_sourcedid
+        var grade = 1;// 0~1 (0.5=50%)
+        //console.log('sendGrade: outcomeurl:',outcomeurl);
+        if (sourcedid == 'x') { return false; }
+        var promise = $.get('onGradePopquiz', {'consumerkey':consumerkey,'outcomeurl':outcomeurl,'sourcedid':sourcedid,'grade':grade}, function (data) {
+            //console.log('PROMISE result:',data);
+        }).fail(function (data) { console.log('PROMISE failed:',data.responseText); });
+    }
 
 
 ToDo:
@@ -27,28 +52,22 @@ use key to lookup secret TEST
 There could be several popquizzes in a course. Use assignmentId for instance name! TEST
 quiz_name just for instructor reference.
 
-Depending on game style, define minimum questions needed within each game.
-millionare = 15
+Depending on game style, define minimum questions needed within each game.Millionare = 15
+Gameshow = 12
 YouGotThis = 0 = unlimited
 
 Is there a way to get question banks?
-intro and outro Text in db field or use generic outro?
+intro is description. use a generic outro
 
 Instructor builds a multiple choice quiz. It can be unpublished.
-cannot use question groups. must use individual questions!
+cannot use question groups. must use individual questions in the quiz!
+If questions could be selected from the database or banks directly, there is no need for quizzes.
 
 gameshow_h5:
 analizeXML function looks for categories... oops no categories
 <categoryName>JAA</categoryName>
 4 categories with 3 questions per category 
-Gameshow Challenge h5
-v1 to run, add filename = xml to url
-file:///H:/zwamp-x64/vdrive/web/work/BAKUP/gameshow_h5/index.html?filename=AAquestions.xml
-
-millionare_h5:
-<categoryName>Costs</categoryName>
-<introText>A cost can be defined in many ways. Individuals preparing reports for management need to recognize which costs to include and what those costs will mean. In this activity you'll practice distinguishing between costs. Read each description and select the cost that best fits the situation.</introText>
-<outroText>Thank you for playing our game! You can click "Play Again" if you'd like to try for a better score.</outroText>
+Used generic: Category 1, ... 
 
 ====
 
@@ -56,11 +75,11 @@ Student view: Play game
 Instructor view: Edit game options. Choose questions.
 
 table fields
-name : instance if you want
-quiz_name : a title in game?
-quiz_description : info/instructions in game
+name : instance defined by assignment id
+quiz_name : a title in game
+quiz_description : intro/instructions in game
 questions : Array of selected question_id
-game_style : ygt, gameshow, millionare, ?
+game_style : ygt, gameshow, millionare, more?
 
 
 question object

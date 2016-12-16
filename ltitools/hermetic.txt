@@ -33,9 +33,31 @@ php artisan create:model hermetic.ltitools popquiz
 php artisan create:component hermetic.ltitools popquiz
 
 Popquiz : 
-    could have several in a course. Instance name should include/be quiz_name?
-    retrieve assignment id
+    could have several in a course. Instance name uses assignment id
+    retrieve assignment id after 1st post and update instance name
     grade as assignment
+
+These functions must be within each game
+    function showIntro() {
+        stage.removeChild(exportRoot);
+        handleComplete();//init();
+    }
+
+    function sendGrade() {
+        if (graded) { return false; }
+        graded = true;// only once
+        // use RestAPI grade is always 100%
+        var consumerkey = '{{consumerkey|raw}}';//Canvas: oauth_consumer_key
+        var outcomeurl = '{{outcomeurl|raw}}';//Canvas: lis_outcome_service_url 
+        var sourcedid = '{{sourcedid|raw}}';//Canvas: lis_result_sourcedid
+        var grade = 1;// 0~1 (0.5=50%)
+        //console.log('sendGrade: outcomeurl:',outcomeurl);
+        if (sourcedid == 'x') { return false; }
+        var promise = $.get('onGradePopquiz', {'consumerkey':consumerkey,'outcomeurl':outcomeurl,'sourcedid':sourcedid,'grade':grade}, function (data) {
+            //console.log('PROMISE result:',data);
+        }).fail(function (data) { console.log('PROMISE failed:',data.responseText); });
+    }
+
 
 -------- Notes:
 removed from component.php
@@ -43,25 +65,26 @@ removed from component.php
     $this->addCss('/modules/system/assets/ui/storm.less', 'core');// UNUSED
     
     
--------- error:
+-------- Errors:
 roots line 575
 //case "Illuminate\Database\Eloquent\Collection":
 case "October\Rain\Database\Collection":
 
 had to switch in order to get quizzes from lms
-timed out but data is there now : Home build 382
+timed out but data is there now. 
+localhost : Home build 382
 test on mediafiles server : build 316
 
 After installing in a new course on server, had to switch back.
-Does this need to be ( or visa versa )
-case "October\Rain\Database\Collection":
+Does this need to be changed to
+
+case "Illuminate\Database\Eloquent\Collection":
     if($data->isEmpty()||($request->getInclude_questions()&& count($data->first()->questions)<1))
     {
         return $this->getQuizzesFromLms($request);
     } else { return $data; }
     
-case "Illuminate\Database\Eloquent\Collection":
-//default:
+case "October\Rain\Database\Collection":
     if(is_null($data)||($request->getInclude_questions()&&count($data->questions)<1))
     {
         return $this->getQuizzesFromLms($request);
@@ -88,36 +111,14 @@ class CreatePopquizzesTable extends Migration
             $table->engine = 'InnoDB';
 
 
-LtiConfiguration :type = editor
 
-But at first launch, courseID is Undefined
-Popquiz.php line 194: $courseId = $_SESSION['courseID'];
-
-SESSION variables get set in LtiConfiguration.php at doBltiHandshake()
-Does it need to be sooner? or is editor not calling handshake
-
-In Quizlession I solved the problem like so,
-$_SESSION['courseID'] = \Input::get('custom_canvas_course_id');
-$_SESSION['userID'] = \Input::get('custom_canvas_user_id');
-$_SESSION['domain'] = \Input::get('custom_canvas_api_domain');
-$_SESSION['lms'] = \Input::get('custom_canvas_lms');
-$_SESSION['roles'] = \Input::get('roles');// I added this for Editor version of LtiConfiguration.php
-
-next err: CanvasHelper
-$token = \Crypt::decrypt($_SESSION['userToken']);
-
-
-Solution:
-type=editor is skipping the doBltiHandshake()
-lti_message_type = ContentItemSelectionRequest
-
+--------
 config.xml includes options & custom variables
-
 
 2nd launch is basic-lti-launch-request
 questions are store/retrieved from db so questions are changable by instructor.
 
--------- // https://www.edu-apps.org/extensions/content.html
+https://www.edu-apps.org/extensions/content.html
 Added ResourceSelection type to LtiConfiguation.php
 Moved custom variables in config xml, so they are available for all types.
 Also included lms in custom variables, it is part of the server Lti Configuration already available
@@ -126,43 +127,16 @@ $lms = $instanceFromDB['lms'];
 
 Installed Popquiz in new course. lti config working
 
-This function must be within each game
-function sendGrade() {
-    // use RestAPI grade is always 100%
-    var outcomeurl = {{outcomeurl|raw}};//Canvas: lis_outcome_service_url 
-    var sourcedid = {{sourcedid|raw}};//Canvas: lis_result_sourcedid
-    var grade = 1;// 0~1 (0.5=50%)
-    //console.log('sendGrade: outcomeurl:',outcomeurl);
-
-    var promise = $.get('onGradePopquiz', {'outcomeurl':outcomeurl,'sourcedid':sourcedid,'grade':grade}, function (data) {
-        console.log('PROMISE result:',data);
-    }).fail(function (data) { console.log('PROMISE failed:',data.responseText); });
-}
-
-
 
 TestStudent Authorized token, Post:
-oauth_consumer_key = mfue-key
-oauth_signature_method = HMAC-SHA1
-oauth_timestamp = 1480959606
-oauth_nonce = slWxWh3rjQxklHJZpUBPI9jCeQamYcI08aPFeersDY
-oauth_version = 1.0
-context_id = c983cc6e877f399dfc4a62dac191c1cf8b8730a9
-context_label = Ed Tech Test Course 2
-context_title = DEV_Ed Tech - Test Course 2
-custom_canvas_api_domain = uvu.instructure.com
+**** oauth_consumer_key = mfue-key
 **** custom_canvas_assignment_id = 2972295
 custom_canvas_assignment_points_possible = 10
 custom_canvas_assignment_title = PopQuiz1
 custom_canvas_course_id = 434530
 custom_canvas_enrollment_state = active
 custom_canvas_lms = canvas
-custom_canvas_user_id = 1688499
-custom_canvas_user_login_id = 21a64d54cb594be6f1748c1ad4599a23ae6d7d79
-custom_lis_course_offering_sourcedid = DEV_EdTech-TestCourse2
-custom_lis_person_contact_email_primary =
 custom_lis_person_sourcedid =
-custom_user_image = https://secure.gravatar.com/avatar/000?s=50&d=https%3A%2F%2Fcanvas.instructure.com%2Fimages%2Fmessages%2Favatar-50.png
 **** ext_ims_lis_basic_outcome_url = https://uvu.instructure.com/api/lti/v1/tools/63671/ext_grade_passback
 ext_outcome_data_values_accepted = url,text
 ext_outcome_result_total_score_accepted = true
@@ -179,58 +153,17 @@ lis_person_name_full = Test Student
 lis_person_name_given = Test
 **** lis_result_sourcedid = 63671-434530-2972295-1688499-48778799581598dba7d8d53bbac7b303d99befe5
 lti_message_type = basic-lti-launch-request
-lti_version = LTI-1p0
-oauth_callback = about:blank
-resource_link_id = c1ab6dc176ed12a00997fb9461ff745dfaf1c63c
 resource_link_title = PopQuiz1
 roles = Learner
 tool_consumer_info_product_family_code = canvas
-tool_consumer_info_version = cloud
-tool_consumer_instance_contact_email = notifications@instructure.com
-tool_consumer_instance_guid = 53ff06d8f8dbd4741ff5bd57b3065b53c1cca411.uvu.instructure.com
-tool_consumer_instance_name = Utah Valley University
-user_id = 7aac895f0d3c071eac687c46b9b0a7afaf8a2bb3
-user_image = https://secure.gravatar.com/avatar/000?s=50&d=https%3A%2F%2Fcanvas.instructure.com%2Fimages%2Fmessages%2Favatar-50.png
-oauth_signature = 6beYQSovsmaV1hK9BgVDnt7htyM= 
 
 
 assignment_id is set after return_url is set, 2nd launch
 $assignmentID = $_POST['custom_canvas_assignment_id'];
 
-is there a Roots submitAssignment ? testing: $roots->submissions($req, $params);
-
-https://canvas.instructure.com/doc/api/submissions.html#method.submissions.create
-POST /api/v1/courses/:course_id/assignments/:assignment_id/submissions 
-Didn't work.
-
-Test 1: roots->submissions
-promise failed:
-responseText:""Client error: `POST https://uvu.instructure.com/api/v1/courses/434530/assignments/2972295/submissions?submission%5Bsubmission_type%5D=basic_lti_launch&submission%5Bbody%5D=Present&access_token=14~q1IsPhThGqD6CYMa39AH9tMDqNuWZo8wp3UynObQUSX4kP4Ej09TcOV3XgHYHHhK` resulted in a `401 Unauthorized` response:
-{"status":"unauthorized","errors":[{"message":"user not authorized to perform that action"}]}
-" on line 107 of /var/www/html/delphinium/plugins/october/drivers/vendor/guzzlehttp/guzzle/src/Exception/RequestException.php"
-
-
-Test 2: gradepassback
-custom_canvas_assignment_id = 2972295
-ext_ims_lis_basic_outcome_url = https://uvu.instructure.com/api/lti/v1/tools/63671/ext_grade_passback
-lis_outcome_service_url =       https://uvu.instructure.com/api/lti/v1/tools/63671/grade_passback
-lis_result_sourcedid = 63671-434530-2972295-1688499-48778799581598dba7d8d53bbac7b303d99befe5
-
-try sending xmlbody directly to lis_outcome_service_url using curl
-https://canvas.instructure.com/doc/api/file.assignment_tools.html
-https://www.imsglobal.org/specs/ltiomv1p0/specification
-
-sendGrade: outcomeurl: https://uvu.instructure.com/api/lti/v1/tools/63671/ext_grade_passback
-PROMISE result: "{\"errors\":[{\"message\":\"Invalid authorization header\"}],\"error_report_id\":79824957}
-Add authorization token header
-
-
 Test 3: Use sendOAuthBodyPOST like my original tool. worked!
 used endpoint lis_outcome_service_url
-
-Hardcoded key & secret
-key is available in post, use it to get secret
-add a getSecret function to LtiConfiguration.php or OAuthRequest for hermetic/ltitools/controllers/RestApi.php
+added a getSecret function to hermetic/ltitools/controllers/RestApi.php
 added function sendOAuthBodyPOST to /delphinium/roots/classes/OAuthRequest.php line 273~
 
 

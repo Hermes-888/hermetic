@@ -1,3 +1,69 @@
+Quiz Lesson lets an instrutor build a page with content, including images, then insert a question selected from a quiz.
+When a student answers the questions, the quiz is updated. 
+Its impotant to use all questions from the same quiz.
+Questions can be spread over multiple pages. 
+A submit button is inserted in the page after all questions are used to submit and grade the quiz.
+12/16
+
+ToDo: TJones: glyphicon at gmail
+
+Decide the best way to display the feedback:
+    overlay onto question
+    with gradeRetry() button added to feedback if not correct
+    OR
+    replace answers and show the correct answer
+    with feedback
+    DONT increase iframe height
+    
+Submit Answer button:
+    each question needs a submit button.
+    multiple_answers_question can have multiple answer ids [1,2,3]
+    ADDED function to inject the selected answer.id(s) into the Submit Answer button
+    button passes quiz_id, question_id, answer.id(s) to php onGradeQuestion()
+    
+    Selected answers are sent by their id
+    https://canvas.instructure.com/doc/api/quiz_submission_questions.html#method.quizzes/quiz_submission_questions.answer
+    Answers have different types
+    https://canvas.instructure.com/doc/api/quiz_submission_questions.html#Question+Answer+Formats-appendix
+    
+Submit the Quiz button:
+    clear the instance, orchidConfig: quiz_name, quiz_id and questions_used for next time
+    only needs to call the onSubmitQuiz function
+    user_id (studentId) and quiz_id are retrieved from SESSION in the function
+    if post parameter quizid == 'submit' render the Submit Quiz button instead of questions
+
+Get Submissions for quiz:
+
+if (role == 'Learner' && $_POST['quiz_id'] != '') {
+
+    Display submission data for answered questions in js render(quizid, questions) 
+    renderQuestion.html retrieves var submission
+    if workflow_state = complete render question + correct answer
+}
+
+
+Match Canvas question css? (displays kinda big, no access to canvas css)
+
+multiple_answers_question = check boxes
+multiple_choice_question = radio buttons
+
+quiz_id, question_id, each answer has an id
+Instruct user to complete one page at a time?
+All questions are in a form for submit button.
+How would this work for separated questions?
+Does each question group need a submit? or does the submit button need question ids?
+
+How to handle multiple pages? will each page in a course try to use the same instance?
+Should a new page update the instance[name] to be unique for the page it belongs to. 
+use quizid = 697065 similar to popquiz instance names?
+unique name would have to come from the post and check if it has already been used upon adding questions to the page.
+possibly .referrer? possibly $_SERVER['REQUEST_URI']
+OR
+A field holds the page name or tool_consumer_instance_guid ( test if this is the same for a given page )
+and instance is chosen accordingly
+
+
+
 9/6
 moved onUpdateTable & onGetSubmissions to RestApi.php
 
@@ -101,44 +167,6 @@ Err was from posting autosubmit before onUpdateTable was done.
 Wait till updateTable is done, then autosubmit the form!
 ======================================
 
-ToDo: TJones: glyphicon at gmail
-
-Decide the best way to display the feedback:
-    overlay onto question
-    with gradeRetry() button added to feedback if not correct
-    OR
-    replace answers and show the correct answer
-    with feedback
-    DONT increase iframe height
-    
-Submit Answer button:
-    each question needs a submit button.
-    multiple_answers_question can have multiple answer ids [1,2,3]
-    ADDED function to inject the selected answer.id(s) into the Submit Answer button
-    button passes quiz_id, question_id, answer.id(s) to php onGradeQuestion()
-    
-    Selected answers are sent by their id
-    https://canvas.instructure.com/doc/api/quiz_submission_questions.html#method.quizzes/quiz_submission_questions.answer
-    Answers have different types
-    https://canvas.instructure.com/doc/api/quiz_submission_questions.html#Question+Answer+Formats-appendix
-    
-Submit the Quiz button:
-    clear the instance, orchidConfig: quiz_name, quiz_id and questions_used for next time
-    only needs to call the onSubmitQuiz function
-    user_id (studentId) and quiz_id are retrieved from SESSION in the function
-    if post parameter quizid == 'submit' render the Submit Quiz button instead of questions
-
-Get Submissions for quiz:
-
-if (role == 'Learner' && $_POST['quiz_id'] != '') {
-
-    Display submission data for answered questions in js render(quizid, questions) 
-    renderQuestion.html retrieves var submission
-    if workflow_state = complete render question + correct answer
-}
-
-
-===
 Quiz must NOT have question groups and should be set to unlimited multiple attempts?
 
 Orchid configuration xml uses the CMS page name for the app
@@ -571,25 +599,6 @@ $_SESSION['courseID']=$_POST['custom_canvas_course_id'];
 
 
 7/24/16
-Match Canvas question css? (displays kinda big, no access to canvas css)
-
-multiple_answers_question = check boxes
-multiple_choice_question = radio buttons
-
-quiz_id, question_id, each answer has an id
-
-All questions are in a form for submit button.
-How would this work for separated questions?
-Does each question group need a submit? or does the submit button need question ids?
-
-How to handle multiple pages? will each page in a course try to use the same instance?
-Should a new page update the instance[name] to be unique for the page it belongs to.
-unique name would have to come from the post and check if it has already been used upon adding questions to the page.
-possibly .referrer? possibly $_SERVER['REQUEST_URI']
-OR
-A field holds the page name or tool_consumer_instance_guid ( test if this is the same for a given page )
-and instance is chosen accordingly
-
 
 postQuizTakingSession($quizId, $studentId);
 with manual student id

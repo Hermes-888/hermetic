@@ -6,20 +6,18 @@ columns:
     id:
         label: ID
         searchable: true
+
     name:
         label: Name
         searchable: true
-        
+ 
     quiz_name:
         label: Quiz Name
         searchable: true
-        
-    quiz_description:
-        label: Description
-        
-    questions:
-        label: Questions
-        
+
     game_style:
         label: Game
         searchable: true
+
+    quiz_description:
+        label: Description

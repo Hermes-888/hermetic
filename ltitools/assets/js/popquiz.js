@@ -154,7 +154,6 @@
 
     /* called from cog form */
     function updateForm(e) {
-        e.preventDefault();
         // transfer form to config
         config.quiz_name = $('#Form-field-Popquiz-quiz_name').val();
         config.questions = $('#Form-field-Popquiz-questions').val();
@@ -166,8 +165,7 @@
         // use RestAPI to update db table then submit to return_url
         console.log('config:',config);
         var promise = $.get('onUpdatePopquiz', {'Popquiz':config}, function (data) {
-            console.log('PROMISE result:',data);// T/F
-            
+            //console.log('PROMISE result:',data);// T/F
             if (assignmentID == '') {
                 // https://www.edu-apps.org/extensions/content.html
                 var url = returnurl+"?return_type=lti_launch_url&url="+encodeURIComponent(toolurl);
@@ -188,41 +186,40 @@
     $('#viewit').click(function(e) {
         e.preventDefault();
         viewitems = quests;
-		if(viewitems.length>0) { 
-			constructQuestion(nextcount);
-			$('#detailed').modal('show');
-		 }
-		 // else no questions to see
+        if (viewitems.length>0) { 
+            constructQuestion(nextcount);
+            $('#detailed').modal('show');
+        }
+        // else no questions to see
     });
 	$('#seeit').click(function(e) {
         e.preventDefault();
         viewitems = gameitems;
-		if(viewitems.length>0) { 
-			constructQuestion(nextcount);
-			$('#detailed').modal('show');
-		 }
-		 // else no questions to see
+        if (viewitems.length>0) { 
+            constructQuestion(nextcount);
+            $('#detailed').modal('show');
+        }
+        // else no questions to see
     });
     $('#nextbtn').click(function(e) {
         e.preventDefault();
         //detailed-body replace content with next question
-		nextcount++;
-		if (nextcount==viewitems.length){ nextcount=0; }
-		constructQuestion(nextcount);
+        nextcount++;
+        if (nextcount==viewitems.length) { nextcount=0; }
+        constructQuestion(nextcount);
     });
      $('#backbtn').on('click', function(e) {
         e.preventDefault();
         //previous question
-		nextcount--;
-		if(nextcount<0){ nextcount=viewitems.length-1; }
-		constructQuestion(nextcount);
+        nextcount--;
+        if (nextcount<0) { nextcount=viewitems.length-1; }
+        constructQuestion(nextcount);
     });
-	/* also see selected questions accordion-2 quests[]
-	   index is first selected question to see in #detailed modal
+    /* also see selected questions accordion-2 quests[]
+       index is first selected question to see in #detailed modal
        construct: type, points, question, answers and comments
-	*/
-	function constructQuestion(index)
-	{	
+    */
+	function constructQuestion(index) {	
 		var quest = viewitems[index];
 		$('#detailed-title').html('Question '+(index+1));
 		$('#qtype').html('Type: '+viewitems[index].type);
@@ -243,9 +240,9 @@
 			ansdiv+=answers[i].text;
 			ansdiv+='</div>';
 		}
-		$('#qanswers').html('<hr/>Answers:<br/>'+ansdiv);
+        $('#qanswers').html('<hr/>Answers:<br/>'+ansdiv);
 		
-		var comdiv='';
+        var comdiv='';
 		if (viewitems[index].correct_comments!= "") {
 			comdiv+='<div class=bg-success>';
 			comdiv+=viewitems[index].correct_comments;
@@ -286,8 +283,7 @@
 
 
     /* show all quizzes as buttons */
-    function showQuizzes()
-    {
+    function showQuizzes() {
         //console.log('quizList.length:',quizList.length);
         /* put 1/3 in each column inc to count, reset : inc colm */
         var count = Math.ceil(quizList.length/3);
@@ -318,8 +314,7 @@
         Questions are selectable or all
         submit btn adds questions to gameitems
     */
-    function showQuizQuestions(id)
-    {
+    function showQuizQuestions(id) {
         // fill id=quizdata with selected quiz and show it
         // qtitle quiz_details, quizdata
         console.log('view quiz_id:'+id);
@@ -360,8 +355,7 @@
     }
 
     /* Display questions selected for game */
-    function showSelected()
-    {
+    function showSelected() {
         $('#qtitle').text(config.quiz_name);
         //gameitems [question, ]
         $('#gameselectable').empty();
@@ -392,22 +386,3 @@
         });
         $('#accordion-3').collapse('show');
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
