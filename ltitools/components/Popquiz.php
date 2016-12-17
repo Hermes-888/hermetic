@@ -43,12 +43,9 @@ class Popquiz extends ComponentBase
      */
     public function onRun()
     {
-
-        //try{
-        
+        //try {
             // Type = ResourceSelection
             //foreach($_POST as $key => $value ) { echo "<br/>$key = $value"; }
-            
             $assignmentID = '';//1st launch no questions yet
             if (isset($_POST['custom_canvas_assignment_id'])) {
                 //2nd launch return_url is set. Questions set. instance name set
@@ -192,7 +189,7 @@ class Popquiz extends ComponentBase
         }
         return json_encode($list);
     }
-    
+
     /* Learner needs question objects for game
      * use Delphinium\Roots\Models\Quizquestion as questionsModel; 
      */
@@ -208,7 +205,7 @@ class Popquiz extends ComponentBase
         }
         return json_encode($questionArray);
     }
-    
+
     /**
      * @return array An array of instances (eloquent models) to populate the instance dropdown to configure this component
      */
@@ -259,27 +256,5 @@ class Popquiz extends ComponentBase
         $config->save();
         return $config;
     }
-
-    /**
-     * Ajax Handler for when instructors update the component from their view
-     * @return string Json encoded instance of component
-     * USE RestApi in form too
-     
-    public function onUpdate()
-    {
-        $data = post('Popquiz');//model name
-        $id = intval($this->page->popquizrecordId);// convert string to integer
-        $config = $this->getInstance($data['name']);// retrieve existing record
-
-        //update record with new data coming from POST
-        $config->name = $data['name'];
-        $config->quiz_name = $data['quiz_name'];//title
-        $config->quiz_description = $data['quiz_description'];//user input html
-        $config->questions = $data['questions'];//selected ids
-        $config->game_style = $data['game_style'];//game
-        $config->save();// update original record
-        return json_encode($config);// back to instructor view  
-    }
-    */
 
 }

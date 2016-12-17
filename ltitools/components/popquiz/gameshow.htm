@@ -12,13 +12,13 @@
 <script>
     var canvas, stage, exportRoot, loader;
     var graded = false;
-	gameQuest = {{gameQuest|raw}};
-	// warn if less than 12 questions
+    var minimalQuestions = 12;// warn if less than
+    gameQuest = {{gameQuest|raw}};
+
     init();
     function init() {
         canvas = document.getElementById("canvas");
-        images = images||{};
-    //http://createjs.com/docs/preloadjs/classes/LoadQueue.html
+        images = images||{};//http://createjs.com/docs/preloadjs/classes/LoadQueue.html
         loader = new createjs.LoadQueue(false);
         loader.addEventListener("fileload", handleFileLoad);
         loader.addEventListener("complete", handleComplete);
@@ -27,13 +27,11 @@
 
     function handleFileLoad(evt) {
         if (evt.item.type == "image") { images[evt.item.id] = evt.result; }
-        if (evt.item.type == "xml") { xmldata=evt.result; }
-        ///console.log("handleFileLoad:"+evt.item.type);
     }
 
     function handleComplete() {
         exportRoot = new lib.gameshow();
-        
+
         stage = new createjs.Stage(canvas);
         stage.addChild(exportRoot);
         stage.update();

@@ -43,7 +43,6 @@ class Quizlesson extends ComponentBase
         ];
     }
 
-
     /**
      * This function will run every time this component runs. To use this component, drop it on a OctoberCMS page along with the dev component
      * (for development) or LTIConfiguration component (for production)
@@ -64,7 +63,7 @@ class Quizlesson extends ComponentBase
             $this->page->quizlessonrecordId = $config->id;
             if (!isset($_SESSION)) {
                  session_start();
-             }
+            }
             //get LMS roles --used to determine functions and display options
             $roleStr = $_SESSION['roles'];
             $this->page['role'] = $roleStr;
@@ -178,7 +177,7 @@ class Quizlesson extends ComponentBase
             return $array_dropdown;
         }
     }
-    
+
     /**
      * Retrieves instance of this component. If no specific instance was selected in the CMS configuration of this component
      * then it will create a dynamic instance based on the alias_courseId in which this component was launched

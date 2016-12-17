@@ -1,53 +1,22 @@
-/*
- * Copyright (C) 2012-2016 Project Delphinium - All Rights Reserved
- *
- * This file is subject to the terms and conditions defined in
- * file 'https://github.com/ProjectDelphinium/delphinium/blob/master/EULA',
- * which is part of this source code package.
- *
- * NOTICE:  All information contained herein is, and remains the property of Project Delphinium. The intellectual and technical concepts contained
- * herein are proprietary to Project Delphinium and may be covered by U.S. and Foreign Patents, patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material is strictly forbidden unless prior written permission is obtained
- * from Project Delphinium.
- *
- * THE RECEIPT OR POSSESSION OF THIS SOURCE CODE AND/OR RELATED INFORMATION DOES NOT CONVEY OR IMPLY ANY RIGHTS
- * TO REPRODUCE, DISCLOSE OR DISTRIBUTE ITS CONTENTS, OR TO MANUFACTURE, USE, OR SELL ANYTHING THAT IT  MAY DESCRIBE, IN WHOLE OR IN PART.
- *
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Non-commercial use only, you may not charge money for the software
- * You can modify personal copy of source-code but cannot distribute modifications
- * You may not distribute any version of this software, modified or otherwise
- */
-
 $(document).ready(function() {
 /*
-	Quiz Lessons:
-	Instructor actions:
-    -In text editor, add text
+    Quiz Lessons:
+    Instructor actions:
+    -In the rich text editor, add text and image content
     -select the editor LTI resources drop down icon
     
-	-select a quiz to use
-	save id and display the questions
-		-ability to choose another quiz?
-		-cannot replace questions already placed on page
-	
-	-select questions with check box, view details with eye icon
-    -select Add QuestIons to place a group of questions on page
-	-use editor to place text between question groups
-	-place a quiz submit button after all questions are placed
-	
-	//start with a text field OBSOLETE
-    
-    todo:
-    https://www.imsglobal.org/specs/lticiv1p0/specification-3
-    
-    submit button must contain quiz_id for quiz submission api call
+    -select a quiz to use
+    -save id and display the questions
+        -ability to choose another quiz?
+        -cannot replace questions already placed on page
+
+    -select questions with check box, view details with eye icon
+    -select Add Questions to place a single or group of questions on page
+    -use editor to place text between question groups
+    -place a submit button after all questions are placed
 */
 
-/* Delphinium functions:
-	set up the popover content text and activate it
-*/
-     if (messageType == "ContentItemSelectionRequest") {
+    if (messageType == "ContentItemSelectionRequest") {
         $('#orchid-popinfo').attr("data-content","Choose a Quiz. Then select questions and add them to the page. Be sure to use all questions from the same quiz! Submit Quiz button will grade the quiz.");
         $('#orchid-popinfo').popover();// activate info
 
@@ -115,14 +84,12 @@ $(document).ready(function() {
     }
     
     /* show all quizzes as buttons */
-    function showQuizzes()
-    {
+    function showQuizzes() {
         /* put 1/3 in each column inc to count, reset : inc colm */
         var count = Math.ceil(quizList.length/3);
         var col=0;
         var row=0;
-        for(var i=0; i<quizList.length; i++)
-        {
+        for (var i=0; i<quizList.length; i++) {
             content = '<div id='+quizList[i].quiz_id+' class="alert alert-info">';// blue
             content += quizList[i].title;
             content += ': total questions: '+quizList[i].questions.length;//.question_count;
@@ -142,8 +109,7 @@ $(document).ready(function() {
         });
     }
 
-    function showQuizQuestions(id)
-    {
+    function showQuizQuestions(id) {
         // close quiz selector quizlist
         $('#quizlist').hide();
         $('#questiongroup').show();
@@ -251,8 +217,8 @@ $(document).ready(function() {
             } else {
                 qids += $(items[i]).parent().attr('id');
             }
-			usedcount+=1;// add to used count
-		}
+            usedcount+=1;// add to used count
+        }
 		
         /* Disable Add Selected Questions button
         *   if all questions have been used, 
@@ -295,7 +261,6 @@ $(document).ready(function() {
         //$('#contentSelector').submit();// autosubmit form
         
         // warn user to close the selection modal or add the Submit Quiz button
-        
     });
 
 	/*  Add the Submit Quiz button to page
@@ -329,16 +294,16 @@ $(document).ready(function() {
         updateTable();
         // wait till updateTable is done
         //$('#contentSelector').submit();// autosubmit form
-	});
+    });
 
     // choose a different quiz
     $('#replacequiz').on('click', function(e) {
         e.preventDefault();
         $('#quizlist').show();
         $('#questiongroup').hide();
-		// enable add questions, disable addsubmit
-		$('#addselected').removeAttr( "disabled" );
-		$('#addsubmit').attr("disabled","disabled");
+        // enable add questions, disable addsubmit
+        $('#addselected').removeAttr( "disabled" );
+        $('#addsubmit').attr("disabled","disabled");
         selecteditems=[];// empty array
     });
 
@@ -346,80 +311,78 @@ $(document).ready(function() {
     $('#nextbtn').on('click', function(e) {
         e.preventDefault();
         //next question
-		nextcount++;
-		if(nextcount==quests.length){ nextcount=0; }
-		constructQuestion(nextcount);
+        nextcount++;
+        if (nextcount==quests.length) { nextcount=0; }
+        constructQuestion(nextcount);
     });
     $('#backbtn').on('click', function(e) {
         e.preventDefault();
         //previous question
-		nextcount--;
-		if(nextcount<0){ nextcount=quests.length-1; }
-		constructQuestion(nextcount);
+        nextcount--;
+        if(nextcount<0){ nextcount=quests.length-1; }
+        constructQuestion(nextcount);
     });
 
-	/*
-	*   index is first selected question to see in #quest-details modal
+    /*
+    *   index is first selected question to see in #quest-details modal
     *   construct: type, points, question, answers and comments
-	*/
-	function constructQuestion(index)
-	{	
-		var quest = quests[index];
+    */
+    function constructQuestion(index) {	
+        var quest = quests[index];
         index = parseInt(index);// string to integer
         //console.log(index, quest);
-		$('#quest-details-title').html('Question '+(index+1));
-		$('#qtype').html('Type: '+quests[index].type);
-		$('#qpoints').html('Points: '+quests[index].points_possible);
-		var txt = quests[index].text;//.toString();
-			txt = $.parseHTML(txt);
-			txt = txt[0].textContent;
-		$('#qtext').html(txt);
-		var answers= $.parseJSON(quests[index].answers);
-		var ansdiv='';
-		//console.log(answers);//for each
-		for(var i=0; i<answers.length; i++)
-		{
-			if(answers[i].weight==0){
-				ansdiv+='<div class="alert alert-danger">';
-			} else {
-				ansdiv+='<div class="alert alert-success">';
-			}
-			ansdiv+=answers[i].text;
-			ansdiv+='</div>';
-		}
-		$('#qanswers').html('<hr/>Answers:<br/>'+ansdiv);
-		
-		var comdiv='';
-		if(quests[index].correct_comments!= "")
-		{
-			comdiv+='<div class=bg-success>';
-			comdiv+=quests[index].correct_comments;
-			comdiv+='</div>';
-		}
-		if(quests[index].incorrect_comments != "")
-		{
-			comdiv+='<div class=bg-danger>';
-			comdiv+=quests[index].incorrect_comments;
-			comdiv+='</div>';
-		}
-		if(quests[index].neutral_comments != "")
-		{
-			comdiv+='<div class=bg-warning>';
-			comdiv+=quests[index].neutral_comments;
-			comdiv+='</div>';
-		}
-		$('#qfeedback').html('<hr/>Comments:<br/>'+comdiv);
-	}
+        $('#quest-details-title').html('Question '+(index+1));
+        $('#qtype').html('Type: '+quests[index].type);
+        $('#qpoints').html('Points: '+quests[index].points_possible);
+        var txt = quests[index].text;//.toString();
+            txt = $.parseHTML(txt);
+            txt = txt[0].textContent;
+        $('#qtext').html(txt);
+        var answers= $.parseJSON(quests[index].answers);
+        var ansdiv='';
+        //console.log(answers);//for each
+        for (var i=0; i<answers.length; i++) {
+            if (answers[i].weight==0) {
+                ansdiv+='<div class="alert alert-danger">';
+            } else {
+                ansdiv+='<div class="alert alert-success">';
+            }
+            ansdiv+=answers[i].text;
+            ansdiv+='</div>';
+        }
+        $('#qanswers').html('<hr/>Answers:<br/>'+ansdiv);
+
+        var comdiv='';
+        if (quests[index].correct_comments!= "")
+        {
+            comdiv+='<div class=bg-success>';
+            comdiv+=quests[index].correct_comments;
+            comdiv+='</div>';
+        }
+        if (quests[index].incorrect_comments != "")
+        {
+            comdiv+='<div class=bg-danger>';
+            comdiv+=quests[index].incorrect_comments;
+            comdiv+='</div>';
+        }
+        if (quests[index].neutral_comments != "")
+        {
+            comdiv+='<div class=bg-warning>';
+            comdiv+=quests[index].neutral_comments;
+            comdiv+='</div>';
+        }
+        $('#qfeedback').html('<hr/>Comments:<br/>'+comdiv);
+    }
     
     /* Render Questions.htm 
     *   functions
     *   https://canvas.instructure.com/doc/api/quiz_submission_questions.html#method.quizzes/quiz_submission_questions.answer
     */
-    function gradeQuestion(quizid, qid, aid, qtype){
+    function gradeQuestion(quizid, qid, aid, qtype) {
         console.log('gradeQuestion:', quizid, qid, aid, qtype);
         
         // Test: role = "Learner";
-        if(role=='Instructor') {
+        if (role=='Instructor') {
             showFeedback(quizid,qid);// only display feedback. 
             
         } else {
@@ -502,7 +465,7 @@ $(document).ready(function() {
         
         if (questions == 'submit') {
             
-            if(quizdone) {
+            if (quizdone) {
                 $('#q').html('<strong>Quiz has been Completed.</strong>');// fancier?
             } else {
                 // only display the Submit Quiz button
@@ -523,9 +486,7 @@ $(document).ready(function() {
             }
             return true;// render completed
         } 
-            
-            
-        
+
         // find the quiz
         var quiz = $.grep(quizList, function(elem, indx){
             return elem.quiz_id == quizid; }
@@ -534,7 +495,7 @@ $(document).ready(function() {
         // find the questions
         var quests = $.grep(quiz[0].questions, function(elem, indx){
            // return elem.question_id == questions[0];
-           for(var q=0; q<questions.length; q++) {
+           for (var q=0; q<questions.length; q++) {
                //console.log('grep:',indx, questions[q], elem.question_id);
                if (elem.question_id == questions[q]) {
                    return elem;
@@ -555,8 +516,6 @@ $(document).ready(function() {
             var ansdiv='';
             //console.log(answers);//for each
             for (var a=0; a<answers.length; a++) {
-                
-                
                 if (quizdone) {
                     // quiz has been completed, add correct answer(s)
                     if (answers[a].weight > 0) {
@@ -621,7 +580,6 @@ $(document).ready(function() {
             }
         });
     }
-    
 
 /* question object
     answers: "[

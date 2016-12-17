@@ -11,45 +11,43 @@
 <button type="button" onClick="sendGrade()">Test Grading</button>
 
 <script>
-
 	var canvas, stage, exportRoot, loader;
     var graded = false;
-	gameQuest = {{gameQuest|raw}};
-	//console.log('millionaire gameQuest:',gameQuest.length, gameQuest);
-	// warn if less than 15 questions
+    var minimalQuestions = 15;// warn if less than
+    gameQuest = {{gameQuest|raw}};
+    
     init();
-	function init() {
-		canvas = document.getElementById("canvas");
-		images = images||{};
-
-		var loader = new createjs.LoadQueue(false);
+    function init() {
+        canvas = document.getElementById("canvas");
+        images = images||{};
+        var loader = new createjs.LoadQueue(false);
 		loader.addEventListener("fileload", handleFileLoad);
-		loader.addEventListener("complete", handleComplete);
-		loader.loadManifest(lib.properties.manifest);// 3rd
-	}
+        loader.addEventListener("complete", handleComplete);
+        loader.loadManifest(lib.properties.manifest);// 3rd
+    }
 
-	function handleFileLoad(evt) {
-		if (evt.item.type == "image") { images[evt.item.id] = evt.result; }
-	}
+    function handleFileLoad(evt) {
+        if (evt.item.type == "image") { images[evt.item.id] = evt.result; }
+    }
 
-	function handleComplete() {
-		exportRoot = new lib.millionaireh5();
-		//console.log('Millionaire handleComplete:');// 4th
+    function handleComplete() {
+        exportRoot = new lib.millionaireh5();
+        //console.log('Millionaire handleComplete:');// 4th
 		
-		stage = new createjs.Stage(canvas);
-		stage.addChild(exportRoot);
-		stage.update();
-		stage.enableMouseOver();
+        stage = new createjs.Stage(canvas);
+        stage.addChild(exportRoot);
+        stage.update();
+        stage.enableMouseOver();
 
-		createjs.Ticker.setFPS(lib.properties.fps);
-		createjs.Ticker.addEventListener("tick", stage);
-	}
+        createjs.Ticker.setFPS(lib.properties.fps);
+        createjs.Ticker.addEventListener("tick", stage);
+    }
 
     function showIntro() {
         stage.removeChild(exportRoot);
         handleComplete();//init();
     }
-    
+
     function sendGrade() {
         if (graded) { return false; }
         graded = true;// only once

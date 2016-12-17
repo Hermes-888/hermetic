@@ -33,6 +33,7 @@
     var chosenitems=[];// question_id of gameitems to use, view, remove, clear all
     var viewitems=[];// view question details
     var quests=[];// quiz questions to selected from
+    var nextcount=0;// question details
     console.log(config);
     console.log('toolurl:',toolurl);
     console.log('returnurl:',returnurl);
@@ -45,7 +46,7 @@
         console.log('INSTANCE:',config.name);
     }
     
-	//quizList = {{quizList|raw}};
+    //quizList = {{quizList|raw}};
     //console.log('quizList:', quizList.length, quizList);
     showQuizzes();// all quizzes to choose from
     console.log('if gameQuest:', gameQuest.length);//, gameQuest);
@@ -55,9 +56,9 @@
         showSelected();// from config.questions
     }
     
-	nextcount=0;//index for question details
-	
-	/* activate accordion and button functions */
+    nextcount=0;//index for question details
+
+    /* activate accordion and button functions */
     $('.panel-trigger').click(function(e) {
         //e.preventDefault();
         if ($(this).attr('href') == '#accordion-4' && $(this).hasClass('collapsed')) {
@@ -66,14 +67,14 @@
         }
         $('.panel-body').collapse('hide');//.addClass('collapsed');// ALL
         $(this).collapse('show');
-	});
+    });
    
     /* Add Selected Questions button in accordion-2 */
     $('#confirmit').click(function(e) {
         e.preventDefault();
         // selecteditems is array of question_id
         // transfer selecteditems[question_id,] to qameitems[question object,]
-		console.log('selecteditems:',selecteditems);
+        console.log('selecteditems:',selecteditems);
         for (var i=0; i<selecteditems.length; i++) {
             var quest = $.grep(quests, function(elem, index){
                 return elem.question_id == selecteditems[i];
@@ -88,14 +89,14 @@
         selecteditems=[];
     });
     
-     /* Remove All Questions button from gameitems */
+    /* Remove All Questions button from gameitems */
     $('#clearit').click(function(e) {
         e.preventDefault();
-		current=0;// questnum
-		nextcount=0;// see question
+        current=0;// questnum
+        nextcount=0;// see question
         gameitems=[];
         chosenitems=[];
-		$('#questcount').html(gameitems.length+' Questions');
+        $('#questcount').html(gameitems.length+' Questions');
         $('#gameselectable').empty();
     });
     
@@ -110,47 +111,47 @@
             gameitems.splice(item,1);// remove from array
             // remove <li>st node
             $('#gameselectable').find('[data-id='+chosenitems[i]+']').remove();
-			$('#questcount').html(gameitems.length+' Game Questions');
+            $('#questcount').html(gameitems.length+' Game Questions');
         }
         //console.log('chosenitems:',chosenitems);
         //console.log('gameitems:',gameitems);
         chosenitems=[];
-		nextcount = 0;//none selected
+        nextcount = 0;//none selected
     });
     
     /*  use gameitems to play game 
-		save gameitem to db questions as array of question_id
-		retrieve questions from delphinium_roots_quiz_questions
-	*/
+        save gameitem to db questions as array of question_id
+        retrieve questions from delphinium_roots_quiz_questions
+    */
     $('#useit').click(function(e) {
         e.preventDefault();
-		//console.log('gameitems:',gameitems.length, gameitems);
-		if (gameitems.length>0) {
+        //console.log('gameitems:',gameitems.length, gameitems);
+        if (gameitems.length>0) {
             /* gameitems = questions to use in game */
-			gameQuest=gameitems;
-			/* gameQuest is array of questions for game
+            gameQuest=gameitems;
+            /* gameQuest is array of questions for game
                 store config.questions[question_id, ...]
                 in db table to retrieve question objects 
                 from delphinium_roots_quiz_questions
             */
-			var idArray = [];
-			for (var i=0; i<gameitems.length; i++) {
+            var idArray = [];
+            for (var i=0; i<gameitems.length; i++) {
             //ONLY? if type == "multiple_choice_question"
-				idArray.push(gameitems[i].question_id);
-			}
-			//console.log('idArray:',idArray);
-			$('#Form-field-Popquiz-questions').val(idArray);
+                idArray.push(gameitems[i].question_id);
+            }
+            //console.log('idArray:',idArray);
+            $('#Form-field-Popquiz-questions').val(idArray);
             config.questions=idArray.toString();// and internal array
             console.log('config:', config.id, config.questions);
             
             updateTable();//RestAPI
-			//open the game
+            //open the game
             $('#accordion-3').collapse('hide');
-			$('#accordion-4').collapse('show');
+            $('#accordion-4').collapse('show');
             showIntro();// restart game with updated questions
-		}
+        }
 		// else no questions to use
-	});
+    });
 
     /* called from cog form */
     function updateForm(e) {
@@ -192,7 +193,7 @@
         }
         // else no questions to see
     });
-	$('#seeit').click(function(e) {
+    $('#seeit').click(function(e) {
         e.preventDefault();
         viewitems = gameitems;
         if (viewitems.length>0) { 
@@ -219,47 +220,47 @@
        index is first selected question to see in #detailed modal
        construct: type, points, question, answers and comments
     */
-	function constructQuestion(index) {	
-		var quest = viewitems[index];
-		$('#detailed-title').html('Question '+(index+1));
-		$('#qtype').html('Type: '+viewitems[index].type);
-		$('#qpoints').html('Points: '+viewitems[index].points_possible);
-		var txt = viewitems[index].text;//.toString();
-			txt = $.parseHTML(txt);
-			txt = txt[0].textContent;
-		$('#qtext').html(txt);
-		var answers= $.parseJSON(viewitems[index].answers);
-		var ansdiv='';
-		console.log(answers);//for each
-		for (var i=0; i<answers.length; i++) {
-			if (answers[i].weight==0) {
-				ansdiv+='<div class="alert alert-danger">';
-			} else {
-				ansdiv+='<div class="alert alert-success">';
-			}
-			ansdiv+=answers[i].text;
-			ansdiv+='</div>';
-		}
+    function constructQuestion(index) {	
+        var quest = viewitems[index];
+        $('#detailed-title').html('Question '+(index+1));
+        $('#qtype').html('Type: '+viewitems[index].type);
+        $('#qpoints').html('Points: '+viewitems[index].points_possible);
+        var txt = viewitems[index].text;//.toString();
+            txt = $.parseHTML(txt);
+            txt = txt[0].textContent;
+        $('#qtext').html(txt);
+        var answers= $.parseJSON(viewitems[index].answers);
+        var ansdiv='';
+        console.log(answers);//for each
+        for (var i=0; i<answers.length; i++) {
+            if (answers[i].weight==0) {
+                ansdiv+='<div class="alert alert-danger">';
+            } else {
+                ansdiv+='<div class="alert alert-success">';
+            }
+            ansdiv+=answers[i].text;
+            ansdiv+='</div>';
+        }
         $('#qanswers').html('<hr/>Answers:<br/>'+ansdiv);
 		
         var comdiv='';
-		if (viewitems[index].correct_comments!= "") {
-			comdiv+='<div class=bg-success>';
-			comdiv+=viewitems[index].correct_comments;
-			comdiv+='</div>';
-		}
-		if (viewitems[index].incorrect_comments != "") {
-			comdiv+='<div class=bg-danger>';
-			comdiv+=viewitems[index].incorrect_comments;
-			comdiv+='</div>';
-		}
-		if (viewitems[index].neutral_comments != "") {
-			comdiv+='<div class=bg-warning>';
-			comdiv+=viewitems[index].neutral_comments;
-			comdiv+='</div>';
-		}
-		$('#qfeedback').html('<hr/>Comments:<br/>'+comdiv);
-	}
+        if (viewitems[index].correct_comments!= "") {
+            comdiv+='<div class=bg-success>';
+            comdiv+=viewitems[index].correct_comments;
+            comdiv+='</div>';
+        }
+        if (viewitems[index].incorrect_comments != "") {
+            comdiv+='<div class=bg-danger>';
+            comdiv+=viewitems[index].incorrect_comments;
+            comdiv+='</div>';
+        }
+        if (viewitems[index].neutral_comments != "") {
+            comdiv+='<div class=bg-warning>';
+            comdiv+=viewitems[index].neutral_comments;
+            comdiv+='</div>';
+        }
+        $('#qfeedback').html('<hr/>Comments:<br/>'+comdiv);
+    }
 
 /* question object
     answers: "[

@@ -3,7 +3,7 @@
     <a id="popinfo" title="Info" tabindex="0" role="button" data-trigger-condition="" data-trigger-action="" data-trigger="focus" data-container="body" data-toggle="popover" data-placement="left" data-content="Setup in js" style="position:absolute; top:5; right:5px; font-size: 1.3em;">
         <i class="icon-question"></i>
     </a>
-	<div id="cog" data-toggle="modal" data-keyboard="true" data-backdrop="true" onclick="showPopquizModal()" style="position:absolute; top:5; right:20px; font-size: 1.3em;">
+    <div id="cog" data-toggle="modal" data-keyboard="true" data-backdrop="true" onclick="showPopquizModal()" style="position:absolute; top:5; right:20px; font-size: 1.3em;">
         <a data-toggle="tooltip" title="Settings" data-placement="bottom"><i class="icon-cog"></i></a>
     </div>
 </div>
@@ -92,7 +92,7 @@
             </div>
         </div>
     </div><!--End accordion-->
-    
+
 </div>
 
 <!-- Modal: show details for a selected question -->
@@ -108,17 +108,17 @@
                     <div id="qtype" class="left questype">Type:</div>
                     <div id="qpoints" class="right questype">Points:</div>
                 </div>
-				<hr/>
-				<div>
-					<div id="qtext"></div>
+                <hr/>
+                <div>
+                    <div id="qtext"></div>
                 </div>
-				<div>
-					<div id="qanswers"></div>
-					<div id="qfeedback"></div>
+                <div>
+                    <div id="qanswers"></div>
+                    <div id="qfeedback"></div>
                 </div>
             </div>
             <div class="modal-footer">
-				<button id="backbtn" type="button" class="btn btn-primary"><i class="icon-arrow-left"></i> Previous</button>
+                <button id="backbtn" type="button" class="btn btn-primary"><i class="icon-arrow-left"></i> Previous</button>
                 <button id="nextbtn" type="button" class="btn btn-primary">Next <i class="icon-arrow-right"></i></button>
             </div>
         </div>
@@ -166,16 +166,16 @@
     .modal-header {background:none !important;border-bottom:1px solid #e5e5e5 !important;color:#333333 !important}
     .modal-header .close{color:black !important;background:transparent !important;}
     .modal-body {padding-bottom: 10px;}
-	.hiddenFromTeacher{display:none;}
-	#Form-field-Popquiz-id-group{display:none;}
-	#Form-field-Popquiz-name-group{display:none;}
+    .hiddenFromTeacher{display:none;}
+    #Form-field-Popquiz-id-group{display:none;}
+    #Form-field-Popquiz-name-group{display:none;}
 </style>
 
 <script>
-	var gameitems=[];// questions selected for game
-	
-	quizList = {{quizList|raw}};// instructors only
-	if (gameQuest != null && gameQuest.length > 1) {
+    var assignmentID = {{assignmentID|raw}};
+    var quizList = {{quizList|raw}};// instructors only
+    var gameitems=[];// questions selected for game
+    if (gameQuest != null && gameQuest.length > 1) {
         gameitems = {{gameQuest|raw}};// twig here
     }
     // resource selection return url

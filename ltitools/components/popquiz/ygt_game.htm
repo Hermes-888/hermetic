@@ -13,15 +13,13 @@
 <script>
     var canvas, stage, exportRoot;
     var graded = false;
+    var minimalQuestions = 1000;// warn if less than
     gameQuest = {{gameQuest|raw}};
-    //console.log('ygt gameQuest:',gameQuest.length, gameQuest);
-    //console.log('ygt role:',role);
-    
+
     init();//once
     function init() {
         canvas = document.getElementById("canvas");
         exportRoot = new lib.ygtgame();
-
         stage = new createjs.Stage(canvas);
         stage.addChild(exportRoot);
         stage.enableMouseOver();
@@ -30,12 +28,12 @@
         createjs.Ticker.setFPS(lib.properties.fps);
         createjs.Ticker.addEventListener("tick", stage);
     }
-    
+
     function showIntro() {
         stage.removeChild(exportRoot);
         init();
     }
-    
+
     function sendGrade() {
         if (graded) { return false; }
         graded = true;// only once
