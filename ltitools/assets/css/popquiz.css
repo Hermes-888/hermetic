@@ -28,9 +28,7 @@
     float: right;
 }
 .clear { clear: both; }
-.questype { 
-    /*padding: 3px;*/
-}
+
 #questcount {
     float: left;
     padding: 6px 10px;/*top&botm, l&r*/
@@ -46,6 +44,14 @@
 }
 
 /*----- Accordion -----*/
+.panel-heading button {
+    width: 100%;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+/* jq-ui */
 .accordion, .accordion * {
     -webkit-box-sizing: border-box; 
     -moz-box-sizing: border-box; 
@@ -84,20 +90,7 @@
     padding: 15px;
     display: none;
 }
-/*---- jq-ui ----*/
-.makeDraggable {
- /* .answer */
-    cursor: move;
-    position:relative;
-    margin: 5px 10px;
-    display: inline-block;
-    padding: 5px;
-    text-align: center;
-    color: white;
-    background: teal;
-}
-.makeDraggable.ui-draggable-dragging { background: green; }
-
+/*---- jq-ui OBSOLETE now bootstrap----*/
 #quizselectable .ui-selecting { background: #E7CF29; }
 #quizselectable .ui-selected { background: #4D7123; color: white; }
 #quizselectable .ui-selected { background: #4D7123; color: white; }
@@ -110,124 +103,4 @@
 #gameselectable { list-style-type: none; margin: 0; padding: 0; width:900px; }
 #gameselectable li { margin: 3px; padding: 5px; cursor:pointer; text-align: left }
 
-/*---- YGT Game ----*/
-.page {
-	display: block;
-	position: relative;
-	overflow: hidden;
-	width: 920px; height: 500px;
-}
-.title {
-    display: block;
-    position: relative;
-    overflow: hidden;
-    width: 100%; height: 100%;
-}
-.gameplay {
-    display: block;
-    position: relative;
-    overflow: hidden;
-    width: 100%; height: 100%;
-}
-.bkground {
-    display: block;
-    position: absolute;
-    overflow: hidden;
-    opacity: 0.0;
-    width: 920px; height: 500px;
-    background: url("../images/bkgrnd.png") center center no-repeat;
-}
-.score {
-    position: relative;
-    width: 180px;
-    height: auto;
-    margin: 5px 10px;
-    padding: 5px;
-    display: inline-block;
-    background-color: #4ac6bc;
-    border: #333333 solid 2px;
-    font-weight: 500;
-}
-.missd {
-    position: relative;
-    width: 180px;
-    height: auto;
-    margin: 5px 150px;
-    padding: 5px;
-    display: inline-block;
-    background-color: #c29253;
-    border: #333333 solid 2px;
-    font-weight: 500;
-}
-.timr {
-    position: relative;
-    width: 180px;
-    height: auto;
-    margin: 5px 10px;
-    padding: 5px;
-    display: inline-block;
-    background-color: gray;
-    border: #333333 solid 2px;
-    font-weight: 500;
-}
-.headbox {
-    width: 100%;
-    height: auto;
-    display: block;
-    position: relative;
-    text-align: center;
-}
-.questbox {
-    display: block;
-    position: relative;
-    width: 900px;
-    height: auto;
-    margin: 2px auto;
-    padding: 30px;
-    background: tan;
-    font-weight: 700;
-    font-size: 1.1em;
-}
-.shado {
-    -webkit-box-shadow: 3px 3px 5px 0px rgba(50, 50, 50, 0.8);
-    -moz-box-shadow:    3px 3px 5px 0px rgba(50, 50, 50, 0.8);
-    box-shadow:         3px 3px 5px 0px rgba(50, 50, 50, 0.8);
-}
-.valid {
-    /*holds correct answer*/
-    display: block;
-    position: relative;
-    font-weight: 700;
-    font-size: 1.2em;
-    text-align: center;
-}
-.answerbox {
-    width: 100%;
-    height: auto;
-    padding: 10px;
-    position: relative;
-    text-align: center;
-}
-.answer {
-/*makeDraggable */
-    width: auto;
-    height: auto;
-    font-weight: 400;
-}
-#introMessage {
-    position: absolute;
-    top: 20px;
-    left: 60px;
-    width: 100%;
-    padding: 20px;
-    font-size:  1.6em;
-    font-weight: 600;
-    text-align: center;
-    color: #ffffff;
-    background-color: red;// ?
-}
-#comment {
-    padding: 20px;
-    margin-top: 20px;
-    /*neutral,correct,incorrect comment colors ?*/
-}
+

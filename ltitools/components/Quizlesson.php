@@ -68,8 +68,8 @@ class Quizlesson extends ComponentBase
             $roleStr = $_SESSION['roles'];
             $this->page['role'] = $roleStr;
 
-
-            /** This component switches by messageType and role
+            $quizList = '';//init for localhost
+            /** This component switches by messageType and role. it will not work in localhost
                 https://www.imsglobal.org/specs/lticiv1p0/specification-3
             */
             if (isset($_POST['lti_message_type'])) {

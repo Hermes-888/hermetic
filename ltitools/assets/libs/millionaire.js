@@ -1495,10 +1495,6 @@ p.nominalBounds = new cjs.Rectangle(-131.8,-423.8,1223.7,1223.7);
                 sendGrade();// function in html
 			}
 			
-			var txt = question.text;
-				txt = $.parseHTML(txt);//jquery available
-				txt = txt[0].textContent;
-			//$('#qtext').html(txt);
 			var answers= $.parseJSON(question.answers);
 			var ri=0;
 			qlist=[4];
@@ -1506,18 +1502,20 @@ p.nominalBounds = new cjs.Rectangle(-131.8,-423.8,1223.7,1223.7);
 			{
 				//find rightAnswer REWORK THIS could be 60/40
 				if(answers[i].weight > 0) { ri=i; } 
-				qlist[i]=answers[i].text;
+                var  atxt = $.parseHTML(answers[i].text);
+				qlist[i] = atxt[0].textContent;// to HTML
 			}
             
 			// T/F questions only have 2 make some up [maybe, probably]
-			console.log('answLen:',answers.length);
+			//console.log('answLen:',answers.length);
             if(answers.length<3) { qlist[2]='Maybe'; }
             if(answers.length<4) { qlist[3]='Probably'; }
             
             //console.log('answer:',answers[ri].text);
             qlist=shuffleArray(qlist);//
             
-			questionBox.questionText.text = txt;//??? html
+            var txt = $.parseHTML(question.text);
+			questionBox.questionText.text = txt[0].textContent;// to HTML
 			questionBox.rightAnswer=answers[ri];// to compare with ???
 			questionBox.questionNumBox.text = questionNumber;
 			questionBox.highlight.visible = false;
@@ -1528,12 +1526,12 @@ p.nominalBounds = new cjs.Rectangle(-131.8,-423.8,1223.7,1223.7);
 			
 			for(i=0; i<optins.length; i+=1)
 			{
-				optins[i].answerText.text=qlist[i];
+				optins[i].answerText.text=qlist[i];// to HTML
 				optins[i].visible=true;//reset fifty:fifty
 				optins[i].isRight=false;// reset & mark
 				if(optins[i].answerText.text == answers[ri].text) {
                     optins[i].isRight=true;
-                    console.log("answer:"+qlist[i]);
+                    if (role != 'Learner'){ console.log("answer:"+qlist[i]); }
                 }
 				var tempStr = qlist[i];
                 var tempNum = tempStr.length;

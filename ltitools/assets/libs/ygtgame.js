@@ -240,12 +240,12 @@ p.nominalBounds = new cjs.Rectangle(-1,-1,612,337);
 	// txt
 	this.txt = new cjs.Text("questions text\nquestions text\nquestions text\nquestions text\nquestions text", "20px 'Arial'", "#333333");
 	this.txt.name = "txt";
-	this.txt.lineHeight = 20;
+	this.txt.lineHeight = 22;
 	this.txt.lineWidth = 878;
 	this.txt.setTransform(21,20.5);
 
 	// bkgrnd
-	this.instruct = new cjs.Text("Drag answer and Drop onto question", "16px 'Arial'", "#CCCCCC");
+	this.instruct = new cjs.Text("Drag answer and Drop onto question", "16px 'Arial'", "#EEEEEE");
 	this.instruct.name = "instruct";
 	this.instruct.textAlign = "center";
 	this.instruct.lineHeight = 16;
@@ -513,14 +513,16 @@ if (loop == null) { loop = false; }	this.initialize(mode,startPosition,loop,{});
             questionPanel.visible=true;
             questionPanel.y=-100;
             answers = [];//reset
-            //beginBtn.off('mousedown');
-            questionPanel.txt.text = gameQuest[qnum].text;
+            //convert &lt;strong&gt; to <strong>
+            var txt = $.parseHTML(gameQuest[qnum].text);
+            questionPanel.txt.text = txt[0].textContent;
             // create answerPanels with text
             var ans = JSON.parse(gameQuest[qnum].answers);
             console.log('answers:', ans.length, ans);
             for (var i=0; i<ans.length; i++) {
                 var ansbtn = new lib.answerPanel();
-                ansbtn.txt.text = ans[i].text;
+                txt = $.parseHTML(ans[i].text);
+                ansbtn.txt.text = txt[0].textContent;
                 ansbtn.id = ans[i].id;
                 ansbtn.weight = ans[i].weight;
                 console.log('answer:', qnum, i, ans[i].text);

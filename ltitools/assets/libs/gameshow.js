@@ -1505,9 +1505,9 @@ p.nominalBounds = new cjs.Rectangle(0,0,513.4,449.7);
 		
 		scoreBox.text = playerScore;//reset score on player Stand
 		
-		analizeXML();//setupCategories();//setupScreens();// COMBINED
+		analizeData();//setupCategories();//setupScreens();// COMBINED
 	
-		function analizeXML()
+		function analizeData()
 		{
 			removeWrongMarks();
 			//var tempNum = xmlplaylist.getElementsByTagName("category")[0].childNodes[0].length;
@@ -1564,14 +1564,6 @@ p.nominalBounds = new cjs.Rectangle(0,0,513.4,449.7);
                             allQuestions[i][j].rightAnswer = questions[i][1][j].answers[a].text;
                         }
                     }
-                    //allQuestions[i][j].rightAnswer = questions[i][1][j].answers[a].text;
-					//allQuestions[i][j].wrongAnswer1 = questions[i][1][j].answers[1].text;
-					//allQuestions[i][j].wrongAnswer2 = questions[i][1][j].answers[2].text;
-					//allQuestions[i][j].wrongAnswer3 = questions[i][1][j].answers[3].text;
-					//allQuestions[i][j].wrongAnswer3.answered=false;
-					//allQuestions[i][j].wrongAnswer3.questionNumber=0;// ??? useage ???
-					//console.log(allQuestions[i][j]);
-					//allQuestions[i][j].setup(value, questxt, right, wrong1, wrong2, wrong3);
 				}
 			}
 			addBoxListeners();// click triggers questionInterface animation 
@@ -1614,9 +1606,10 @@ p.nominalBounds = new cjs.Rectangle(0,0,513.4,449.7);
 		{
 			//trace(e.currentTarget.name, "clicked");
 			if(e.currentTarget.answered) { return; }
-			questionInterface.questionBox.text = e.currentTarget.questionText;
+            var txt = $.parseHTML(e.currentTarget.questionText);
+			questionInterface.questionBox.text = txt[0].textContent;
 			questionInterface.rightAnswer = e.currentTarget.rightAnswer;
-	///		console.log("rightAnswer:"+e.currentTarget.rightAnswer);
+            ///console.log("rightAnswer:"+e.currentTarget.rightAnswer);
 			///console.log(questionInterface.id);
 			// get Q/answers and put into question interface
 			// shuffle copy of ansBoxes & answers
@@ -1640,7 +1633,8 @@ p.nominalBounds = new cjs.Rectangle(0,0,513.4,449.7);
 				{
 					ansboxs[i].answerBox.y = 12;// center vertical
 				}
-				ansBoxes[i].answerBox.text = answers[i].text;
+                txt = $.parseHTML(answers[i].text);
+				ansBoxes[i].answerBox.text = txt[0].textContent;
                 ansBoxes[i].weight = answers[i].weight;
 				// clear all highlights from answerBoxes
 				ansBoxes[i].rightHighlight.visible=false;
@@ -1669,7 +1663,8 @@ p.nominalBounds = new cjs.Rectangle(0,0,513.4,449.7);
 			
             
 			//check text with rightAnswer if wrong show wrongHighlight of ansBox
-			if(questionInterface.rightAnswer == e.currentTarget.answerBox.text)
+			//if(questionInterface.rightAnswer == e.currentTarget.answerBox.text)
+            if(e.currentTarget.answerBox.weight > 0)
 			{
 				e.currentTarget.rightHighlight.visible=true;// correct
 				// add to score : clear hilights : remove interface
@@ -1762,8 +1757,6 @@ p.nominalBounds = new cjs.Rectangle(0,0,513.4,449.7);
 				}
 			}
 			addBoxListeners();
-			//analizeXML();// keep original configuration
-			//setupCategories();setupScreens();
 		}
 	}
 
