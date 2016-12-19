@@ -51,9 +51,10 @@ class Popquiz extends ComponentBase
                 //2nd launch return_url is set. Questions set. instance name set
                 $assignmentID = $_POST['custom_canvas_assignment_id'];
                 $name = $this->alias . '_' . $assignmentID;
-                $config = $this->getInstance($name);//set at updateTable
+                $config = $this->getInstance($name);//create new table with assignmentID
+                // instructor can now set the questions
             } else {
-                $config = $this->getInstance();
+                $config = $this->getInstance();// will always have one blank for courseID
             }
             // used to determine if first launch
             $this->page['assignmentID'] = json_encode($assignmentID);

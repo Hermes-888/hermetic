@@ -39,11 +39,15 @@
     console.log('returnurl:',returnurl);
     console.log('assignmentID:',assignmentID);
     console.log('INSTANCE:',config.name);
-    //set instance name after first launch
-    if (assignmentID != '') {
-        var temp = config.name.split('_');
-        config.name = temp[0] +'_'+ assignmentID;//after first launch
-        console.log('INSTANCE:',config.name);
+    //if first launch immediately set returnurl
+    // then instructor can set the questions
+    if (assignmentID == '') {
+        // https://www.edu-apps.org/extensions/content.html
+        var url = returnurl+"?return_type=lti_launch_url&url="+encodeURIComponent(toolurl);
+        window.location.href = url;// first launch
+        /*launch_presentation_return_url with parameters ?type &url
+            assignmentId is now available in next launch
+        */
     }
     
     //quizList = {{quizList|raw}};
