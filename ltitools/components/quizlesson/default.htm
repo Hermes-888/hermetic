@@ -12,6 +12,7 @@
 	console.log('orchidConfig', orchidConfig);
 	
 	var quizList = {{quizList|raw}};// all quizzes
+    //console.log('quizList:',quizList.length, quizList);
 	/*
         initialize main variables
         get variables from the php with twig
@@ -26,10 +27,11 @@
     
     var messageType = '{{messageType}}';
     console.log('messageType:', messageType);
+    var toolurl = '{{toolurl|raw}}';
     
 </script>
 {% if ('basic-lti-launch-request' in messageType) %}
-{% partial __SELF__~'::renderQuestion' %}
+    {% partial __SELF__~'::renderQuestion' %}
 {% elseif ('ContentItemSelectionRequest' in messageType) %}
-{% partial __SELF__~'::instructor' %}
+    {% partial __SELF__~'::instructor' %}
 {% endif %}

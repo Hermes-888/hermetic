@@ -1,4 +1,4 @@
-$(document).ready(function() {
+//$(document).ready(function() {
 /*
     Quiz Lessons:
     Instructor actions:
@@ -19,7 +19,6 @@ $(document).ready(function() {
     if (messageType == "ContentItemSelectionRequest") {
         $('#orchid-popinfo').attr("data-content","Choose a Quiz. Then select questions and add them to the page. Be sure to use all questions from the same quiz! Submit Quiz button will grade the quiz.");
         $('#orchid-popinfo').popover();// activate info
-
         $('#orchid-cog').on('click', function(e) {
             $('#orchid-configuration').modal('show');// instructions
         });
@@ -43,7 +42,7 @@ $(document).ready(function() {
         
     //console.log('messageType:',messageType);// test
     console.log('quiz_id:', orchidConfig.quiz_id);
-    console.log('quizList length:', quizList.length);
+    console.log('quizList length:', quizList.length, quizList);
     //console.log('quizList:', quizList);
     
     if (messageType == "basic-lti-launch-request") {
@@ -179,7 +178,7 @@ $(document).ready(function() {
 
 	function updateTable() {
         // use RestAPI & Routes
-        var promise = $.get('onUpdateTable', {'Quizlesson':orchidConfig}, function (data) {
+        var promise = $.get('onUpdateQuizlesson', {'Quizlesson':orchidConfig}, function (data) {
 				console.log('PROMISE result:',data);
                 $('#contentSelector').submit();//Now autosubmit form
 			}).fail(function (data1) { console.log('PROMISE failed:',data1); });
@@ -245,8 +244,8 @@ $(document).ready(function() {
         var contentval = '{"@context" : "http://purl.imsglobal.org/ctx/lti/v1/ContentItem",';
             contentval += '"@graph":[{';
             contentval += '"@type":"LtiLinkItem",';
-            contentval += '"@id":"https://mediafiles.uvu.edu/delphinium/orchidtest",';
-            contentval += '"url":"https://mediafiles.uvu.edu/delphinium/orchidtest'+parameters+'",';
+            contentval += '"@id":"QuizLesson",';
+            contentval += '"url":"'+toolurl+parameters+'",';
             contentval += '"title":"Quiz Questions","text":"placed in page",';
             contentval += '"mediaType":"application/vnd.ims.lti.v1.ltilink",';
             //  contentval += '"custom":{"quizid":'+orchidConfig.quiz_id+',"questionid":[ '+qids+']},';// append to url instead
@@ -278,8 +277,8 @@ $(document).ready(function() {
         var contentval = '{"@context" : "http://purl.imsglobal.org/ctx/lti/v1/ContentItem",';
             contentval += '"@graph":[{';
             contentval += '"@type":"LtiLinkItem",';
-            contentval += '"@id":"https://mediafiles.uvu.edu/delphinium/orchidtest",';
-            contentval += '"url":"https://mediafiles.uvu.edu/delphinium/orchidtest'+parameters+'",';
+            contentval += '"@id":"QuizLesson",';
+            contentval += '"url":"'+toolurl+parameters+'",';
             contentval += '"title":"Quiz Submit Button","text":"placed in page",';
             contentval += '"mediaType":"application/vnd.ims.lti.v1.ltilink",';
             //  contentval += '"custom":{"quizid":'+quiz_id+',"questionid":"submit"},';// append to url instead
@@ -459,7 +458,7 @@ $(document).ready(function() {
         
     */
     function render(quizid, questions) {
-        //console.log('quizList length:', quizList);
+        console.log('quizList length:', quizList);
         console.log('render:', quizid, questions);
         var pageContent = '';
         
@@ -602,4 +601,4 @@ $(document).ready(function() {
 */
 
 //End document.ready
-});
+//});

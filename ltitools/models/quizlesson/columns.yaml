@@ -22,3 +22,7 @@ columns:
         type: text
         searchable: true
         sortable: true
+
+    questions_used:
+        label: Questions Used id's
+        type: text

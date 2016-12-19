@@ -57,7 +57,7 @@ class Quizlesson extends ComponentBase
 
             $config = $this->getInstance();
             //use the record in the component and frontend form
-            $this->page['config'] = json_encode($config);
+            $this->page['orchidConfig'] = json_encode($config);
             //Use the primary key of the record you want to update
             //$this->page['recordId'] = $config->id;
             $this->page->quizlessonrecordId = $config->id;
@@ -67,6 +67,10 @@ class Quizlesson extends ComponentBase
             //get LMS roles --used to determine functions and display options
             $roleStr = $_SESSION['roles'];
             $this->page['role'] = $roleStr;
+            
+            $tempurl = 'https://'.$_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
+            $toolurl = explode("?", $tempurl);
+            $this->page['toolurl'] = $toolurl[0];// without ?parameters
 
             $quizList = '';//init for localhost
             /** This component switches by messageType and role. it will not work in localhost
@@ -91,8 +95,8 @@ class Quizlesson extends ComponentBase
 
                         //FRONTEND configuration FORM IS UNUSED
                         // INSTRUCTIONS IN MODAL
-                        //$formController = new QuizlessonController
-				        //$formController->create('frontend');
+                        $formController = new QuizlessonController();
+				        $formController->create('frontend');
                         // Append the Instructions to the page
                         $instructions = $formController->makePartial('quizlessoninstructions');
                         $this->page['quizlessoninstructions'] = $instructions;
@@ -133,7 +137,8 @@ class Quizlesson extends ComponentBase
             $this->addCss("/modules/system/assets/ui/storm.css", "core");
             $this->addJs("/modules/system/assets/ui/storm-min.js", "core");
             $this->addCss("/plugins/hermetic/ltitools/assets/css/quizlesson.css");
-            $this->addJs("/plugins/hermetic/ltitools/assets/javascript/quizlesson.js");
+            //$this->addJs("/plugins/hermetic/ltitools/assets/js/quizlesson_instructor.js");
+            $this->addJs("/plugins/hermetic/ltitools/assets/js/quizlesson.js");
 
         //Error handling requires nonlti.htm. See #11 in https://github.com/ProjectDelphinium/delphinium/wiki/1.-Installation#setup
 /*        }
@@ -230,12 +235,12 @@ class Quizlesson extends ComponentBase
 
 
     /**
-    * return the selected quiz
+    * return only the selected quiz
     */
     public function getQuiz($quizId)
     {
         $quizId = intval($quizId);
-        $fresh_data = false;
+        $fresh_data = true;//false;//
         $roots = new Roots();
         $req = new QuizRequest(ActionType::GET, $quizId, $fresh_data, true);
         $result = $roots->quizzes($req);
@@ -248,7 +253,7 @@ class Quizlesson extends ComponentBase
     */
     public function getAllQuizzes()
     {
-        $fresh_data = false;//true; // instructor may have just built one!
+        $fresh_data = true;//false;// instructor may have just built one!
         $roots = new Roots();
         $req = new QuizRequest(ActionType::GET, null, $fresh_data, true);
         $result = $roots->quizzes($req);
